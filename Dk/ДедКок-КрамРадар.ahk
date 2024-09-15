@@ -1,0 +1,209 @@
+﻿#NoEnv
+SetWorkingDir %A_ScriptDir%
+#SingleInstance force
+SetBatchLines, -1
+
+#include data/offsets.ahk
+#include data/classMemory.ahk
+#include data/ShinsOverlayClass.ahk
+
+
+; Создание массива героев
+HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
+
+
+gameEXE:= "ahk_exe project8.exe"
+gameDLL:= "client.dll"
+
+
+Gui, 1: new, +hwndNewGuiID
+game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
+
+StartLabelStart:
+sleep 300
+1337flex := new _ClassMemory(gameEXE)
+baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+
+; Console.WriteLine("EntityList " + Deadlock.EntityList);
+; Console.WriteLine("AddressBase " + AddressBase);
+; Thread.Sleep(9999999);
+
+WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+SetFormat, float, 2.20
+VarStart_time := A_TickCount
+Loop
+{
+sleep 1
+	game.BeginDraw()
+
+	j=0
+	ViewMatrix:=Array()
+	while(j<16)
+	{
+		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		j++
+	}
+	VarElapsed_time := A_TickCount - VarStart_time
+	if (VarElapsed_time > 3000) ;3000
+	{
+		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		if !(LocalPlayer)
+		{
+			game.BeginDraw()
+			game.EndDraw()
+			Goto StartLabelStart
+		}
+		playerIndex=0
+		BubaArray := []
+		BubaArray2 := []
+		while(playerIndex < 64)
+		{
+			;==============Энтити лист
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
+			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
+			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
+			Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+			TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+			if Health
+			{
+				BubaArray.push(ControllerBase)
+				BubaArray2.push(Pawn)
+			}
+			playerIndex++
+		}
+		;==============Локальный игрок
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
+		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
+		VarStart_time := A_TickCount
+	}
+	Kramindex := 0
+	while Kramindex < BubaArray.length()
+	{
+	Kramindex++
+	ControllerBase := BubaArray[Kramindex]
+	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
+	if Health>0
+	{
+		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
+		{
+			Pawn := BubaArray2[Kramindex]
+			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
+			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
+			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+			if(enemyXLocation!=0)
+			{
+			
+			IfWinActive, ahk_exe project8.exe
+			{
+			
+			; Координаты верхнего левого и нижнего правого углов радара
+			radarTopLeftX := 2014
+			radarTopLeftY := 873
+			radarBottomRightX := 2519
+			radarBottomRightY := 1380
+			radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
+			radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
+			radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
+			radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
+			radarBorderThickness := 2  ; Толщина рамки радара
+			game.FillRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarFillColor)
+			game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
+			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
+			mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
+			maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
+			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
+			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
+			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
+			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
+			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
+			pointSize := 8
+			borderSize := 2  ; Толщина обводки
+
+
+			game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
+			if (TeamNum == MyTeamIs) 
+			{
+				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
+				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
+			} 
+			else
+			{
+				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
+				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xffFF0000)  ; Красный для врагов
+			}
+			}
+			}
+		}
+	}
+	}
+sleep 1
+
+		; IfWinNotActive, ahk_exe project8.exe
+		; {
+			; game.EndDraw()
+			; game.BeginDraw()
+			; game.EndDraw()
+		; }
+		; else
+		; {
+			; game.EndDraw()
+		; }
+	game.EndDraw()
+}
+return
+
+; F1::
+; game.BeginDraw()
+; game.EndDraw()
+; return
+; enemyXLocation = 1973.65625000000000000000
+; enemyYLocation = -999.46875000000000000000
+
+
+WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
+{
+	global
+    clipCoordsx := posx*ViewMatrix[1] + posy*ViewMatrix[2] + posz*ViewMatrix[3] + ViewMatrix[4]
+    clipCoordsy := posx*ViewMatrix[5] + posy*ViewMatrix[6] + posz*ViewMatrix[7] + ViewMatrix[8]
+    clipCoordsz := posx*ViewMatrix[9] + posy*ViewMatrix[10] + posz*ViewMatrix[11] + ViewMatrix[12]
+    clipCoordsw := posx*ViewMatrix[13] + posy*ViewMatrix[14] + posz*ViewMatrix[15] + ViewMatrix[16]
+    if (clipCoordsw < 1)
+        return false
+    NDCx := clipCoordsx / clipCoordsw
+    NDCy := clipCoordsy / clipCoordsw
+    NDCz := clipCoordsz / clipCoordsw
+    x := (windowWidth / 2 * NDCx) + (NDCx + windowWidth / 2)
+    y := -(windowHeight / 2 * NDCy) + (NDCy + windowHeight / 2)
+	coords:=array(x,y)
+    return coords
+}
+
+getDistance(x,y,z)
+{
+	global
+	myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
+	myYLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x4,"float")
+	myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")	
+	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
+	return distance
+}
+
+
+*~$Home::
+Reload
+return
+
+*~$End::
+ExitApp
+return

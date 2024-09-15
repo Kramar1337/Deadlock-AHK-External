@@ -1,0 +1,218 @@
+﻿#NoEnv
+SetWorkingDir %A_ScriptDir%
+#SingleInstance force
+SetBatchLines, -1
+
+#include data/offsets.ahk
+#include data/classMemory.ahk
+#include data/ShinsOverlayClass.ahk
+
+
+; Создание массива героев
+HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
+
+
+gameEXE:= "ahk_exe project8.exe"
+gameDLL:= "client.dll"
+
+boxTeam:=1
+boxEnemy:=1
+
+Gui, 1: new, +hwndNewGuiID
+game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
+
+StartLabelStart:
+sleep 300
+1337flex := new _ClassMemory(gameEXE)
+baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+
+; Console.WriteLine("EntityList " + Deadlock.EntityList);
+; Console.WriteLine("AddressBase " + AddressBase);
+; Thread.Sleep(9999999);
+
+WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+SetFormat, float, 2.20
+VarStart_time := A_TickCount
+Loop
+{
+	game.BeginDraw()
+
+	j=0
+	ViewMatrix:=Array()
+	while(j<16)
+	{
+		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		j++
+	}
+	VarElapsed_time := A_TickCount - VarStart_time
+	if (VarElapsed_time > 3000) ;3000
+	{
+		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		if !(LocalPlayer)
+		{
+			game.EndDraw()
+			Goto StartLabelStart
+		}
+		playerIndex=0
+		BubaArray := []
+		BubaArray2 := []
+		while(playerIndex < 64)
+		{
+			;==============Энтити лист
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
+			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
+			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
+			Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+			TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+			if Health
+			{
+				BubaArray.push(ControllerBase)
+				BubaArray2.push(Pawn)
+			}
+			playerIndex++
+		}
+		;==============Локальный игрок
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
+		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
+		VarStart_time := A_TickCount
+	}
+	Kramindex := 0
+	while Kramindex < BubaArray.length()
+	{
+	Kramindex++
+	ControllerBase := BubaArray[Kramindex]
+	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+	MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
+	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
+	if Health>0
+	{
+		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
+		{
+			Pawn := BubaArray2[Kramindex]
+			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
+			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
+			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
+			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+			if(enemyXLocation!=0)
+			{
+				if(arr:=WorldToScreen(enemyXLocation,enemyYLocation,enemyZLocation,windowWidth,windowHeight))
+				{
+					xpos1:=arr[1]
+					ypos1:=arr[2]
+					arr2:=WorldToScreen(enemyXLocation,enemyYLocation,enemyZLocation+75,windowWidth,windowHeight)
+					xpos2:=arr2[1]
+					ypos2:=arr2[2]
+					dist:=getDistance(enemyXLocation,enemyYLocation,enemyZLocation)
+					IfWinActive, ahk_exe project8.exe
+					{
+						if (dist > 1.2)
+						{
+							MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
+							if(TeamNum==MyTeamIs)
+								DrawESP(xpos1,ypos1,xpos2,ypos2,dist,1)
+							else
+								DrawESP(xpos1,ypos1,xpos2,ypos2,dist,0)
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	game.EndDraw()
+}
+return
+
+
+
+DrawESP(x1,y1,x2,y2,distance, team)
+{
+	global
+	if(team)
+	{
+		if(boxEnemy)
+		{
+		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
+		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина
+		boxEnemyColor := 0xff00FF00
+		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
+		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
+		HPWidth := ESPwidth / 8  ; Ширина полосы, можно отрегулировать по вашему вкусу
+		if (Health / MaxHealth <= 0.25) {
+			HPColor := 0xffFF0000  ; Красный цвет (меньше 25% здоровья)
+		} else if (Health / MaxHealth <= 0.5) {
+			HPColor := 0xffFFFF00  ; Желтый цвет (меньше 50% здоровья)
+		} else {
+			HPColor := 0xff00FF00  ; Зеленый цвет (больше 50% здоровья)
+		}
+		game.FillRectangle(x1 - (ESPwidth / 2) - HPWidth - 5, y1 - HPHeight, HPWidth, HPHeight, HPColor, "1")
+		}
+	} 
+	else 
+	{
+		if(boxEnemy)
+		{
+		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
+		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина
+		boxEnemyColor := 0xffFF0000
+		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
+		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
+		HPWidth := ESPwidth / 8  ; Ширина полосы, можно отрегулировать по вашему вкусу
+		if (Health / MaxHealth <= 0.25) {
+			HPColor := 0xffFF0000  ; Красный цвет (меньше 25% здоровья)
+		} else if (Health / MaxHealth <= 0.5) {
+			HPColor := 0xffFFFF00  ; Желтый цвет (меньше 50% здоровья)
+		} else {
+			HPColor := 0xff00FF00  ; Зеленый цвет (больше 50% здоровья)
+		}
+		game.FillRectangle(x1 - (ESPwidth / 2) - HPWidth - 5, y1 - HPHeight, HPWidth, HPHeight, HPColor, "1")
+		}
+	}
+}
+
+WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
+{
+	global
+    clipCoordsx := posx*ViewMatrix[1] + posy*ViewMatrix[2] + posz*ViewMatrix[3] + ViewMatrix[4]
+    clipCoordsy := posx*ViewMatrix[5] + posy*ViewMatrix[6] + posz*ViewMatrix[7] + ViewMatrix[8]
+    clipCoordsz := posx*ViewMatrix[9] + posy*ViewMatrix[10] + posz*ViewMatrix[11] + ViewMatrix[12]
+    clipCoordsw := posx*ViewMatrix[13] + posy*ViewMatrix[14] + posz*ViewMatrix[15] + ViewMatrix[16]
+    if (clipCoordsw < 1)
+        return false
+    NDCx := clipCoordsx / clipCoordsw
+    NDCy := clipCoordsy / clipCoordsw
+    NDCz := clipCoordsz / clipCoordsw
+    x := (windowWidth / 2 * NDCx) + (NDCx + windowWidth / 2)
+    y := -(windowHeight / 2 * NDCy) + (NDCy + windowHeight / 2)
+	coords:=array(x,y)
+    return coords
+}
+
+getDistance(x,y,z)
+{
+	global
+	myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
+	myYLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x4,"float")
+	myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")	
+	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
+	return distance
+}
+
+
+*~$Home::
+Reload
+return
+
+*~$End::
+ExitApp
+return
