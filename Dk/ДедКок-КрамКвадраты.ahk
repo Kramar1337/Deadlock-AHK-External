@@ -1,4 +1,9 @@
-﻿#NoEnv
+﻿; Настройки
+boxTeam:=1
+boxEnemy:=1
+
+
+#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -15,9 +20,6 @@ HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abra
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 
-boxTeam:=1
-boxEnemy:=1
-
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
 
@@ -25,10 +27,6 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
-; Console.WriteLine("EntityList " + Deadlock.EntityList);
-; Console.WriteLine("AddressBase " + AddressBase);
-; Thread.Sleep(9999999);
 
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
@@ -138,7 +136,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 	global
 	if(team)
 	{
-		if(boxEnemy)
+		if(boxTeam)
 		{
 		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
 		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина

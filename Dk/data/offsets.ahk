@@ -1,13 +1,13 @@
 class offsets
 {
 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
-static dwEntityList = 0x1F220C8
+static dwEntityList = 0x1F23838
 ; 48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0
-static dwViewMatrix = 0x20DFA20
-; 4C 8B 05 ? ? ? ? 8B D3 48 8B CD
-static dwLocalPlayerPawn = 0x1DCB588
+static dwViewMatrix = 0x20e11b0
+; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
+static dwLocalPlayerPawn = 0x20CF650
 ; 48 8D 3D ? ? ? ? 8B D9
-static CCameraManager = 0x1F439C0
+static CCameraManager = 0x1F45130
 
 ;C_BaseEntity
 static m_pGameSceneNode = 0x328

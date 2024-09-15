@@ -1,4 +1,12 @@
-﻿#NoEnv
+﻿; Настройки
+key_aim := "V"
+sensitivity := 0.5  	; 0.05	Чувствительность движения
+tolerance := 1       	; 2 	Допустимое расстояние до цели для остановки движения
+captureRange := 100  	; 100 пикселей
+
+
+
+#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -6,13 +14,6 @@ SetBatchLines, -1
 #include data/offsets.ahk
 #include data/classMemory.ahk
 #include data/ShinsOverlayClass.ahk
-
-
-; Настройки
-key_aim := "V"
-sensitivity := 0.5  	; 0.05	Чувствительность движения
-tolerance := 1       	; 2 	Допустимое расстояние до цели для остановки движения
-captureRange := 200  	; 100 пикселей
 
 Gui, 1: new, +hwndNewGuiID2
 game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID2)
@@ -24,10 +25,6 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
-; Console.WriteLine("EntityList " + Deadlock.EntityList);
-; Console.WriteLine("AddressBase " + AddressBase);
-; Thread.Sleep(9999999);
 
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20

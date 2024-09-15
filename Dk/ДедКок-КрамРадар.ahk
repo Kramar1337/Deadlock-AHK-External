@@ -1,4 +1,23 @@
-﻿#NoEnv
+﻿; Настройки
+radarBoxEnable = 1
+radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
+radarTopLeftY := round(A_ScreenHeight * (873 / 1440))
+radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
+radarBottomRightY := round(A_ScreenHeight * (1380 / 1440))
+radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
+radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
+radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
+radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
+radarBorderThickness := 2  ; Толщина рамки радара
+mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
+mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
+maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+pointSize := 8
+borderSize := 2  ; Толщина обводки
+
+
+
+#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -23,10 +42,6 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
-; Console.WriteLine("EntityList " + Deadlock.EntityList);
-; Console.WriteLine("AddressBase " + AddressBase);
-; Thread.Sleep(9999999);
 
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
@@ -101,35 +116,20 @@ sleep 1
 			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 			if(enemyXLocation!=0)
 			{
-			
 			IfWinActive, ahk_exe project8.exe
 			{
-			
 			; Координаты верхнего левого и нижнего правого углов радара
-			radarTopLeftX := 2014
-			radarTopLeftY := 873
-			radarBottomRightX := 2519
-			radarBottomRightY := 1380
-			radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
-			radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
-			radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
-			radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
-			radarBorderThickness := 2  ; Толщина рамки радара
+			if radarBoxEnable
+			{
 			game.FillRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarFillColor)
 			game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
-			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
-			mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
-			maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+			}
 			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
 			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
 			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
 			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
-			pointSize := 8
-			borderSize := 2  ; Толщина обводки
-
-
 			game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
 			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 			if (TeamNum == MyTeamIs) 
@@ -149,26 +149,9 @@ sleep 1
 	}
 sleep 1
 
-		; IfWinNotActive, ahk_exe project8.exe
-		; {
-			; game.EndDraw()
-			; game.BeginDraw()
-			; game.EndDraw()
-		; }
-		; else
-		; {
-			; game.EndDraw()
-		; }
-	game.EndDraw()
+game.EndDraw()
 }
 return
-
-; F1::
-; game.BeginDraw()
-; game.EndDraw()
-; return
-; enemyXLocation = 1973.65625000000000000000
-; enemyYLocation = -999.46875000000000000000
 
 
 WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
