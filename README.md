@@ -21,8 +21,7 @@ Home - Перезапуск
 End - Завершить работу
 ```
 
-<details>
-<summary>:memo:Как запустить?::memo:</summary>
+:memo:Как запустить?:memo:
 
 1. Скачать и установить [Autohotkey.com](https://www.autohotkey.com/download/ahk-install.exe)
 
@@ -33,7 +32,7 @@ End - Завершить работу
 
 3. Запустить
 
-</details>
+
 
 ## Disclaimer 
 This project is intended solely for educational purposes. 
