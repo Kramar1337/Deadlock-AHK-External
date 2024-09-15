@@ -48,6 +48,14 @@ captureRange := 100  	; пикселей
 Dk\ДедКок-КрамРадар.ahk
 radarBoxEnable = 1
 ```
+Как обновить оффсеты?
+Автоматически:
+- запустить Dk\data\1337offsetsUpdate.ahk
+- ждать пока я обновлю обновлятор
+Вручную редактировать Dk\data\offsets.ahk:
+- искать на форуме [UC](https://www.unknowncheats.me/forum/deadlock/639185-deadlock-reversal-structs-offsets.html)
+- искать по гитхабу [github](https://github.com/Loara228/deadlock-esp/blob/master/deadlock/Offsets.cs)
+
 
 ## Disclaimer 
 This project is intended solely for educational purposes. 
