@@ -1,4 +1,4 @@
-# Deadlock-AHK-flex
+# Deadlock-AHK-External
 Esp Box, Aim, Radar
 
 Работает 14.09.2024
