@@ -1,7 +1,8 @@
 ﻿; Настройки
-boxTeam:=1
-boxEnemy:=1
-
+boxTeam = 1
+boxEnemy = 1
+SleepCpu = 1 	; рекомендую 20. для идеальной плавности 0, но жрет много CPU 5% в моем случае
+boneDBGmode = 0 	;показывать индексы костей для настройки ДедКок-КрамАимбот.ahk
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
@@ -11,6 +12,21 @@ SetBatchLines, -1
 #include data/offsets.ahk
 #include data/classMemory.ahk
 #include data/ShinsOverlayClass.ahk
+
+Menu,Tray, Icon, data\icon.ico, ,1
+
+Menu,Tray,NoStandard
+Menu,Tray,DeleteAll
+Menu,Tray, add, Esp Box, MetkaMenu3
+Menu,Tray, Disable, Esp Box
+Menu,Tray, Icon, Esp Box, shell32.dll,264, 16
+Menu,Tray, add
+Menu,Tray, add, Edit Config, MetkaMenu3
+Menu,Tray, Icon, Edit Config, imageres.dll, 247, 16
+Menu,Tray, add, Reload, MetkaMenu2
+Menu,Tray, Icon, Reload, shell32.dll, 239, 16
+Menu,Tray, add, Exit, MetkaMenu1
+Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
 
 ; Создание массива героев
@@ -33,6 +49,7 @@ SetFormat, float, 2.20
 VarStart_time := A_TickCount
 Loop
 {
+	Sleep %SleepCpu%
 	game.BeginDraw()
 
 	j=0
@@ -98,6 +115,24 @@ Loop
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
+			
+			if boneDBGmode
+			{
+			BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+			i := 0
+				while (i < 64)
+				{
+					BoneXLocation := 1337flex.Read(BoneArray + i * 32, "float")
+					BoneYLocation := 1337flex.Read(BoneArray + i * 32+0x4, "float")
+					BoneZLocation := 1337flex.Read(BoneArray + i * 32+0x8, "float")
+					arr:=WorldToScreen(BoneXLocation,BoneYLocation,BoneZLocation,windowWidth,windowHeight)
+					xpos1:=arr[1]
+					ypos1:=arr[2]
+					game.DrawText(i, xpos1, ypos1, "10", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+					i++
+				}
+			}
+			
 			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 			if(enemyXLocation!=0)
 			{
@@ -206,11 +241,16 @@ getDistance(x,y,z)
 	return distance
 }
 
+MetkaMenu3:
+msgbox Пока ничего нет
+return
 
 *~$Home::
+MetkaMenu2:
 Reload
 return
 
 *~$End::
+MetkaMenu1:
 ExitApp
 return

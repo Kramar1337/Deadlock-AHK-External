@@ -1,5 +1,7 @@
 ﻿; Настройки
-radarBoxEnable = 1
+radarBoxEnable = 0 	; Рекомендую 0 чтобы не мешала рамка
+radarShowName = 1 	; Рекомендую 1 чтобы знать кто гангает
+radarShowTeam = 0 	; Рекомендую 0 чтобы не мешало
 radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
 radarTopLeftY := round(A_ScreenHeight * (873 / 1440))
 radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
@@ -25,6 +27,21 @@ SetBatchLines, -1
 #include data/offsets.ahk
 #include data/classMemory.ahk
 #include data/ShinsOverlayClass.ahk
+
+Menu,Tray, Icon, data\icon.ico, ,1
+
+Menu,Tray,NoStandard
+Menu,Tray,DeleteAll
+Menu,Tray, add, Radar, MetkaMenu3
+Menu,Tray, Disable, Radar
+Menu,Tray, Icon, Radar, shell32.dll,264, 16
+Menu,Tray, add
+Menu,Tray, add, Edit Config, MetkaMenu3
+Menu,Tray, Icon, Edit Config, imageres.dll, 247, 16
+Menu,Tray, add, Reload, MetkaMenu2
+Menu,Tray, Icon, Reload, shell32.dll, 239, 16
+Menu,Tray, add, Exit, MetkaMenu1
+Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
 
 ; Создание массива героев
@@ -130,15 +147,23 @@ sleep 1
 			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
-			game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
 			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 			if (TeamNum == MyTeamIs) 
 			{
+				if radarShowTeam
+				{
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
+				
+				if radarShowName
+				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+				}
 			} 
 			else
 			{
+				if radarShowName
+				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+				
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xffFF0000)  ; Красный для врагов
 			}
@@ -183,10 +208,16 @@ getDistance(x,y,z)
 }
 
 
+MetkaMenu3:
+msgbox Пока ничего нет
+return
+
 *~$Home::
+MetkaMenu2:
 Reload
 return
 
 *~$End::
+MetkaMenu1:
 ExitApp
 return

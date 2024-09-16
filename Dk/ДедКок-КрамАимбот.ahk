@@ -2,7 +2,40 @@
 key_aim := "V"
 sensitivity := 0.5  	; 0.05	Чувствительность движения
 tolerance := 1       	; 2 	Допустимое расстояние до цели для остановки движения
-captureRange := 100  	; 100 пикселей
+captureRange := 150  	; 100 пикселей
+SleepCpu = 1 			; 0 для идеальной плавности но жрет много CPU 5% в моем случае
+BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
+headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
+
+HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
+HeroBones := {1: {head: 30, neck: 29}, 2: {head: 14, neck: 13}, 3: {head: 7, neck: 6}, 4: {head: 11, neck: 10}, 6: {head: 7, neck: 6}, 7: {head: 7, neck: 6}, 8: {head: 7, neck: 6}, 10: {head: 8, neck: 7}, 11: {head: 13, neck: 12}, 12: {head: 12, neck: 11}, 13: {head: 8, neck: 7}, 14: {head: 0, neck: 0}, 15: {head: 6, neck: 5}, 17: {head: 17, neck: 18}, 18: {head: 10, neck: 9}, 19: {head: 13, neck: 12}, 20: {head: 13, neck: 12}, 25: {head: 11, neck: 10}, 27: {head: 35, neck: 34}, 31: {head: 12, neck: 11}, 35: {head: 7, neck: 6}, 48: {head: 0, neck: 0}, 50: {head: 13, neck: 12}, 52: {head: 0, neck: 0}, 55: {head: 0, neck: 0}}
+
+
+; Abrams 7 голова 6 шея
+; Bebop 6 голова 5 шея
+; Vindicta 7 голова 6 шея
+; Viscous 7 голова 6 шея
+; Infernus 30 голова 29 шея
+; Seven 14 голова 13 шея
+; LadyGeist 11 голова 10 шея
+; Wraith 7 голова 6 шея
+; McGinnis 7 голова 6 шея
+; Paradox 8 голова 7 шея
+; Dynamo 13 голова 12 шея
+; Kelvin 12 голова 11 шея
+; Haze 8 голова 7 шея
+; Holliday 
+; GreyTalon 17 голова 18 шея
+; MoAndKrill 10 голова 9 шея
+; Shiv 13 голова 12 шея
+; Ivy 13 голова 12 шея
+; Warden 11 голова 10 шея
+; Yamato 35 голова 34 шея
+; Lash 12 голова 11 шея
+; Wrecker 
+; Pocket 13 голова 12 шея
+; Mirage 
+; Dummy 
 
 
 
@@ -14,6 +47,21 @@ SetBatchLines, -1
 #include data/offsets.ahk
 #include data/classMemory.ahk
 #include data/ShinsOverlayClass.ahk
+
+Menu,Tray, Icon, data\icon.ico, ,1
+
+Menu,Tray,NoStandard
+Menu,Tray,DeleteAll
+Menu,Tray, add, AimBot, MetkaMenu3
+Menu,Tray, Disable, AimBot
+Menu,Tray, Icon, AimBot, shell32.dll,264, 16
+Menu,Tray, add
+Menu,Tray, add, Edit Config, MetkaMenu3
+Menu,Tray, Icon, Edit Config, imageres.dll, 247, 16
+Menu,Tray, add, Reload, MetkaMenu2
+Menu,Tray, Icon, Reload, shell32.dll, 239, 16
+Menu,Tray, add, Exit, MetkaMenu1
+Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
 Gui, 1: new, +hwndNewGuiID2
 game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID2)
@@ -31,7 +79,7 @@ SetFormat, float, 2.20
 VarStart_time := A_TickCount
 Loop
 {
-	Sleep 1
+	Sleep %SleepCpu%
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -94,65 +142,143 @@ Loop
 		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
+		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
+		
 		VarStart_time := A_TickCount
 	}
 	Kramindex := 0
+	bones := []
+	distances := []
 	while (Kramindex < BubaArray.length() && GetKeyState(key_aim, "P"))
 	{
-	Kramindex++
-	ControllerBase := BubaArray[Kramindex]
-	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-	MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
-	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
-	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
-	if Health>0
-	{
-		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
+		Kramindex++
+		ControllerBase := BubaArray[Kramindex]
+		Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+		MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
+		TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+		HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
+		if (TeamNum != MyTeamIs)
 		{
-			Pawn := BubaArray2[Kramindex]
-			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-			BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
-			highestBoneIndex := -1
-			highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-			i := 0
-			while (i < 64)
+			if Health > 0
 			{
-				BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-				if (BoneZLocation > highestBoneZ)
+				Pawn := BubaArray2[Kramindex]
+				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+				
+				if BoneMode
 				{
-					highestBoneZ := BoneZLocation
-					highestBoneIndex := i
+				if headOrneck
+				SelectBone := HeroBones[HeroID].head
+				else
+				SelectBone := HeroBones[HeroID].neck
+				if SelectBone
+				{
+					enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
+					enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
+					enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
 				}
-				i++
-			}
-			if (highestBoneIndex >= 0)
-			{
-				enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-				enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-				enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-			}
-			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
-			if(enemyXLocation!=0)
-			{
-				if(arr:=WorldToScreen(enemyXLocation,enemyYLocation,enemyZLocation,windowWidth,windowHeight))
+				else
 				{
-					xpos1:=arr[1]
-					ypos1:=arr[2]
-					dist:=getDistance(enemyXLocation,enemyYLocation,enemyZLocation)
-					IfWinActive, ahk_exe project8.exe
+					highestBoneIndex := -1
+					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
+					i := 0
+					while (i < 64)
 					{
-						if (dist > 1.2)
+						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
+						if (BoneZLocation > highestBoneZ)
 						{
-							MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
-							if(TeamNum!=MyTeamIs)
-								AimAtTarget(xpos1, ypos1)
+							highestBoneZ := BoneZLocation
+							highestBoneIndex := i
+						}
+						i++
+					}
+					if (highestBoneIndex >= 0)
+					{
+						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
+						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
+						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
+					}
+				}
+				}
+				else
+				{
+					highestBoneIndex := -1
+					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
+					i := 0
+					while (i < 64)
+					{
+						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
+						if (BoneZLocation > highestBoneZ)
+						{
+							highestBoneZ := BoneZLocation
+							highestBoneIndex := i
+						}
+						i++
+					}
+					if (highestBoneIndex >= 0)
+					{
+						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
+						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
+						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
+					}
+				}
+				if (enemyXLocation != 0)
+				{
+					arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight)
+					if (arr) ; Если цель видна на экране
+					{
+						xpos1 := arr[1]
+						ypos1 := arr[2]
+						; Получаем центр экрана
+						centerX := A_ScreenWidth / 2
+						centerY := A_ScreenHeight / 2
+						; Вычисляем смещение от центра экрана до цели
+						deltaX := (xpos1 - centerX)
+						deltaY := (ypos1 - centerY)
+						; Вычисляем расстояние до цели на экране
+						distance := Sqrt(deltaX**2 + deltaY**2)
+						; Добавляем кость в массив, если она находится в пределах видимого диапазона захвата
+						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
+						{
+							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation])
 						}
 					}
 				}
 			}
 		}
 	}
+	; Заполняем массив расстояний и костей
+	for index, bone in bones
+	{
+		boneX := bone[1]
+		boneY := bone[2]
+		boneZ := bone[3]
+		dist := getDistance(boneX, boneY, boneZ)
+		distances.Push([dist, bone])
 	}
+	Sort, distances, D
+	closestBone := ""
+	closestDistance := -1  ; Начальное значение, которое всегда будет меньше истинного расстояния
+	for index, item in distances
+	{
+		distance := item[1]
+		bone := item[2]
+		if (closestDistance = -1 || distance < closestDistance)
+		{
+			closestBone := bone
+			closestDistance := distance
+		}
+	}
+	if (closestBone != "")
+	{
+		if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
+		{
+			xpos1 := arr[1]
+			ypos1 := arr[2]
+			AimAtTarget(xpos1, ypos1)
+		}
+	}
+	
 }
 return
 
@@ -166,7 +292,6 @@ MoveMouseBy(deltaX, deltaY) {
     ; Преобразуем смещения в целые числа
     deltaX := Round(deltaX)
     deltaY := Round(deltaY)
-
     ; Используем mouse_event для перемещения мыши
     DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
@@ -177,23 +302,14 @@ AimAtTarget(targetX, targetY) {
     ; Определяем центр экрана (прицел)
     centerX := A_ScreenWidth / 2
     centerY := A_ScreenHeight / 2
-    
     ; Вычисляем смещение от центра экрана до цели
     deltaX := (targetX - centerX)
     deltaY := (targetY - centerY)
-    
-    ; Вычисляем расстояние до цели
-    distance := Sqrt(deltaX**2 + deltaY**2)
-    
-    ; Если цель находится в пределах диапазона захвата
-    if (distance <= captureRange) {
-        ; Применяем чувствительность
-        deltaX := deltaX * sensitivity
-        deltaY := deltaY * sensitivity
-        
-        ; Двигаем мышь к цели
-        MoveMouseBy(deltaX, deltaY)
-    }
+    ; Применяем чувствительность
+    deltaX := deltaX * sensitivity + 1
+    deltaY := deltaY * sensitivity + 1
+    ; Двигаем мышь к цели
+    MoveMouseBy(deltaX, deltaY)
 }
 
 
@@ -228,10 +344,16 @@ getDistance(x,y,z)
 }
 
 
+MetkaMenu3:
+msgbox Пока ничего нет
+return
+
 *~$Home::
+MetkaMenu2:
 Reload
 return
 
 *~$End::
+MetkaMenu1:
 ExitApp
 return
