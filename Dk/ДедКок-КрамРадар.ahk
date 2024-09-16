@@ -11,8 +11,7 @@ radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
 radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
 radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
 radarBorderThickness := 2  ; Толщина рамки радара
-mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
-mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
+
 maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
 pointSize := 8
 borderSize := 2  ; Толщина обводки
@@ -141,13 +140,28 @@ sleep 1
 			game.FillRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarFillColor)
 			game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
 			}
+			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
+			if MyTeamIs = 2
+			{
+			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
+			mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
 			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
 			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
 			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
 			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
+			}
+			if MyTeamIs = 3
+			{
+			mapCenterX := 180  ; Центр карты по X в игровом мире (условно)
+			mapCenterY := -180  ; Центр карты по Y в игровом мире (условно)
+			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
+			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
+			radarX := radarTopLeftX + (radarWidth / 2) - (relativeX * radarWidth / 2)  ; Инверсия по X
+			radarY := radarTopLeftY + (radarHeight / 2) + (relativeY * radarHeight / 2)  ; Инверсия по Y
+			}
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
-			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
+			; MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 			if (TeamNum == MyTeamIs) 
 			{
 				if radarShowTeam
