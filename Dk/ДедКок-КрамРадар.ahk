@@ -121,7 +121,8 @@ sleep 1
 	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
 	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
-	if Health>0
+	DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
+	if DormantVar = 1
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{

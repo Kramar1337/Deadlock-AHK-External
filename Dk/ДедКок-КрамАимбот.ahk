@@ -157,9 +157,10 @@ Loop
 		MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
+		DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
 		if (TeamNum != MyTeamIs)
 		{
-			if Health > 0
+			if DormantVar = 1
 			{
 				Pawn := BubaArray2[Kramindex]
 				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)

@@ -9,6 +9,8 @@ static dwLocalPlayerPawn = 0x20CF600
 ; 48 8D 3D ? ? ? ? 8B D9
 static CCameraManager = 0x1F450E0
 
+;ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
+static m_bDormant = 0x7b8
 ;C_BaseEntity
 static m_pGameSceneNode = 0x328
 ;ControllerBase в CE отмотать 0x7A0 в поисках хп, преобразовать в 4 байт целое
