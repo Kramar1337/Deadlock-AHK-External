@@ -1,5 +1,7 @@
 # Deadlock-AHK-External
 
+![hippo](https://i.imgur.com/YveKqnK.jpeg)
+
 Из говна и палок, переворачивая форумы и мучая ChatGPT я слепил:
 
 External чит на AHK для игры [Deadlock](https://store.steampowered.com/app/1422450/Deadlock/)
@@ -13,7 +15,7 @@ __🚀Функционал:🚀__
 
 - Esp Box (HP, Box, Name)
 - AimBot (Голова, Шея, Высшая кость)
-- Radar
+- Radar (Топовый)
 - Обновлятор оффсетов
 
 :musical_keyboard:__Горячие клавиши:__:musical_keyboard:
