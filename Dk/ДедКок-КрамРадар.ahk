@@ -23,11 +23,11 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
 
-#include data/offsets.ahk
-#include data/classMemory.ahk
-#include data/ShinsOverlayClass.ahk
+#include %A_ScriptDir%\data\offsets.ahk
+#include %A_ScriptDir%\data\classMemory.ahk
+#include %A_ScriptDir%\data\ShinsOverlayClass.ahk
 
-Menu,Tray, Icon, data\icon.ico, ,1
+Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 
 Menu,Tray,NoStandard
 Menu,Tray,DeleteAll

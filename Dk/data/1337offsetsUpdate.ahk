@@ -16,18 +16,16 @@ CCameraManager: 0x23d7960 // 48 8D 3D ? ? ? ? 8B D9
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
-#include classMemory.ahk
+#include %A_ScriptDir%\classMemory.ahk
 
 
 ; Проверяем, существует ли файл
-if FileExist("offsets.ahk") {
-    ; MsgBox, Файл существует.
-} else {
-    MsgBox, Файл "offsets.ahk" не найден.
-	Exitapp
+if !FileExist(A_ScriptDir . "\offsets.ahk") {
+    MsgBox, Файл "%A_ScriptDir%\offsets.ahk" не найден.
+    ExitApp
 }
 
-FileRead, fileContent, offsets.ahk
+FileRead, fileContent, %A_ScriptDir%\offsets.ahk
 
 ; static dwEntityList = 0x1F220C8 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
 PatternVar1 := "48 8B 0D ? ? ? ? 8B C5 48 C1 E8"
@@ -73,8 +71,8 @@ newString := "static CCameraManager = "getOffsets
 searchPattern := "static CCameraManager.*"
 fileContent := RegExReplace(fileContent, searchPattern, newString)
 
-FileDelete, offsets.ahk ; Удаляем старый файл
-FileAppend, %fileContent%, offsets.ahk ; Создаем новый файл с изменениями
+FileDelete, %A_ScriptDir%\offsets.ahk ; Удаляем старый файл
+FileAppend, %fileContent%, %A_ScriptDir%\offsets.ahk ; Создаем новый файл с изменениями
 MsgBox,,, Ok, 1
 return
 
