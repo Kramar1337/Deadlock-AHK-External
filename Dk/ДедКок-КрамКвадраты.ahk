@@ -1,13 +1,25 @@
 ﻿; Настройки
 boxTeam = 0
 boxEnemy = 1
-SleepCpu = 1 	; рекомендую 20. для идеальной плавности 0, но жрет много CPU 5% в моем случае
+SleepCpu = 1 		; рекомендую 20. для идеальной плавности 0, но жрет много CPU 5% в моем случае
 boneDBGmode = 0 	;показывать индексы костей для настройки ДедКок-КрамАимбот.ahk
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
+
+CommandLine := DllCall("GetCommandLine", "Str")
+If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
+	Try {
+		If (A_IsCompiled) {
+			Run *RunAs "%A_ScriptFullPath%" /restart
+		} Else {
+			Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+		}
+	}
+	ExitApp
+}
 
 
 #include %A_ScriptDir%\data\offsets.ahk
@@ -247,6 +259,13 @@ getDistance(x,y,z)
 	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
 	return distance
 }
+
+F1::
+myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
+myYLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x4,"float")
+myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")
+msgbox %myXLocation%`n%myYLocation%`n%myZLocation%
+return
 
 MetkaMenu3:
 msgbox Пока ничего нет

@@ -1,7 +1,17 @@
 ﻿; Настройки
-radarBoxEnable = 0 	; Рекомендую 0 чтобы не мешала рамка
-radarShowName = 1 	; Рекомендую 1 чтобы знать кто гангает
-radarShowTeam = 0 	; Рекомендую 0 чтобы не мешало
+radarBoxEnable = 0 		; Отображать рамку
+radarShowTeam = 1 		; Показывать команду
+radarShowNameTeam = 0	; Показывать имя героя команды
+radarShowNameEnemy = 1	; Показывать имя героя врага
+imageOrpoint = 1 		; 1 image 0 point
+pointSize = 8 			; Размер точки
+borderSize = 2 			; Толщина обводки точки
+imageSize = 40 			; Размер изображения на радаре
+imageAlpha = 0.8		; Прозрачность изображения
+
+imageSizeOrigin = 128 	; Размер изображения в пикселях в свойствах
+imagePath1 = %A_ScriptDir%\data\red2.png
+imagePath2 = %A_ScriptDir%\data\green2.png
 radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
 radarTopLeftY := round(A_ScreenHeight * (873 / 1440))
 radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
@@ -11,10 +21,11 @@ radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
 radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
 radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
 radarBorderThickness := 2  ; Толщина рамки радара
-
 maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
-pointSize := 8
-borderSize := 2  ; Толщина обводки
+; Размеры области для центрирования текста
+textWidth := 150  ; Примерная ширина текста
+textHeight := 50  ; Примерная высота текста
+extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
 
 
 
@@ -22,6 +33,18 @@ borderSize := 2  ; Толщина обводки
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
+
+CommandLine := DllCall("GetCommandLine", "Str")
+If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
+	Try {
+		If (A_IsCompiled) {
+			Run *RunAs "%A_ScriptFullPath%" /restart
+		} Else {
+			Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+		}
+	}
+	ExitApp
+}
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -163,24 +186,34 @@ sleep 1
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
 			; MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
+			
+
 			if (TeamNum == MyTeamIs) 
 			{
 				if radarShowTeam
 				{
+				if imageOrpoint
+				game.DrawImage(imagePath2, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlpha, 1, 0, 0)
+				else
+				{
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
-				
-				if radarShowName
-				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+				}
+				if radarShowNameTeam
+				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
 				}
 			} 
 			else
 			{
-				if radarShowName
-				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - 25, radarY - pointSize / 2 + 5, "15", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-				
+				if imageOrpoint
+				game.DrawImage(imagePath1, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlpha, 1, 0, 0)
+				else
+				{
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xffFF0000)  ; Красный для врагов
+				}
+				if radarShowNameEnemy
+				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
 			}
 			}
 			}

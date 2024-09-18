@@ -1,41 +1,39 @@
 ﻿; Настройки
-key_aim := "V"
-sensitivity := 0.5  	; 0.05	Чувствительность движения
-tolerance := 1       	; 2 	Допустимое расстояние до цели для остановки движения
-captureRange := 150  	; 100 пикселей
+key_aim := "V"  		; Клавиша aim
+sensitivity := 0.5  	; 0.1 - 0.9	Чувствительность движения
+tolerance := 0       	; 1 Допустимое расстояние до цели для остановки движения
+captureRange := 150  	; 150 Диапазон захвата пикселей
 SleepCpu = 1 			; 0 для идеальной плавности но жрет много CPU 5% в моем случае
 BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
 headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
 
-HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
-HeroBones := {1: {head: 30, neck: 29}, 2: {head: 14, neck: 13}, 3: {head: 7, neck: 6}, 4: {head: 11, neck: 10}, 6: {head: 7, neck: 6}, 7: {head: 7, neck: 6}, 8: {head: 7, neck: 6}, 10: {head: 8, neck: 7}, 11: {head: 13, neck: 12}, 12: {head: 12, neck: 11}, 13: {head: 8, neck: 7}, 14: {head: 0, neck: 0}, 15: {head: 6, neck: 5}, 17: {head: 17, neck: 18}, 18: {head: 10, neck: 9}, 19: {head: 13, neck: 12}, 20: {head: 13, neck: 12}, 25: {head: 11, neck: 10}, 27: {head: 35, neck: 34}, 31: {head: 12, neck: 11}, 35: {head: 7, neck: 6}, 48: {head: 0, neck: 0}, 50: {head: 13, neck: 12}, 52: {head: 0, neck: 0}, 55: {head: 0, neck: 0}}
 
-
-; Abrams 7 голова 6 шея
-; Bebop 6 голова 5 шея
-; Vindicta 7 голова 6 шея
-; Viscous 7 голова 6 шея
-; Infernus 30 голова 29 шея
-; Seven 14 голова 13 шея
-; LadyGeist 11 голова 10 шея
-; Wraith 7 голова 6 шея
-; McGinnis 7 голова 6 шея
-; Paradox 8 голова 7 шея
-; Dynamo 13 голова 12 шея
-; Kelvin 12 голова 11 шея
-; Haze 8 голова 7 шея
-; Holliday 
-; GreyTalon 17 голова 18 шея
-; MoAndKrill 10 голова 9 шея
-; Shiv 13 голова 12 шея
-; Ivy 13 голова 12 шея
-; Warden 11 голова 10 шея
-; Yamato 35 голова 34 шея
-; Lash 12 голова 11 шея
-; Wrecker 
-; Pocket 13 голова 12 шея
-; Mirage 
-; Dummy 
+HeroBones := {}
+HeroBones[1] := {name: "Infernus", head: 30, neck: 29}
+HeroBones[2] := {name: "Seven", head: 14, neck: 13}
+HeroBones[3] := {name: "Vindicta", head: 7, neck: 6}
+HeroBones[4] := {name: "LadyGeist", head: 11, neck: 10}
+HeroBones[6] := {name: "Abrams", head: 7, neck: 6}
+HeroBones[7] := {name: "Wraith", head: 7, neck: 6}
+HeroBones[8] := {name: "McGinnis", head: 7, neck: 6}
+HeroBones[10] := {name: "Paradox", head: 8, neck: 7}
+HeroBones[11] := {name: "Dynamo", head: 13, neck: 12}
+HeroBones[12] := {name: "Kelvin", head: 12, neck: 11}
+HeroBones[13] := {name: "Haze", head: 8, neck: 7}
+HeroBones[14] := {name: "Holliday", head: 0, neck: 0}
+HeroBones[15] := {name: "Bebop", head: 6, neck: 5}
+HeroBones[17] := {name: "GreyTalon", head: 17, neck: 18}
+HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9}
+HeroBones[19] := {name: "Shiv", head: 13, neck: 12}
+HeroBones[20] := {name: "Ivy", head: 13, neck: 12}
+HeroBones[25] := {name: "Warden", head: 11, neck: 10}
+HeroBones[27] := {name: "Yamato", head: 35, neck: 34}
+HeroBones[31] := {name: "Lash", head: 12, neck: 11}
+HeroBones[35] := {name: "Viscous", head: 7, neck: 6}
+HeroBones[48] := {name: "Wrecker", head: 0, neck: 0}
+HeroBones[50] := {name: "Pocket", head: 13, neck: 12}
+HeroBones[52] := {name: "Mirage", head: 0, neck: 0}
+HeroBones[55] := {name: "Dummy", head: 0, neck: 0}
 
 
 
@@ -43,6 +41,18 @@ HeroBones := {1: {head: 30, neck: 29}, 2: {head: 14, neck: 13}, 3: {head: 7, nec
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
+
+CommandLine := DllCall("GetCommandLine", "Str")
+If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
+	Try {
+		If (A_IsCompiled) {
+			Run *RunAs "%A_ScriptFullPath%" /restart
+		} Else {
+			Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+		}
+	}
+	ExitApp
+}
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -276,6 +286,7 @@ Loop
 		{
 			xpos1 := arr[1]
 			ypos1 := arr[2]
+			IfWinActive, ahk_exe project8.exe
 			AimAtTarget(xpos1, ypos1)
 		}
 	}
@@ -296,7 +307,7 @@ MoveMouseBy(deltaX, deltaY) {
     ; Используем mouse_event для перемещения мыши
     DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
-
+; sensitivity := 0.5
 ; Функция для движения мыши к цели с учетом диапазона захвата
 AimAtTarget(targetX, targetY) {
     global

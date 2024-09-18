@@ -1,5 +1,6 @@
 ﻿/*
 https://deadlocked.wiki/
+
 Персонажи:
 Bebop - Бибоп - Пудж (Пушка лазер, Крюк, много хп, Ульт лазер)
 Wraith - Фантом (томик, блинк, баф атк от 3 спела, ульт стан)
@@ -34,6 +35,18 @@ SetWorkingDir %A_ScriptDir%
 SetBatchLines, -1
 #include %A_ScriptDir%\classMemory.ahk
 
+CommandLine := DllCall("GetCommandLine", "Str")
+If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
+	Try {
+		If (A_IsCompiled) {
+			Run *RunAs "%A_ScriptFullPath%" /restart
+		} Else {
+			Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+		}
+	}
+	ExitApp
+}
+
 
 ; Проверяем, существует ли файл
 if !FileExist(A_ScriptDir . "\offsets.ahk") {
@@ -42,6 +55,7 @@ if !FileExist(A_ScriptDir . "\offsets.ahk") {
 }
 
 FileRead, fileContent, %A_ScriptDir%\offsets.ahk
+
 
 ; static dwEntityList = 0x1F220C8 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
 PatternVar1 := "48 8B 0D ? ? ? ? 8B C5 48 C1 E8"
@@ -54,6 +68,7 @@ newString := "static dwEntityList = "getOffsets
 searchPattern := "static dwEntityList.*"
 fileContent := RegExReplace(fileContent, searchPattern, newString)
 
+
 ; static dwViewMatrix = 0x20DFA20 ; 48 8D 0D ? ? ? ? 48 C1 E0
 PatternVar1 := "48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0"
 aPattern := ConvertBytesStringToArray(PatternVar1)
@@ -64,6 +79,7 @@ getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
 newString := "static dwViewMatrix = "getOffsets
 searchPattern := "static dwViewMatrix.*"
 fileContent := RegExReplace(fileContent, searchPattern, newString)
+
 
 ; static dwLocalPlayerPawn = 0x1DCB588 ; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
 PatternVar1 := "48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF"
@@ -76,6 +92,7 @@ newString := "static dwLocalPlayerPawn = "getOffsets
 searchPattern := "static dwLocalPlayerPawn.*"
 fileContent := RegExReplace(fileContent, searchPattern, newString)
 
+
 ;static CCameraManager = 0x1F45130 ; 48 8D 3D ? ? ? ? 8B D9
 PatternVar1 := "48 8D 3D ? ? ? ? 8B D9"
 aPattern := ConvertBytesStringToArray(PatternVar1)
@@ -86,6 +103,7 @@ getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
 newString := "static CCameraManager = "getOffsets
 searchPattern := "static CCameraManager.*"
 fileContent := RegExReplace(fileContent, searchPattern, newString)
+
 
 FileDelete, %A_ScriptDir%\offsets.ahk ; Удаляем старый файл
 FileAppend, %fileContent%, %A_ScriptDir%\offsets.ahk ; Создаем новый файл с изменениями
