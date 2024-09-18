@@ -1,4 +1,6 @@
 ﻿; Настройки
+key_radarHide := "Alt" 	; Скрыть радар
+radarHidekey = 1 		; Использовать скрытие радара
 radarBoxEnable = 0 		; Отображать рамку
 radarShowTeam = 1 		; Показывать команду
 radarShowNameTeam = 0	; Показывать имя героя команды
@@ -221,6 +223,14 @@ sleep 1
 	}
 	}
 sleep 1
+if radarHidekey
+if GetKeyState(key_radarHide, "P")
+{
+	game.EndDraw()
+	game.BeginDraw()
+	game.EndDraw()
+	KeyWait %key_radarHide%
+}
 
 game.EndDraw()
 }
