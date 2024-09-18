@@ -2,7 +2,6 @@
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
-#IfWinActive, ahk_exe project8.exe
 CommandLine := DllCall("GetCommandLine", "Str")
 If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	Try {
@@ -14,8 +13,9 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+Hotkey, IfWinActive, ahk_exe project8.exe
 Hotkey, *~$%key_jump%, JumpAction
-
+Hotkey, IfWinActive
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray,NoStandard
 Menu,Tray,DeleteAll
