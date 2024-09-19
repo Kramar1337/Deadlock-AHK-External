@@ -21,7 +21,7 @@ __🚀Функционал:🚀__
 :musical_keyboard:__Горячие клавиши:__:musical_keyboard:
 ```
 V - AimBot
-C - Jump
+C - Jump(Shift + Space + Ctrl)
 Alt - Hide Radar
 Home - Перезапуск
 End - Завершить работу
