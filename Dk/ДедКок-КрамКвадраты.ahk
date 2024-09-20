@@ -126,7 +126,7 @@ Loop
 		{
 			Pawn := BubaArray2[Kramindex]
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-			
+			; msgbox % Pawn
 			; DormantVar := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
 			; if DormantVar = 1
 			; msgbox % ControllerBase
@@ -260,12 +260,12 @@ getDistance(x,y,z)
 	return distance
 }
 
-F1::
-myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
-myYLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x4,"float")
-myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")
-msgbox %myXLocation%`n%myYLocation%`n%myZLocation%
-return
+; F1::
+; myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
+; myYLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x4,"float")
+; myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")
+; msgbox %myXLocation%`n%myYLocation%`n%myZLocation%
+; return
 
 MetkaMenu3:
 msgbox Пока ничего нет

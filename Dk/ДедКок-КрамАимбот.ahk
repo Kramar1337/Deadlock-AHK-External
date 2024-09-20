@@ -115,7 +115,7 @@ Loop
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
 			circleColor := 0xFFFF0000  ; Красный цвет (0xAARRGGBB)
-			thickness := 1             ; Толщина контура
+			thickness := 2             ; Толщина контура
 			game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
 			game2.EndDraw()
 		}
@@ -163,6 +163,7 @@ Loop
 	{
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
+		; msgbox % ControllerBase
 		Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
 		MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
