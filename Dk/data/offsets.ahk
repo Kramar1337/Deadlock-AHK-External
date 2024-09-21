@@ -1,13 +1,13 @@
 class offsets
 {
 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
-static dwEntityList = 0x1F24888
+static dwEntityList = 0x1F24948
 ; 48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0
-static dwViewMatrix = 0x20E21F0
+static dwViewMatrix = 0x20E22E0
 ; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
-static dwLocalPlayerPawn = 0x20D06D0
+static dwLocalPlayerPawn = 0x20D07C0
 ; 48 8D 3D ? ? ? ? 8B D9
-static CCameraManager = 0x1F46170
+static CCameraManager = 0x1F46230
 
 ;ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
 static m_bDormant = 0x7b8

@@ -115,7 +115,7 @@ Loop
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
 			circleColor := 0xFFFF0000  ; Красный цвет (0xAARRGGBB)
-			thickness := 2             ; Толщина контура
+			thickness := 1             ; Толщина контура
 			game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
 			game2.EndDraw()
 		}

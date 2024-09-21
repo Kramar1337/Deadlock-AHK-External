@@ -46,7 +46,12 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
-
+If !A_IsAdmin
+{
+msgbox Запусти от имени администратора!
+Exitapp
+return
+}
 
 ; Проверяем, существует ли файл
 if !FileExist(A_ScriptDir . "\offsets.ahk") {
