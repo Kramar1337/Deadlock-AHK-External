@@ -10,11 +10,12 @@ static dwLocalPlayerPawn = 0x20D0668
 static CCameraManager = 0x1F46230
 
 ; localplayer->CPlayer_CameraServices->m_vecPunchAngle отдача
+; Pawn1->CPlayer_CameraServices(0xda0)->m_vecPunchAngle(0x40)
 ; C_BasePlayerPawn смещение
-; static m_pCameraServices = 0xda0
+static m_pCameraServices = 0xda0
 ; CPlayer_CameraServices
-; static m_vecPunchAngle = 0x40
-; static m_vecPunchAngleVel = 0x58
+static m_vecPunchAngle = 0x40
+static m_vecPunchAngleVel = 0x58
 
 ; CEntityInstance
 ; static m_bVisibleinPVS = 0x30

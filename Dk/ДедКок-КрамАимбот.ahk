@@ -105,6 +105,7 @@ Loop
 	if (VarElapsed_time > 3000) ;3000
 	{
 		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		; msgbox % HexFormat(baseAddress + offsets.dwLocalPlayerPawn)
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -308,12 +309,13 @@ Loop
 			camera_posXcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38)
 			camera_posYcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x4)
 			camera_posZcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x8)
+			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
 			pitch := 0
 			yaw := 0
 			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
 			if camera_posXcam
 			{
-				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch, "Float", 0x44) 		;вертикаль
+				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
 				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
 			}
 		}

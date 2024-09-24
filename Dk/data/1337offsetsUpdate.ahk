@@ -12,7 +12,7 @@ Ivy - Лоза - Висп (хил, релокейт*)
 Seven - Семь - Зюс (стан, ульт зюса, баф атк от 3 спела)
 
 
--insecure -console -novid
+-console -novid -insecure
 
 
 68 урон в секунду
