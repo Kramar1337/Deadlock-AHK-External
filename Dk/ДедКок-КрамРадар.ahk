@@ -1,6 +1,6 @@
 ﻿; Настройки
 key_radarHide := "Alt" 	; Скрыть радар
-radarHidekey = 1 		; Использовать скрытие радара
+radarHidekey = 1 		; Использовать скрытие радара на "key_radarHide"
 radarBoxEnable = 0 		; Отображать рамку
 radarShowTeam = 1 		; Показывать команду
 radarShowNameTeam = 0	; Показывать имя героя команды
@@ -121,8 +121,8 @@ sleep 1
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-			TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			; TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
 			if Health
 			{
 				BubaArray.push(ControllerBase)
@@ -136,6 +136,8 @@ sleep 1
 		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
+		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
+		
 		VarStart_time := A_TickCount
 	}
 	Kramindex := 0
@@ -143,8 +145,10 @@ sleep 1
 	{
 	Kramindex++
 	ControllerBase := BubaArray[Kramindex]
-	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+	Pawn := BubaArray2[Kramindex]
+	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
 	DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
 	if DormantVar = 1
@@ -265,6 +269,16 @@ getDistance(x,y,z)
 	return distance
 }
 
+HexFormat(address) {
+    ; Преобразование адреса в 16-ричный формат без "0x"
+    hexAddress := Format("{:X}", address)
+    
+    ; Копирование адреса в буфер обмена
+    Clipboard := hexAddress
+    
+    ; Возвращаем 16-ричный адрес
+    return hexAddress
+}
 
 MetkaMenu3:
 msgbox Пока ничего нет

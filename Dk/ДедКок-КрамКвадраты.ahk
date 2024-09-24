@@ -90,13 +90,19 @@ Loop
 			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
+			
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-			TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+			
+			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			if Health
 			{
+			; MsgBox % HexFormat(ControllerBase)
+			; MsgBox % HexFormat(Pawn)
+			; VisibleinPVS := 1337flex.Read(Pawn + offsets.m_bVisibleinPVS,"int")
+			; Tooltip Health-%Health%`nVis-%VisibleinPVS%
+			; sleep 500
 				BubaArray.push(ControllerBase)
 				BubaArray2.push(Pawn)
 			}
@@ -115,22 +121,17 @@ Loop
 	{
 	Kramindex++
 	ControllerBase := BubaArray[Kramindex]
-	Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-	MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
-	TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+	Pawn := BubaArray2[Kramindex]
+	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
 	DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
 	if DormantVar = 1
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
-			Pawn := BubaArray2[Kramindex]
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-			; msgbox % Pawn
-			; DormantVar := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
-			; if DormantVar = 1
-			; msgbox % ControllerBase
-			
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
@@ -258,6 +259,17 @@ getDistance(x,y,z)
 	myZLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin+0x8,"float")	
 	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
 	return distance
+}
+
+HexFormat(address) {
+    ; Преобразование адреса в 16-ричный формат без "0x"
+    hexAddress := Format("{:X}", address)
+    
+    ; Копирование адреса в буфер обмена
+    Clipboard := hexAddress
+    
+    ; Возвращаем 16-ричный адрес
+    return hexAddress
 }
 
 ; F1::

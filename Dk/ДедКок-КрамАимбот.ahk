@@ -1,11 +1,14 @@
 ﻿; Настройки
 key_aim := "V"  		; Клавиша aim
+WriteMode = 0 			; Режим: 1-запись в память(высокая точность, нелья регулировать чувствительность), 0-только чтение(mouse_event)
 sensitivity := 0.5  	; 0.1 - 0.9	Чувствительность движения
 tolerance := 0       	; 1 Допустимое расстояние до цели для остановки движения
 captureRange := 150  	; 150 Диапазон захвата пикселей
 SleepCpu = 1 			; 0 для идеальной плавности но жрет много CPU 5% в моем случае
 BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
 headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
+
+
 
 
 HeroBones := {}
@@ -90,6 +93,7 @@ VarStart_time := A_TickCount
 Loop
 {
 	Sleep %SleepCpu%
+	KeyWait, %key_aim%, D T3
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -115,7 +119,7 @@ Loop
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
 			circleColor := 0xFFFF0000  ; Красный цвет (0xAARRGGBB)
-			thickness := 1             ; Толщина контура
+			thickness := 2             ; Толщина контура
 			game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
 			game2.EndDraw()
 		}
@@ -138,7 +142,7 @@ Loop
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
+			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			if Health
 			{
 				BubaArray.push(ControllerBase)
@@ -154,6 +158,9 @@ Loop
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
 		
+		; msgbox % HexFormat(baseAddress + offsets.CCameraManager + 0x28) ;CCitadel_ThirdPersonCamera
+		; client.dll+0x1F46230
+		
 		VarStart_time := A_TickCount
 	}
 	Kramindex := 0
@@ -163,10 +170,10 @@ Loop
 	{
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
-		; msgbox % ControllerBase
-		Health := 1337flex.Read(ControllerBase + offsets.m_ihealth,"int")
-		MaxHealth := 1337flex.Read(ControllerBase + offsets.m_iMaxHealth,"int")
-		TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
+		Pawn := BubaArray2[Kramindex]
+		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+		MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
 		DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
 		if (TeamNum != MyTeamIs)
@@ -283,20 +290,65 @@ Loop
 	}
 	if (closestBone != "")
 	{
-		if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
+		if !WriteMode
 		{
-			xpos1 := arr[1]
-			ypos1 := arr[2]
-			IfWinActive, ahk_exe project8.exe
-			AimAtTarget(xpos1, ypos1)
+			if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
+			{
+				xpos1 := arr[1]
+				ypos1 := arr[2]
+				IfWinActive, ahk_exe project8.exe
+				AimAtTarget(xpos1, ypos1)
+			}
+		}
+		else
+		{
+		IfWinActive, ahk_exe project8.exe
+		{
+			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + offsets.CCameraManager + 0x28, 0x38)
+			camera_posXcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38)
+			camera_posYcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x4)
+			camera_posZcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x8)
+			pitch := 0
+			yaw := 0
+			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
+			if camera_posXcam
+			{
+				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch, "Float", 0x44) 		;вертикаль
+				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
+			}
+		}
 		}
 	}
-	
+
 }
 return
 
 
-
+AimAtTargetWrite(camX, camY, camZ, enemyX, enemyY, enemyZ, ByRef yaw, ByRef pitch) {
+    ; Объявляем Pi
+    Pi := 3.141592653589793
+    ; Вычисляем разницу координат между камерой и противником
+    deltaX := enemyX - camX
+    deltaY := enemyY - camY
+    deltaZ := enemyZ - camZ
+    ; Проверка: вычисляем Yaw (азимут) только если deltaX не равен нулю
+    if (deltaX != 0) {
+        yaw := ATan(deltaY / deltaX) * (180 / Pi)
+        if (deltaX < 0) {
+            yaw += 180  ; Корректируем угол, если противник слева
+        }
+    } else {
+        yaw := deltaY > 0 ? 90 : -90  ; Противник прямо перед нами или позади
+    }
+	; Вычисляем Pitch (тангаж) — угол по вертикали
+	distance := Sqrt(deltaX**2 + deltaY**2)  ; Горизонтальное расстояние
+	if (distance != 0) {
+		angleInRadians := ATan(deltaZ / distance)  ; Угол в радианах
+		pitch := angleInRadians * (180 / Pi) * -1  ; Преобразуем в градусы и меняем знак
+	} else {
+		pitch := 0  ; Если противник на одной высоте
+	}
+}
 
 
 ; Функция для перемещения мыши с помощью mouse_event
@@ -356,6 +408,16 @@ getDistance(x,y,z)
 	return distance
 }
 
+HexFormat(address) {
+    ; Преобразование адреса в 16-ричный формат без "0x"
+    hexAddress := Format("{:X}", address)
+    
+    ; Копирование адреса в буфер обмена
+    Clipboard := hexAddress
+    
+    ; Возвращаем 16-ричный адрес
+    return hexAddress
+}
 
 MetkaMenu3:
 msgbox Пока ничего нет
