@@ -22,7 +22,7 @@ __🚀Функционал:🚀__
 
 :musical_keyboard:__Горячие клавиши:__:musical_keyboard:
 ```
-XButton2 - AimBot
+V - AimBot
 XButton1 - AimBot Soul
 C - Jump(Shift + Space + Ctrl)
 Alt - Hide Radar
