@@ -1,42 +1,14 @@
 ﻿; Настройки
-key_aim := "XButton2"  		; Клавиша aim
-WriteMode = 1 			; Режим: 1-запись в память(высокая точность, нелья регулировать чувствительность), 0-только чтение(mouse_event)
-sensitivity := 0.5  	; 0.1 - 0.9	Чувствительность движения
-tolerance := 0       	; 1 Допустимое расстояние до цели для остановки движения
-captureRange := 150  	; 150 Диапазон захвата пикселей
-SleepCpu = 0 			; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
-BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
-headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
+key_aim := "XButton1"  			; Клавиша aim
+WriteMode = 1 				; Режим: 1-запись в память(высокая точность, нельзя регулировать чувствительность), 0-только чтение(mouse_event)
+sensitivity := 0.5  		; 0.1 - 0.9	Чувствительность движения
+tolerance := 0       		; 1 Допустимое расстояние до цели для остановки движения
+captureRange := 300  		; 150 Диапазон захвата пикселей
+SleepCpu = 1 				; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
+circleColor := 0xFFFFD800  	; Цвет (0xAARRGGBB)
+thickness := 1             	; Толщина контура
 
 
-
-
-HeroBones := {}
-HeroBones[1] := {name: "Infernus", head: 30, neck: 29}
-HeroBones[2] := {name: "Seven", head: 14, neck: 13}
-HeroBones[3] := {name: "Vindicta", head: 7, neck: 6}
-HeroBones[4] := {name: "LadyGeist", head: 11, neck: 10}
-HeroBones[6] := {name: "Abrams", head: 7, neck: 6}
-HeroBones[7] := {name: "Wraith", head: 7, neck: 6}
-HeroBones[8] := {name: "McGinnis", head: 7, neck: 6}
-HeroBones[10] := {name: "Paradox", head: 8, neck: 7}
-HeroBones[11] := {name: "Dynamo", head: 13, neck: 12}
-HeroBones[12] := {name: "Kelvin", head: 12, neck: 11}
-HeroBones[13] := {name: "Haze", head: 8, neck: 7}
-HeroBones[14] := {name: "Holliday", head: 0, neck: 0}
-HeroBones[15] := {name: "Bebop", head: 6, neck: 5}
-HeroBones[17] := {name: "GreyTalon", head: 17, neck: 18}
-HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9}
-HeroBones[19] := {name: "Shiv", head: 13, neck: 12}
-HeroBones[20] := {name: "Ivy", head: 13, neck: 12}
-HeroBones[25] := {name: "Warden", head: 11, neck: 10}
-HeroBones[27] := {name: "Yamato", head: 35, neck: 34}
-HeroBones[31] := {name: "Lash", head: 12, neck: 11}
-HeroBones[35] := {name: "Viscous", head: 7, neck: 6}
-HeroBones[48] := {name: "Wrecker", head: 0, neck: 0}
-HeroBones[50] := {name: "Pocket", head: 13, neck: 12}
-HeroBones[52] := {name: "Mirage", head: 0, neck: 0}
-HeroBones[55] := {name: "Dummy", head: 0, neck: 0}
 
 
 
@@ -64,9 +36,9 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray, NoStandard
 Menu,Tray, DeleteAll
-Menu,Tray, add, AimBot, MetkaMenu3
-Menu,Tray, Disable, AimBot
-Menu,Tray, Icon, AimBot, shell32.dll,264, 16
+Menu,Tray, add, AimBotSoul, MetkaMenu3
+Menu,Tray, Disable, AimBotSoul
+Menu,Tray, Icon, AimBotSoul, shell32.dll,264, 16
 Menu,Tray, add
 Menu,Tray, add, Edit Config, MetkaMenu3
 Menu,Tray, Icon, Edit Config, imageres.dll, 247, 16
@@ -101,10 +73,9 @@ Loop
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
-	if (VarElapsed_time > 3000) ;3000
+	if (VarElapsed_time > 3500) ;3000
 	{
 		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
-		; msgbox % HexFormat(baseAddress + offsets.dwLocalPlayerPawn)
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -118,8 +89,7 @@ Loop
 			game2.BeginDraw()
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
-			circleColor := 0xFFFF0000  ; Красный цвет (0xAARRGGBB)
-			thickness := 2             ; Толщина контура
+
 			game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
 			game2.EndDraw()
 		}
@@ -132,22 +102,37 @@ Loop
 
 		playerIndex=0
 		BubaArray := []
-		BubaArray2 := []
-		while(playerIndex < 64)
+		while(playerIndex < 2064)
 		{
 			;==============Энтити лист
 			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
-			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
-			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-			if Health
+			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
+			; esignerNameString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
+			if (pEntityString == "CItemXP")
 			{
-				BubaArray.push(ControllerBase)
-				BubaArray2.push(Pawn)
+			BubaArray.push(ControllerBase)
+				; MsgBoxVar:=HexFormat(ControllerBase)
+				; MsgBox Index - %playerIndex%`n%pEntityString%`n%esignerNameString%`n%MsgBoxVar%
+				; bDormant2 := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
+				; if (bDormant2 == "0")
+				; {
+				; BubaArray.push(ControllerBase)
+				; BubaArray2.push(Pawn)
+				; MsgBox %XCItemXP%`n%YCItemXP%`n%ZCItemXP%`n%bDormant2%
+				; }
+				; FileAppend, Index - %playerIndex%`n%pEntityString%`n%designerNameString%`n%MsgBoxVar%`n------`n, output.txt
 			}
+			; ControllerBase + 0x38, 0x8, 0x10 14 18 	- координаты души моба
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin,"float"
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x4,"float"
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x8,"float"
+			
+			; ControllerBase + offsets.m_pGameSceneNode, "int", m_bDormant2
+			; ControllerBase + offsets.m_flSimulationTime 	; Время жизни души
+			
+
 			playerIndex++
 		}
 		;==============Локальный игрок
@@ -156,11 +141,6 @@ Loop
 		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
-		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
-		
-		; msgbox % HexFormat(baseAddress + offsets.CCameraManager + 0x28) ;CCitadel_ThirdPersonCamera
-		; client.dll+0x1F46230
-		
 		VarStart_time := A_TickCount
 	}
 	Kramindex := 0
@@ -170,77 +150,12 @@ Loop
 	{
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
-		Pawn := BubaArray2[Kramindex]
-		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-		MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
-		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
-		HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
-		DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
-		if (TeamNum != MyTeamIs)
-		{
-			if DormantVar = 1
+		DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
+			if (DormantVar == "0")
 			{
-				Pawn := BubaArray2[Kramindex]
-				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
-				
-				if BoneMode
-				{
-				if headOrneck
-				SelectBone := HeroBones[HeroID].head
-				else
-				SelectBone := HeroBones[HeroID].neck
-				if SelectBone
-				{
-					enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
-					enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
-					enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
-				}
-				else
-				{
-					highestBoneIndex := -1
-					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-					i := 0
-					while (i < 64)
-					{
-						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-						if (BoneZLocation > highestBoneZ)
-						{
-							highestBoneZ := BoneZLocation
-							highestBoneIndex := i
-						}
-						i++
-					}
-					if (highestBoneIndex >= 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-					}
-				}
-				}
-				else
-				{
-					highestBoneIndex := -1
-					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-					i := 0
-					while (i < 64)
-					{
-						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-						if (BoneZLocation > highestBoneZ)
-						{
-							highestBoneZ := BoneZLocation
-							highestBoneIndex := i
-						}
-						i++
-					}
-					if (highestBoneIndex >= 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-					}
-				}
+			enemyXLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin)
+			enemyYLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin + 0x4)
+			enemyZLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin + 0x8)
 				if (enemyXLocation != 0)
 				{
 					arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight)
@@ -264,7 +179,6 @@ Loop
 					}
 				}
 			}
-		}
 	}
 	; Заполняем массив расстояний и костей
 	for index, bone in bones

@@ -22,8 +22,17 @@ static m_vecPunchAngleVel = 0x58
 ; STeamFOWEntity
 ; static m_bVisibleOnMap = 0x41
 
+; CEntityInstance
+static m_pEntity = 0x10
+; CEntityIdentity
+static m_designerName = 0x20
+
+; C_BaseEntity
+static m_flSimulationTime = 0x3b8
 ;ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
 static m_bDormant = 0x7b8
+; CGameSceneNode
+static m_bDormant2 = 0xef
 ;C_BaseEntity
 static m_pGameSceneNode = 0x328
 ;C_BaseEntity. старое: ControllerBase в CE отмотать 0x7A0 в поисках хп, преобразовать в 4 байт целое

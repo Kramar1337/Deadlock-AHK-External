@@ -78,9 +78,9 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 }
 If !A_IsAdmin
 {
-msgbox Запусти от имени администратора!
-Exitapp
-return
+	msgbox Запусти от имени администратора!
+	Exitapp
+	return
 }
 
 ; Проверяем, существует ли файл

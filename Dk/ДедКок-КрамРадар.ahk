@@ -281,7 +281,7 @@ HexFormat(address) {
 }
 
 MetkaMenu3:
-msgbox Пока ничего нет
+Run, notepad.exe "%A_ScriptFullPath%"
 return
 
 *~$Home::

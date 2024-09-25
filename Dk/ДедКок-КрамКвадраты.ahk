@@ -28,8 +28,8 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 
-Menu,Tray,NoStandard
-Menu,Tray,DeleteAll
+Menu,Tray, NoStandard
+Menu,Tray, DeleteAll
 Menu,Tray, add, Esp Box, MetkaMenu3
 Menu,Tray, Disable, Esp Box
 Menu,Tray, Icon, Esp Box, shell32.dll,264, 16
@@ -91,23 +91,38 @@ Loop
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			
+			; pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
+			; esignerNameString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
+			; if pEntityString
+			; {
+				; MsgBoxVar:=HexFormat(ControllerBase)
+				; MsgBox Index - %playerIndex%`n%pEntityString%`n%esignerNameString%`n%MsgBoxVar%
+				; FileAppend, Index - %playerIndex%`n%pEntityString%`n%designerNameString%`n%MsgBoxVar%`n------`n, output.txt
+			; }
+			; ControllerBase + 0x38, 0x8, 0x10 14 18 	- координаты души моба
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin,"float"
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x4,"float"
+			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x8,"float"
+			
+			; ControllerBase + offsets.m_pGameSceneNode, "int", m_bDormant2
+			
+			; ControllerBase + offsets.m_flSimulationTime 	; Время жизни души
+			
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			
+	
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			if Health
 			{
-			; MsgBox % HexFormat(ControllerBase)
-			; MsgBox % HexFormat(Pawn)
-			; VisibleinPVS := 1337flex.Read(Pawn + offsets.m_bVisibleinPVS,"int")
-			; Tooltip Health-%Health%`nVis-%VisibleinPVS%
-			; sleep 500
+				; MsgBox % HexFormat(ControllerBase)
+				; msgbox % Health
 				BubaArray.push(ControllerBase)
 				BubaArray2.push(Pawn)
 			}
 			playerIndex++
 		}
+		; msgbox 1
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -280,7 +295,7 @@ HexFormat(address) {
 ; return
 
 MetkaMenu3:
-msgbox Пока ничего нет
+Run, notepad.exe "%A_ScriptFullPath%"
 return
 
 *~$Home::
