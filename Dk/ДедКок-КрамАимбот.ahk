@@ -7,7 +7,8 @@ captureRange := 150  	; 150 Диапазон захвата пикселей
 SleepCpu = 0 			; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
 BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
 headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
-
+circleColor := 0x8FFF0000  ; Красный цвет (0xAARRGGBB)
+thickness := 2             ; Толщина контура
 
 
 
@@ -97,14 +98,14 @@ Loop
 	ViewMatrix:=Array()
 	while(j<16)
 	{
-		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
-		; msgbox % HexFormat(baseAddress + offsets.dwLocalPlayerPawn)
+		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		; msgbox % HexFormat(baseAddress + dwLocalPlayerPawn)
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -118,8 +119,7 @@ Loop
 			game2.BeginDraw()
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
-			circleColor := 0xFFFF0000  ; Красный цвет (0xAARRGGBB)
-			thickness := 2             ; Толщина контура
+
 			game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
 			game2.EndDraw()
 		}
@@ -136,11 +136,11 @@ Loop
 		while(playerIndex < 64)
 		{
 			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
-			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			if Health
@@ -151,14 +151,14 @@ Loop
 			playerIndex++
 		}
 		;==============Локальный игрок
-		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
 		
-		; msgbox % HexFormat(baseAddress + offsets.CCameraManager + 0x28) ;CCitadel_ThirdPersonCamera
+		; msgbox % HexFormat(baseAddress + CCameraManager + 0x28) ;CCitadel_ThirdPersonCamera
 		; client.dll+0x1F46230
 		
 		VarStart_time := A_TickCount
@@ -304,18 +304,18 @@ Loop
 		{
 		IfWinActive, ahk_exe project8.exe
 		{
-			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + offsets.CCameraManager + 0x28, 0x38)
-			camera_posXcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38)
-			camera_posYcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x4)
-			camera_posZcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x8)
+			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + CCameraManager + 0x28, 0x38)
+			camera_posXcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38)
+			camera_posYcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x4)
+			camera_posZcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x8)
 			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
 			pitch := 0
 			yaw := 0
 			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
 			if camera_posXcam
 			{
-				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
-				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
+				1337flex.write(baseAddress + CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
+				1337flex.write(baseAddress + CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
 			}
 		}
 		}

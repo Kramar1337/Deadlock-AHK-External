@@ -96,13 +96,13 @@ sleep 1
 	ViewMatrix:=Array()
 	while(j<16)
 	{
-		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
 		{
 			game.BeginDraw()
@@ -115,11 +115,11 @@ sleep 1
 		while(playerIndex < 64)
 		{
 			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
-			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			; TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
@@ -131,9 +131,9 @@ sleep 1
 			playerIndex++
 		}
 		;==============Локальный игрок
-		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")

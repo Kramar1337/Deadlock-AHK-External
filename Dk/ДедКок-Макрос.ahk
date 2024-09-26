@@ -34,7 +34,7 @@ return
 JumpAction:
 Sleep 1
 SendInput {vkA0}   ; Shift
-Sleep 330
+Sleep 350
 SendInput {vk20}   ; Space
 Sleep 1
 SendInput {vkA2 down}

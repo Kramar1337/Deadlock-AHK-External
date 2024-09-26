@@ -50,23 +50,23 @@ vecPunchAngleOld = 0
 Loop
 {
 	Sleep 1
-	LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+	LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
 	if !(LocalPlayer)
 	Goto StartLabelStart
 	pitch := 0
 	yaw := 0
 	;==============Локальный игрок
-	ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+	ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 	pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 	Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 
-	pitch := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "Float", 0x44)
+	pitch := 1337flex.Read(baseAddress + CCameraManager + 0x28, "Float", 0x44)
 	vecPunchAngle := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "Float", offsets.m_vecPunchAngle) 	;RCS
 	vecPunchAngleOld := vecPunchAngle - vecPunchAngleOld
 	if (vecPunchAngle < 0)
 	{
-		1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch - vecPunchAngleOld, "Float", 0x44) 		;вертикаль
+		1337flex.write(baseAddress + CCameraManager + 0x28, pitch - vecPunchAngleOld, "Float", 0x44) 		;вертикаль
 		vecPunchAngleOld := vecPunchAngle
 	}
 	else

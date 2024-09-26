@@ -1,13 +1,18 @@
+﻿filePathoffsets := A_ScriptDir . "\data\offsets.ini"
+IniRead, dwEntityList, %filePathoffsets%, Offsets, dwEntityList, 0
+IniRead, dwViewMatrix, %filePathoffsets%, Offsets, dwViewMatrix, 0
+IniRead, dwLocalPlayerPawn, %filePathoffsets%, Offsets, dwLocalPlayerPawn, 0
+IniRead, CCameraManager, %filePathoffsets%, Offsets, CCameraManager, 0
 class offsets
 {
 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
-static dwEntityList = 0x1F24948
+; static dwEntityList = 0x1F26A28
 ; 48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0
-static dwViewMatrix = 0x20E22D0
+; static dwViewMatrix = 0x20E43D0
 ; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
-static dwLocalPlayerPawn = 0x20D0668
+; static dwLocalPlayerPawn = 0x20D2768
 ; 48 8D 3D ? ? ? ? 8B D9
-static CCameraManager = 0x1F46230
+; static CCameraManager = 0x1F48310
 
 ; localplayer->CPlayer_CameraServices->m_vecPunchAngle отдача
 ; Pawn1->CPlayer_CameraServices(0xda0)->m_vecPunchAngle(0x40)

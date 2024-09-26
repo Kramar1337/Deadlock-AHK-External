@@ -69,13 +69,13 @@ Loop
 	ViewMatrix:=Array()
 	while(j<16)
 	{
-		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
 		{
 			game.EndDraw()
@@ -87,8 +87,8 @@ Loop
 		while(playerIndex < 64)
 		{
 			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			
 			; pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
@@ -98,6 +98,7 @@ Loop
 				; MsgBoxVar:=HexFormat(ControllerBase)
 				; MsgBox Index - %playerIndex%`n%pEntityString%`n%esignerNameString%`n%MsgBoxVar%
 				; FileAppend, Index - %playerIndex%`n%pEntityString%`n%designerNameString%`n%MsgBoxVar%`n------`n, output.txt
+				; ControllerBase + m_hOwnerEntity (0x43c)
 			; }
 			; ControllerBase + 0x38, 0x8, 0x10 14 18 	- координаты души моба
 			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin,"float"
@@ -109,13 +110,14 @@ Loop
 			; ControllerBase + offsets.m_flSimulationTime 	; Время жизни души
 			
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
-			listEntry := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 	
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			if Health
 			{
 				; MsgBox % HexFormat(ControllerBase)
+				; MsgBox % HexFormat(Pawn)
 				; msgbox % Health
 				BubaArray.push(ControllerBase)
 				BubaArray2.push(Pawn)
@@ -124,10 +126,11 @@ Loop
 		}
 		; msgbox 1
 		;==============Локальный игрок
-		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
+		; MsgBox % HexFormat(Pawn1)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		VarStart_time := A_TickCount
 	}

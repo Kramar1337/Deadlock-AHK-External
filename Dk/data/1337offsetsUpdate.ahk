@@ -13,37 +13,7 @@ Seven - Семь - Зюс (стан, ульт зюса, баф атк от 3 с�
 
 
 -console -novid -insecure
-
-
-68 урон в секунду
-13 урон от пуль
-26 урон в голову
-22 пули
-
-Базовый магазин 24% боезапас, 15% урон от пуль, 6% урон от пуль
-Ближнаяя дистанция 25% урон от пуль, 6% урон от пуль
-Живительный выстрел 8% урон от пуль, 6% урон от пуль
-Разрывная оборона 22% урон от пуль, 6% урон от пуль
-Скоростной магазин 12% урон от пуль, 6% урон от пуль
-Спешная стрельба 9% скорострельность, 6% урон от пуль
-Усилителем в голову 5% скорострельность, 40 урона 1 раз в 7.5 сек, 6% урон от пуль
-
-
-
-551 без ничего
-
-721 — ближняя дистанция (до 15 метров)
-706 — разрывная оборона
-668 (850) — базовый магазин (22 пули 28 пуль)
-650 — скоростной магазин
-628 — живительный выстрел
-589 — спешная стрельба
-587 (625) — с усилителем в голову (587) без прока
-
-
-
-
-
+https://steamcommunity.com/sharedfiles/filedetails/?id=3317893255
 
 
 client.dll+2D5A93 - 48 8D 3D 96F6C601     - lea rdi,[client.dll+1F45130]
@@ -64,6 +34,7 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
 #include %A_ScriptDir%\classMemory.ahk
+filePathoffsets := A_ScriptDir . "\offsets.ini"
 
 CommandLine := DllCall("GetCommandLine", "Str")
 If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
@@ -82,15 +53,11 @@ If !A_IsAdmin
 	Exitapp
 	return
 }
-
 ; Проверяем, существует ли файл
-if !FileExist(A_ScriptDir . "\offsets.ahk") {
-    MsgBox, Файл "%A_ScriptDir%\offsets.ahk" не найден.
+if !FileExist(A_ScriptDir . "\offsets.ini") {
+    MsgBox, Файл "%A_ScriptDir%\offsets.ini" не найден.
     ExitApp
 }
-
-FileRead, fileContent, %A_ScriptDir%\offsets.ahk
-
 
 ; static dwEntityList = 0x1F220C8 ; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
 PatternVar1 := "48 8B 0D ? ? ? ? 8B C5 48 C1 E8"
@@ -99,10 +66,7 @@ gameDLL := "client.dll"
 offset1 := 0x3
 offset2 := 0x7
 getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
-newString := "static dwEntityList = "getOffsets
-searchPattern := "static dwEntityList.*"
-fileContent := RegExReplace(fileContent, searchPattern, newString)
-
+IniWrite, %getOffsets%, %filePathOffsets%, Offsets, dwEntityList
 
 ; static dwViewMatrix = 0x20DFA20 ; 48 8D 0D ? ? ? ? 48 C1 E0
 PatternVar1 := "48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0"
@@ -111,10 +75,7 @@ gameDLL := "client.dll"
 offset1 := 0x6
 offset2 := 0xA
 getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
-newString := "static dwViewMatrix = "getOffsets
-searchPattern := "static dwViewMatrix.*"
-fileContent := RegExReplace(fileContent, searchPattern, newString)
-
+IniWrite, %getOffsets%, %filePathOffsets%, Offsets, dwViewMatrix
 
 ; static dwLocalPlayerPawn = 0x1DCB588 ; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
 PatternVar1 := "48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF"
@@ -123,10 +84,7 @@ gameDLL := "client.dll"
 offset1 := 0x3
 offset2 := 0x7
 getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
-newString := "static dwLocalPlayerPawn = "getOffsets
-searchPattern := "static dwLocalPlayerPawn.*"
-fileContent := RegExReplace(fileContent, searchPattern, newString)
-
+IniWrite, %getOffsets%, %filePathOffsets%, Offsets, dwLocalPlayerPawn
 
 ;static CCameraManager = 0x1F45130 ; 48 8D 3D ? ? ? ? 8B D9
 PatternVar1 := "48 8D 3D ? ? ? ? 8B D9"
@@ -135,14 +93,15 @@ gameDLL := "client.dll"
 offset1 := 0x3
 offset2 := 0x7
 getOffsets := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
-newString := "static CCameraManager = "getOffsets
-searchPattern := "static CCameraManager.*"
-fileContent := RegExReplace(fileContent, searchPattern, newString)
+IniWrite, %getOffsets%, %filePathOffsets%, Offsets, CCameraManager
 
+Sleep 100
+IniRead, dwEntityList, %filePathoffsets%, Offsets, dwEntityList, 0
+IniRead, dwViewMatrix, %filePathoffsets%, Offsets, dwViewMatrix, 0
+IniRead, dwLocalPlayerPawn, %filePathoffsets%, Offsets, dwLocalPlayerPawn, 0
+IniRead, CCameraManager, %filePathoffsets%, Offsets, CCameraManager, 0
 
-FileDelete, %A_ScriptDir%\offsets.ahk ; Удаляем старый файл
-FileAppend, %fileContent%, %A_ScriptDir%\offsets.ahk ; Создаем новый файл с изменениями
-MsgBox,,, Ok, 1
+MsgBox,,, %dwEntityList% - dwEntityList`n%dwViewMatrix% - dwViewMatrix`n%dwLocalPlayerPawn% - dwLocalPlayerPawn`n%CCameraManager% - CCameraManager, 3
 return
 
 

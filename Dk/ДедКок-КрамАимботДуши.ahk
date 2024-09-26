@@ -5,7 +5,7 @@ sensitivity := 0.5  		; 0.1 - 0.9	Чувствительность движен�
 tolerance := 0       		; 1 Допустимое расстояние до цели для остановки движения
 captureRange := 300  		; 150 Диапазон захвата пикселей
 SleepCpu = 1 				; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
-circleColor := 0xFFFFD800  	; Цвет (0xAARRGGBB)
+circleColor := 0x6FFFD800  	; Цвет (0xAARRGGBB)
 thickness := 1             	; Толщина контура
 
 
@@ -69,13 +69,13 @@ Loop
 	ViewMatrix:=Array()
 	while(j<16)
 	{
-		ViewMatrix.Push(1337flex.Read(baseAddress + offsets.dwViewMatrix + (j * 0x4),"float"))
+		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3500) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + offsets.dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -105,8 +105,8 @@ Loop
 		while(playerIndex < 2064)
 		{
 			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
 			; esignerNameString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
@@ -136,9 +136,9 @@ Loop
 			playerIndex++
 		}
 		;==============Локальный игрок
-		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwLocalPlayerPawn, 0x0)
+		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + offsets.dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		VarStart_time := A_TickCount
@@ -218,18 +218,18 @@ Loop
 		{
 		IfWinActive, ahk_exe project8.exe
 		{
-			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + offsets.CCameraManager + 0x28, 0x38)
-			camera_posXcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38)
-			camera_posYcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x4)
-			camera_posZcam := 1337flex.Read(baseAddress + offsets.CCameraManager + 0x28, "float",0x38+0x8)
+			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + CCameraManager + 0x28, 0x38)
+			camera_posXcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38)
+			camera_posYcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x4)
+			camera_posZcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x8)
 			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
 			pitch := 0
 			yaw := 0
 			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
 			if camera_posXcam
 			{
-				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
-				1337flex.write(baseAddress + offsets.CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
+				1337flex.write(baseAddress + CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
+				1337flex.write(baseAddress + CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
 			}
 		}
 		}
