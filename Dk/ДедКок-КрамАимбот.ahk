@@ -1,10 +1,10 @@
 ﻿; Настройки
 key_aim := "V"  		; Клавиша aim
-WriteMode = 1 			; Режим: 1-запись в память(высокая точность, нелья регулировать чувствительность), 0-только чтение(mouse_event)
+WriteMode = 0 			; Режим: 1-запись в память(высокая точность, нелья регулировать чувствительность), 0-только чтение(mouse_event)
 sensitivity := 0.5  	; 0.1 - 0.9	Чувствительность движения
 tolerance := 0       	; 1 Допустимое расстояние до цели для остановки движения
 captureRange := 150  	; 150 Диапазон захвата пикселей
-SleepCpu = 0 			; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
+SleepCpu = 1 			; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
 BoneMode = 1 			; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
 headOrneck = 1 			; 1 - приоритет на голову из базы, 0 - приоритет на шею из базы
 circleColor := 0x8FFF0000  ; Красный цвет (0xAARRGGBB)
@@ -36,7 +36,7 @@ HeroBones[31] := {name: "Lash", head: 12, neck: 11}
 HeroBones[35] := {name: "Viscous", head: 7, neck: 6}
 HeroBones[48] := {name: "Wrecker", head: 0, neck: 0}
 HeroBones[50] := {name: "Pocket", head: 13, neck: 12}
-HeroBones[52] := {name: "Mirage", head: 0, neck: 0}
+HeroBones[52] := {name: "Mirage", head: 8, neck: 7}
 HeroBones[55] := {name: "Dummy", head: 0, neck: 0}
 
 
