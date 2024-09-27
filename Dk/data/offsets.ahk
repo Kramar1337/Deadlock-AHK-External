@@ -17,7 +17,7 @@ class offsets
 ; localplayer->CPlayer_CameraServices->m_vecPunchAngle отдача
 ; Pawn1->CPlayer_CameraServices(0xda0)->m_vecPunchAngle(0x40)
 ; C_BasePlayerPawn смещение
-static m_pCameraServices = 0xda0
+static m_pCameraServices = 0xda8
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
 static m_vecPunchAngleVel = 0x58
@@ -35,7 +35,7 @@ static m_designerName = 0x20
 ; C_BaseEntity
 static m_flSimulationTime = 0x3b8
 ;ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
-static m_bDormant = 0x7b8
+static m_bDormant = 0x7C8
 ; CGameSceneNode
 static m_bDormant2 = 0xef
 ;C_BaseEntity
@@ -58,7 +58,7 @@ static v_angle = 0x0E04
 ;CModelState
 static m_hModel = 0xD0
 ;ControllerBase в CE отмотать 0x774 в поисках id, преобразовать в 4 байт целое
-static m_heroid = 0x774
+static m_heroid = 0x784
 }
 
 

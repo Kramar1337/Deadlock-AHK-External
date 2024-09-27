@@ -144,7 +144,34 @@ Loop
 	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
+	
+	
+	; DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
+	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+	; Dormant2 := 1337flex.Read(Pawn + offsets.m_pGameSceneNode,"int", offsets.m_bDormant2)
+	
+	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant2,"int")
+	
+	
+	; static m_bDormant2 = 0xef
+	; static m_heroid = 0x774
+	; static m_pGameSceneNode = 0x328
+	; static m_bDormant = 0x7C8
+	; CGameSceneNode
+	; static m_bDormant2 = 0xef
+	
+	
+	; MsgBox % HexFormat(Pawn)
+	; MsgBox % HexFormat(ControllerBase)
+	; msgbox % Health
+	; msgbox % HeroID
+	; msgbox % DormantVar
+	; MsgBox % HexFormat(Pawn)
+	; MsgBox % HexFormat(ControllerBase)
+	
 	DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
+	; msgbox % DormantVar
 	if DormantVar = 1
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
