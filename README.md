@@ -1,6 +1,6 @@
 # Deadlock-AHK-External v0.1
 
-![hippo](https://i.imgur.com/JtLVIKz.jpeg)
+![hippo](https://i.imgur.com/2LV7HZV.jpeg)
 
 Из говна и палок, переворачивая форумы и мучая ChatGPT я слепил:
 
