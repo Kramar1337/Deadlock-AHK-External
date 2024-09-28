@@ -1,17 +1,4 @@
-﻿; Настройки
-key_radarHide := "Alt" 	; Скрыть радар
-radarHidekey = 1 		; Использовать скрытие радара на "key_radarHide"
-radarBoxEnable = 0 		; Отображать рамку
-radarShowTeam = 1 		; Показывать команду
-radarShowNameTeam = 0	; Показывать имя героя команды
-radarShowNameEnemy = 1	; Показывать имя героя врага
-imageOrpoint = 1 		; 1 image 0 point
-pointSize = 8 			; Размер точки
-borderSize = 2 			; Толщина обводки точки
-imageSize = 40 			; Размер изображения на радаре
-imageAlpha = 0.8		; Прозрачность изображения
-
-imageSizeOrigin = 128 	; Размер изображения в пикселях в свойствах
+﻿
 imagePath1 = %A_ScriptDir%\data\red2.png
 imagePath2 = %A_ScriptDir%\data\green2.png
 radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
@@ -35,6 +22,7 @@ extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 CommandLine := DllCall("GetCommandLine", "Str")
 If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
@@ -47,6 +35,20 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+
+IniFile := A_ScriptDir "\data\config.ini"
+IniRead, key_radarHide, %iniFile%, Settings, key_radarHide, Alt
+IniRead, radarHidekey, %iniFile%, Settings, radarHidekey, 1
+IniRead, radarBoxEnable, %iniFile%, Settings, radarBoxEnable, 0
+IniRead, radarShowTeam, %iniFile%, Settings, radarShowTeam, 1
+IniRead, radarShowNameTeam, %iniFile%, Settings, radarShowNameTeam, 0
+IniRead, radarShowNameEnemy, %iniFile%, Settings, radarShowNameEnemy, 1
+IniRead, imageOrpoint, %iniFile%, Settings, imageOrpoint, 1
+IniRead, pointSize, %iniFile%, Settings, pointSize, 8
+IniRead, borderSize, %iniFile%, Settings, borderSize, 2
+IniRead, imageSize, %iniFile%, Settings, imageSize, 40
+IniRead, imageAlpha, %iniFile%, Settings, imageAlpha, 0.8
+IniRead, imageSizeOrigin, %iniFile%, Settings, imageSizeOrigin, 128
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -75,6 +77,7 @@ HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abra
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
@@ -83,7 +86,7 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
+#include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
@@ -240,6 +243,7 @@ game.EndDraw()
 }
 return
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
 {
@@ -268,6 +272,7 @@ getDistance(x,y,z)
 	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
 	return distance
 }
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 HexFormat(address) {
     ; Преобразование адреса в 16-ричный формат без "0x"
@@ -281,7 +286,7 @@ HexFormat(address) {
 }
 
 MetkaMenu3:
-Run, notepad.exe "%A_ScriptFullPath%"
+Run, notepad.exe "%IniFile%"
 return
 
 *~$Home::

@@ -1,9 +1,4 @@
-﻿; Настройки
-boxTeam = 0
-boxEnemy = 1
-SleepCpu = 1 		; рекомендую 20. для идеальной плавности 0, но жрет много CPU 5% в моем случае
-boneDBGmode = 0 	;показывать индексы костей для настройки ДедКок-КрамАимбот.ahk
-
+﻿
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
@@ -20,7 +15,13 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+IniFile := A_ScriptDir "\data\config.ini"
+IniRead, boxTeam, %iniFile%, Settings, ESPboxTeam, 0
+IniRead, boxEnemy, %iniFile%, Settings, ESPboxEnemy, 1
+IniRead, SleepCpu, %iniFile%, Settings, ESPSleepCpu, 1
+IniRead, boneDBGmode, %iniFile%, Settings, ESPboneDBGmode, 0
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -51,12 +52,13 @@ gameDLL:= "client.dll"
 
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
+#include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
@@ -229,6 +231,7 @@ Loop
 }
 return
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
 DrawESP(x1,y1,x2,y2,distance, team)
@@ -277,6 +280,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		}
 	}
 }
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
 {
@@ -305,6 +309,7 @@ getDistance(x,y,z)
 	distance := Sqrt(((myXLocation - x)**2) + ((myYLocation - y)**2) + ((myZLocation - z)**2)) * 0.0254
 	return distance
 }
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 HexFormat(address) {
     ; Преобразование адреса в 16-ричный формат без "0x"
@@ -325,8 +330,9 @@ HexFormat(address) {
 ; return
 
 MetkaMenu3:
-Run, notepad.exe "%A_ScriptFullPath%"
+Run, notepad.exe "%IniFile%"
 return
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 *~$Home::
 MetkaMenu2:

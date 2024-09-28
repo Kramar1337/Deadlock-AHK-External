@@ -14,6 +14,7 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -32,6 +33,7 @@ Menu,Tray, add, Reload, MetkaMenu2
 Menu,Tray, Icon, Reload, shell32.dll, 239, 16
 Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
@@ -40,7 +42,7 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
+#include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 
@@ -58,6 +60,7 @@ Loop
 	;==============Локальный игрок
 	ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 	pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
+	; msgbox % HexFormat(ControllerBase1)
 	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 	Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 
@@ -76,6 +79,7 @@ Loop
 }
 
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
 
@@ -92,7 +96,7 @@ HexFormat(address) {
 }
 
 MetkaMenu3:
-Run, notepad.exe "%A_ScriptFullPath%"
+Run, notepad.exe "%IniFile%"
 return
 
 *~$Home::

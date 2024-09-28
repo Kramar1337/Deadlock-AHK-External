@@ -1,37 +1,17 @@
-﻿filePathoffsets := A_ScriptDir . "\data\offsets.ini"
-IniRead, dwEntityList, %filePathoffsets%, Offsets, dwEntityList, 0
-IniRead, dwViewMatrix, %filePathoffsets%, Offsets, dwViewMatrix, 0
-IniRead, dwLocalPlayerPawn, %filePathoffsets%, Offsets, dwLocalPlayerPawn, 0
-IniRead, CCameraManager, %filePathoffsets%, Offsets, CCameraManager, 0
-class offsets
+﻿class offsets
 {
-; 48 8B 0D ? ? ? ? 8B C5 48 C1 E8
-; static dwEntityList = 0x1F26A28
-; 48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0
-; static dwViewMatrix = 0x20E43D0
-; 48 8B 0D ? ? ? ? 48 85 C9 74 65 83 FF FF
-; static dwLocalPlayerPawn = 0x20D2768
-; 48 8D 3D ? ? ? ? 8B D9
-; static CCameraManager = 0x1F48310
-
 ; localplayer->CPlayer_CameraServices->m_vecPunchAngle отдача
 ; Pawn1->CPlayer_CameraServices(0xda0)->m_vecPunchAngle(0x40)
+
 ; C_BasePlayerPawn смещение
 static m_pCameraServices = 0xda8
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
 static m_vecPunchAngleVel = 0x58
-
-; CEntityInstance
-; static m_bVisibleinPVS = 0x30
-; STeamFOWEntity
-; static m_bVisibleOnMap = 0x41
-
 ; CEntityInstance
 static m_pEntity = 0x10
 ; CEntityIdentity
 static m_designerName = 0x20
-
 ; C_BaseEntity
 static m_flSimulationTime = 0x3b8
 ;ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
@@ -60,7 +40,63 @@ static m_hModel = 0xD0
 ;ControllerBase в CE отмотать 0x774 в поисках id, преобразовать в 4 байт целое
 static m_heroid = 0x784
 }
+; Функция для выполнения поиска паттерна и вычисления адреса
+FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2) {
+    gameEXE := "ahk_exe project8.exe"
+    1337flex := new _ClassMemory(gameEXE)
+    baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+    moduleInfo := []
+    1337flex.GetModuleInformation(baseAddress, moduleInfo)
+    SizeOfImage := moduleInfo.SizeOfImage
+    address := 1337flex.addressPatternScan(baseAddress, SizeOfImage, aPattern*)
+    if (address) {
+        address2 := 1337flex.read(address + offset1, "UInt")
+        outAddress := address + offset2 + address2 - baseAddress
+		outAddress := ConvertNumberToAddress(outAddress)
+    } 
+	else 
+	{
+		outAddress = 0
+    }
+return outAddress
+}
 
+
+; Функция для преобразования строки байтов в массив байтов и символов
+ConvertBytesStringToArray(bytesString) {
+    ; Удаляем пробелы из строки
+    bytesString := RegExReplace(bytesString, "\s+", " ")
+    
+    ; Разделяем строку на отдельные элементы
+    byteArray := StrSplit(bytesString, " ")
+    
+    ; Создаём массив для результата
+    aPattern := []
+    
+    ; Обрабатываем каждый элемент
+    for index, byte in byteArray {
+        if (byte = "?") {
+            aPattern.Push("?")
+        } else {
+            ; Преобразуем в шестнадцатеричное число
+            aPattern.Push("0x" byte)
+        }
+    }
+    
+    return aPattern
+}
+
+; Функция для преобразования числа в адрес
+ConvertNumberToAddress(number) {
+    ; Преобразуем число в шестнадцатеричную строку
+    hexValue := Format("{:X}", number)
+    
+    ; Добавляем префикс 0x
+    address := "0x" . hexValue
+    
+    ; Выводим результат (или записываем в файл)
+    return address
+}
 
 
 

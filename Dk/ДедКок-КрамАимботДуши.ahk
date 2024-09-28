@@ -1,15 +1,5 @@
-﻿; Настройки
-key_aim := "XButton1"  			; Клавиша aim
-WriteMode = 1 				; Режим: 1-запись в память(высокая точность, нельзя регулировать чувствительность), 0-только чтение(mouse_event)
-sensitivity := 0.5  		; 0.1 - 0.9	Чувствительность движения
-tolerance := 0       		; 1 Допустимое расстояние до цели для остановки движения
-captureRange := 300  		; 150 Диапазон захвата пикселей
-SleepCpu = 1 				; 0 для идеальной плавности в "WriteMode = 1" но жрет много CPU 8% в моем случае
-circleColor := 0x6FFFD800  	; Цвет (0xAARRGGBB)
-thickness := 1             	; Толщина контура
-
-
-
+﻿
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
 #NoEnv
@@ -28,6 +18,16 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+
+IniFile := A_ScriptDir "\data\config.ini"
+IniRead, key_aim, %iniFile%, Settings, soulkey_aim, N
+IniRead, WriteMode, %iniFile%, Settings, soulWriteMode, 1
+IniRead, sensitivity, %iniFile%, Settings, soulsensitivity, 0.5
+IniRead, tolerance, %iniFile%, Settings, soultolerance, 0
+IniRead, captureRange, %iniFile%, Settings, soulcaptureRange, 300
+IniRead, SleepCpu, %iniFile%, Settings, soulSleepCpu, 1
+IniRead, circleColor, %iniFile%, Settings, soulcircleColor, 0x6FFFD800
+IniRead, thickness, %iniFile%, Settings, soulthickness, 1
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -52,18 +52,27 @@ game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",,
 
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
-
+#include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
 Loop
 {
-	Sleep %SleepCpu%
+	if WriteMode
+	{
+		Sleep %SleepCpu%
+	}
+	else
+	{
+		Sleep %SleepCpu%
+		Sleep 1
+	}
 	KeyWait, %key_aim%, D T3
 	j=0
 	ViewMatrix:=Array()
@@ -237,6 +246,7 @@ Loop
 
 }
 return
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
 AimAtTargetWrite(camX, camY, camZ, enemyX, enemyY, enemyZ, ByRef yaw, ByRef pitch) {
@@ -292,6 +302,7 @@ AimAtTarget(targetX, targetY) {
     MoveMouseBy(deltaX, deltaY)
 }
 
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
 
@@ -333,9 +344,10 @@ HexFormat(address) {
     ; Возвращаем 16-ричный адрес
     return hexAddress
 }
+AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 MetkaMenu3:
-Run, notepad.exe "%A_ScriptFullPath%"
+Run, notepad.exe "%IniFile%"
 return
 
 *~$Home::
