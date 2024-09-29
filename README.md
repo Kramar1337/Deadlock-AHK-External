@@ -1,4 +1,4 @@
-# Deadlock-AHK-External v0.1
+# Deadlock-AHK-External v0.2
 
 ![hippo](https://i.imgur.com/2LV7HZV.jpeg)
 
@@ -19,11 +19,12 @@ __🚀Функционал:🚀__
 - RCS (Контроль отдачи, Dk\ДедКок-КрамРКС.ahk)
 - Radar (Радар, Dk\ДедКок-КрамРадар.ahk)
 - Обновлятор оффсетов
+- Ручной импорт настроек
 
 :musical_keyboard:__Горячие клавиши:__:musical_keyboard:
 ```
 V - AimBot
-N - AimBot Soul
+Rbutton(ПКМ) - AimBot Soul
 C - Jump(Shift + Space + Ctrl)
 Alt - Hide Radar
 Home - Перезапуск
