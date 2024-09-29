@@ -29,10 +29,11 @@ Gui, -Caption +AlwaysOnTop ; Убирает кнопки управления и
 Gui, Add, Button, gStart w100 h30, Start
 Gui, Add, Button, gHashChanger w100 h30, Hash Changer
 Gui, Add, Button, gNameChanger w100 h30, Name Changer
-Gui, Add, Button, gUpdate w100 h30 Disabled, Update
+Gui, Add, Button, gUpCfg w100 h30, Import Config
 Gui, Add, Button, gExit w100 h30, Exit
 randomName := GenerateRandomName(15) ; 10 - длина имени
-Gui, Show, , %randomName%
+yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (300 / 1440))
+Gui, Show, y%yPosGui%, %randomName%
 return
 
 Start:
@@ -162,9 +163,38 @@ NameChanger:
 	MsgBox,,, All files renamed except for this script, 1
 return
 
-Update:
-    ; Здесь добавьте код для обновления
-    MsgBox, Update clicked (this button is disabled)
+UpCfg:
+    FileSelectFile, selectedFile, 3, %A_ScriptDir%, Выберите файл config.ini, INI (*.ini)
+    if selectedFile =
+        return
+    if (FileExist(selectedFile) && RegExMatch(selectedFile, "config\.ini$") = 0)
+    {
+        MsgBox,,, Выбранный файл не является "config.ini",1
+        return
+    }
+    newFilePath := A_ScriptDir "\data\config.ini"
+    IniRead, sections, %selectedFile%, ,
+    Loop, Parse, sections, `n
+    {
+        section := A_LoopField
+        IniRead, keys, %selectedFile%, %section%
+        Loop, Parse, keys, `n
+        {
+            keyArray := StrSplit(A_LoopField, "=")
+            if (keyArray.MaxIndex() = 2) ; Проверить, была ли строка успешно разделена
+            {
+                paramName := keyArray[1]
+                paramValue := keyArray[2]
+                IniWrite, %paramValue%, %newFilePath%, %section%, %paramName%
+            }
+            else
+            {
+                MsgBox,,, Неправильный формат строки в файле: %selectedFile%
+                continue
+            }
+        }
+    }
+    MsgBox,,, Настройки импортированы,1
 return
 
 Exit:

@@ -246,6 +246,8 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		boxEnemyColor := 0xff00FF00
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
 		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		if (Health > MaxHealth)
+		MaxHealth:=Health
 		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
 		HPWidth := ESPwidth / 8  ; Ширина полосы, можно отрегулировать по вашему вкусу
 		if (Health / MaxHealth <= 0.25) {
@@ -267,6 +269,8 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		boxEnemyColor := 0xffFF0000
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
 		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		if (Health > MaxHealth)
+		MaxHealth:=Health
 		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
 		HPWidth := ESPwidth / 8  ; Ширина полосы, можно отрегулировать по вашему вкусу
 		if (Health / MaxHealth <= 0.25) {

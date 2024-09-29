@@ -21,6 +21,7 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 
 IniFile := A_ScriptDir "\data\config.ini"
 IniRead, key_aim, %iniFile%, Settings, soulkey_aim, N
+IniRead, key_aim2, %iniFile%, Settings, key_aim, V
 IniRead, WriteMode, %iniFile%, Settings, soulWriteMode, 1
 IniRead, sensitivity, %iniFile%, Settings, soulsensitivity, 0.5
 IniRead, tolerance, %iniFile%, Settings, soultolerance, 0
@@ -155,7 +156,7 @@ Loop
 	Kramindex := 0
 	bones := []
 	distances := []
-	while (Kramindex < BubaArray.length() && GetKeyState(key_aim, "P"))
+	while (Kramindex < BubaArray.length() && GetKeyState(key_aim, "P") && !GetKeyState(key_aim2, "P"))
 	{
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
