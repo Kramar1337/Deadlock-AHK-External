@@ -1,4 +1,25 @@
-﻿#NoEnv
+﻿/*
+
+
+
+
+Все консольные команды DEADLOCK
+https://steamcommunity.com/sharedfiles/filedetails/?id=3317893255
+map street_test
+exec citadel_botmatch_practice_6v6_hard.cfg
+
+citadel_hero_testing_enabled 1
+citadel_hero_testing_infinite_money
+trooper_kill_all
+host_timescale 1
+l_ent_actornames
+
+
+
+
+*/
+
+#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -14,6 +35,8 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+
+
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray, NoStandard
 Menu,Tray, DeleteAll
@@ -25,11 +48,12 @@ Menu,Tray, add, Reload, MetkaMenu2
 Menu,Tray, Icon, Reload, shell32.dll, 239, 16
 Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
-Gui, -Caption +AlwaysOnTop ; Убирает кнопки управления и делает окно всегда на верх
+Gui, -Caption +AlwaysOnTop
 Gui, Add, Button, gStart w100 h30, Start
 Gui, Add, Button, gHashChanger w100 h30, Hash Changer
 Gui, Add, Button, gNameChanger w100 h30, Name Changer
 Gui, Add, Button, gUpCfg w100 h30, Import Config
+Gui, Add, Button, gHwidSpoofer w100 h30, HWID Spoofer
 Gui, Add, Button, gExit w100 h30, Exit
 randomName := GenerateRandomName(15) ; 10 - длина имени
 yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (300 / 1440))
@@ -73,6 +97,11 @@ Start:
 return
 
 HashChanger:
+MsgBox 0x1, ,Изменить Hash всех файлов в папке?
+IfMsgBox OK, {
+} Else IfMsgBox Cancel, {
+Return
+}
     ; Получаем путь к текущему скрипту
     scriptPath := A_ScriptDir
     ; Получаем имя текущего скрипта
@@ -125,6 +154,11 @@ HashChanger:
 return
 
 NameChanger:
+MsgBox 0x1, ,Изменить имена всех файлов в папке?
+IfMsgBox OK, {
+} Else IfMsgBox Cancel, {
+Return
+}
     ; Получаем путь к текущему скрипту
     scriptPath := A_ScriptDir
     ; Получаем имя текущего скрипта
@@ -195,6 +229,10 @@ UpCfg:
         }
     }
     MsgBox,,, Настройки импортированы,1
+return
+
+HwidSpoofer:
+MsgBox,,, Пока ничего нет,1
 return
 
 Exit:

@@ -144,9 +144,15 @@ Loop
 	Pawn := BubaArray2[Kramindex]
 	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+	; msgbox % MaxHealth
+	; msgbox % HexFormat(ControllerBase)
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
 	
+	; 325 щит пули
+	; 395 щит маг
+	; CCitadel_HealthPips
+	; 0x70 + 0x74
 	
 	; DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
 	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)

@@ -1,23 +1,4 @@
 ﻿
-imagePath1 = %A_ScriptDir%\data\red2.png
-imagePath2 = %A_ScriptDir%\data\green2.png
-radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
-radarTopLeftY := round(A_ScreenHeight * (873 / 1440))
-radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
-radarBottomRightY := round(A_ScreenHeight * (1380 / 1440))
-radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
-radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
-radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
-radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
-radarBorderThickness := 2  ; Толщина рамки радара
-maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
-; Размеры области для центрирования текста
-textWidth := 150  ; Примерная ширина текста
-textHeight := 50  ; Примерная высота текста
-extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
-
-
-
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
@@ -49,6 +30,34 @@ IniRead, borderSize, %iniFile%, Settings, borderSize, 2
 IniRead, imageSize, %iniFile%, Settings, imageSize, 40
 IniRead, imageAlpha, %iniFile%, Settings, imageAlpha, 0.8
 IniRead, imageSizeOrigin, %iniFile%, Settings, imageSizeOrigin, 128
+
+IniRead, radarAutoMode, %iniFile%, Settings, radarAutoMode, 1
+IniRead, radarTopLeftX, %iniFile%, Settings, radarTopLeftX, 200
+IniRead, radarTopLeftY, %iniFile%, Settings, radarTopLeftY, 200
+IniRead, radarBottomRightX, %iniFile%, Settings, radarBottomRightX, 400
+IniRead, radarBottomRightY, %iniFile%, Settings, radarBottomRightY, 400
+imagePath1 = %A_ScriptDir%\data\red2.png
+imagePath2 = %A_ScriptDir%\data\green2.png
+if radarAutoMode
+{
+	radarTopLeftX := round(A_ScreenWidth * (2014 / 2560))
+	radarTopLeftY := round(A_ScreenHeight * (873 / 1440))
+	radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
+	radarBottomRightY := round(A_ScreenHeight * (1380 / 1440))
+}
+
+radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
+radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
+radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
+radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
+radarBorderThickness := 2  ; Толщина рамки радара
+maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+; Размеры области для центрирования текста
+textWidth := 150  ; Примерная ширина текста
+textHeight := 50  ; Примерная высота текста
+extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
+
+
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk

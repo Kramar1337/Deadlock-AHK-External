@@ -23,6 +23,8 @@ static m_pGameSceneNode = 0x328
 ;C_BaseEntity. старое: ControllerBase в CE отмотать 0x7A0 в поисках хп, преобразовать в 4 байт целое
 static m_ihealth = 0x34c
 static m_iMaxHealth = 0x348
+; 256 жив 258 мертв
+static m_lifeState = 0x350
 ;C_BaseEntity
 static m_iTeamNum = 0x03eb
 ;CGameSceneNode
