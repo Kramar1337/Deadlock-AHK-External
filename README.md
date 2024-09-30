@@ -162,29 +162,36 @@ ESPboneDBGmode = 0
 ;===============================================================================
 ; Настройки Radar ДедКок-КрамРадар.ahk
 ; Скрыть радар
-key_radarHide = Alt
+key_radarHide=Alt
 ; Использовать скрытие радара на "key_radarHide"
-radarHidekey = 1
+radarHidekey=1
 ; Отображать рамку
-radarBoxEnable = 0
+radarBoxEnable=0
+; 0 - Указать размер радара вручную(экзотические мониторы), 1 - автоматически(для мониторов 16-9)
+radarAutoMode=1
+; X Y верхняя левая и X Y нижняя правая координата
+radarTopLeftX=200
+radarTopLeftY=200
+radarBottomRightX=400
+radarBottomRightY=400
 ; Показывать команду
-radarShowTeam = 1
+radarShowTeam=1
 ; Показывать имя Team
-radarShowNameTeam = 0
+radarShowNameTeam=0
 ; Показывать имя Enemy
-radarShowNameEnemy = 1
+radarShowNameEnemy=1
 ; 1 image 0 point
-imageOrpoint = 1
+imageOrpoint=1
 ; Размер точки
-pointSize = 8
+pointSize=8
 ; Толщина обводки точки
-borderSize = 2
+borderSize=2
 ; Размер изображения на радаре	
-imageSize = 40
+imageSize=40
 ; Прозрачность изображения	
-imageAlpha = 0.8
+imageAlpha=0.8
 ; Размер изображения в пикселях в свойствах	
-imageSizeOrigin = 128
+imageSizeOrigin=128
 ```
 
 ## Disclaimer 
