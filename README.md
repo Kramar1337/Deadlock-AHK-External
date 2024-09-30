@@ -22,8 +22,8 @@ Deadlock External Cheat на AHK для игры [Deadlock](https://store.steamp
 - Если зайти с забаненного компьютера на чистый аккаунт то тот будет мгновенно забанен(зайти в игру! не в стим)
 
 План по разбану:
-- Купить аккич на Фанпей[Funpay](https://funpay.com/)
-- Провести Spoofer`изацию[YouTube](https://www.youtube.com/watch?v=VPskGHjG-bA)
+- Купить аккич на [Funpay](https://funpay.com/)
+- Провести Spoofer`изацию [YouTube](https://www.youtube.com/watch?v=VPskGHjG-bA)
 - Зайти на аккич и играть
 - *Сгоревший аккаунт продать за пол цены на Фанпей
 - *Скрыть игру в списке стим(после бана), чтобы случайно не откыть
