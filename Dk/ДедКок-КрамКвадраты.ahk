@@ -154,8 +154,13 @@ Loop
 	; CCitadel_HealthPips
 	; 0x70 + 0x74
 	
+	; Pawn->GameSceneNode + 0x4D0
+	
 	; DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
 	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+	; msgbox % MaxHealth
+	; msgbox % HexFormat(GameSceneNode)
+	; msgbox % HexFormat(Pawn)
 	; Dormant2 := 1337flex.Read(Pawn + offsets.m_pGameSceneNode,"int", offsets.m_bDormant2)
 	
 	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
@@ -206,30 +211,30 @@ Loop
 				}
 			}
 			
-			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
-			if(enemyXLocation!=0)
-			{
-				if(arr:=WorldToScreen(enemyXLocation,enemyYLocation,enemyZLocation,windowWidth,windowHeight))
-				{
-					xpos1:=arr[1]
-					ypos1:=arr[2]
-					arr2:=WorldToScreen(enemyXLocation,enemyYLocation,enemyZLocation+75,windowWidth,windowHeight)
-					xpos2:=arr2[1]
-					ypos2:=arr2[2]
-					dist:=getDistance(enemyXLocation,enemyYLocation,enemyZLocation)
-					IfWinActive, ahk_exe project8.exe
-					{
-						if (dist > 1.2)
-						{
-							MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
-							if(TeamNum==MyTeamIs)
-								DrawESP(xpos1,ypos1,xpos2,ypos2,dist,1)
-							else
-								DrawESP(xpos1,ypos1,xpos2,ypos2,dist,0)
-						}
-					}
-				}
-			}
+WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe project8.exe
+if (enemyXLocation != 0)
+{
+    if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, windowWidth, windowHeight))
+    {
+        xpos1 := arr[1] + windowX ; Учитываем позицию окна по оси X
+        ypos1 := arr[2] + windowY ; Учитываем позицию окна по оси Y
+        arr2 := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation + 75, windowWidth, windowHeight)
+        xpos2 := arr2[1] + windowX
+        ypos2 := arr2[2] + windowY
+        dist := getDistance(enemyXLocation, enemyYLocation, enemyZLocation)
+        IfWinActive, ahk_exe project8.exe
+        {
+            if (dist > 1.2)
+            {
+                MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
+                if (TeamNum == MyTeamIs)
+                    DrawESP(xpos1, ypos1, xpos2, ypos2, dist, 1)
+                else
+                    DrawESP(xpos1, ypos1, xpos2, ypos2, dist, 0)
+            }
+        }
+    }
+}
 		}
 	}
 	}
