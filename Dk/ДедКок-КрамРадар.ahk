@@ -18,6 +18,7 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 }
 
 IniFile := A_ScriptDir "\data\config.ini"
+IniRead, key_NetWorthShow, %iniFile%, Settings, key_NetWorthShow, Ctrl
 IniRead, key_radarHide, %iniFile%, Settings, key_radarHide, Alt
 IniRead, radarHidekey, %iniFile%, Settings, radarHidekey, 1
 IniRead, radarBoxEnable, %iniFile%, Settings, radarBoxEnable, 0
@@ -98,12 +99,12 @@ baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 #include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
-VarStart_time := A_TickCount
+VarStart_time = 0
 Loop
 {
-sleep 1
+sleep 50
 	game.BeginDraw()
-
+sleep 1
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -161,9 +162,9 @@ sleep 1
 	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
-	HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
-	DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
-	if DormantVar = 1
+	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
+	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
+	if DormantVar = 256
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
@@ -171,6 +172,12 @@ sleep 1
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
+			
+			myGoldNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
+			myAPNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
+			GoldNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
+			APNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
+
 			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 			if(enemyXLocation!=0)
 			{
@@ -231,7 +238,25 @@ sleep 1
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xffFF0000)  ; Красный для врагов
 				}
 				if radarShowNameEnemy
-				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
+				{
+					if !GetKeyState(key_NetWorthShow, "P")
+					{
+					game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
+					}
+					else
+					{
+					subGoldNetWorth := myGoldNetWorth - GoldNetWorth
+					if (myGoldNetWorth < GoldNetWorth)
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFA0AB", "Arial", extraOptions)
+					else
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x0000FF00", "Arial", extraOptions)
+					subAPNetWorth := myAPNetWorth - APNetWorth
+					if (myAPNetWorth < APNetWorth)
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFA0AB", "Arial", extraOptions)
+					else
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x0000FF00", "Arial", extraOptions)
+					}
+				}
 			}
 			}
 			}

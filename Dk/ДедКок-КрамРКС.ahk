@@ -64,19 +64,29 @@ Loop
 	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 	Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 
+
+	; msgbox % HexFormat(baseAddress + CCameraManager + 0x28)
+	; msgbox % HexFormat(Pawn1 + offsets.m_pCameraServices)
 	pitch := 1337flex.Read(baseAddress + CCameraManager + 0x28, "Float", 0x44)
 	vecPunchAngle := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "Float", offsets.m_vecPunchAngle) 	;RCS
 	vecPunchAngleOld := vecPunchAngle - vecPunchAngleOld
 	if (vecPunchAngle < 0)
 	{
 		1337flex.write(baseAddress + CCameraManager + 0x28, pitch - vecPunchAngleOld, "Float", 0x44) 		;вертикаль
+		; tooltip % pitch - vecPunchAngleOld
 		vecPunchAngleOld := vecPunchAngle
 	}
 	else
 	{
 		vecPunchAngleOld = 0
 	}
+
+
+
+
 }
+
+
 
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"

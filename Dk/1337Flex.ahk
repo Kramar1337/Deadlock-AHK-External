@@ -1,6 +1,29 @@
 ﻿/*
 
+Запланировано:
+ - HWID Changer
+ - Аимбот не сбивается с таргета
+ - Нейм ченжер фикс
+ - Отображение крипов
+ - Отображение коробок
+ - Индексы шеи, туловища
+ - Переключение аимбота на туловище "NumPad 0"
+ - Переключение отображения "F1" - герои, "F2" - герои и крипы, "F3" - герои, крипы, коробки
+ - Плавная наводка аимбота в режиме записи
+ - Автоматическое парирование
+ - Система конфигов, рейдж, легит
 
+
+
+
+
+
+
+тяжелая атака
+Pawn->GameSceneNode + 0x4D0
+
+
+-insecure -console -novid
 
 
 Все консольные команды DEADLOCK
@@ -15,7 +38,40 @@ host_timescale 1
 l_ent_actornames
 
 
+https://www.youtube.com/watch?v=VPskGHjG-bA
+Cпуфер:
+Закрыть стим
+C:\Program Files (x86)\Steam
+appcache
+userdata
+ssfn
+C:\Users\Nagibskiy\AppData\Roaming
+C:\Users\Nagibskiy\AppData\Local\Steam
+Чистим реестр
 
+valve
+steam
+deadlock
+project8
+Citadel
+
+
+TMAC v6
+Меняем мак адреса все что можно
+
+Меняем в реестре ID
+machineGUID
+https://www.guidgen.com/
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography
+MachineGuid
+4c14a75a-ee26-47ba-bb97-13342f911e14
+
+Меняем ид диска
+Hwid Changer.exe
+ee26-47ba
+A046-53F0 было
+
+Перезагружаемся
 
 */
 
@@ -232,8 +288,71 @@ UpCfg:
 return
 
 HwidSpoofer:
+
+
+
+; MsgBox, MAC-адреса всех адаптеров были успешно изменены.
+
+
+MsgBox 1
+return
+
+; Получаем SID текущего пользователя
+UserSID := GetUserSID()
+if (UserSID = "") {
+    MsgBox, 16, Ошибка, Не удалось получить SID пользователя.
+    return
+}
+
+
+
 MsgBox,,, Пока ничего нет,1
 return
+
+
+
+
+
+
+
+
+GetUserSID() {
+    SID := ""
+    for obj in ComObjGet("winmgmts:\\.\root\cimv2").ExecQuery("SELECT * FROM Win32_UserAccount WHERE Name = '" A_UserName "'") {
+        if (obj.SID != "") {
+            SID := obj.SID
+            break
+        }
+    }
+    return SID
+}
+
+RegDeleteKey(KeyPath) {
+    try {
+        RegDelete, %KeyPath%
+        MsgBox, 0, Успех, Ключ %KeyPath% успешно удален.
+    } catch {
+        MsgBox, 16, Ошибка, Не удалось удалить ключ %KeyPath%.
+    }
+}
+RegDeleteValue(KeyPath, ValueName) {
+    try {
+        RegDelete, %KeyPath%, %ValueName%
+        MsgBox, 0, Успех, Параметр %ValueName% в ключе %KeyPath% успешно удален.
+    } catch {
+        MsgBox, 16, Ошибка, Не удалось удалить параметр %ValueName% в ключе %KeyPath%.
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 Exit:
     Gui, Destroy

@@ -1,33 +1,44 @@
 ﻿
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-HeroBones := {}
-HeroBones[1] := {name: "Infernus", head: 30, neck: 29}
-HeroBones[2] := {name: "Seven", head: 14, neck: 13}
-HeroBones[3] := {name: "Vindicta", head: 7, neck: 6}
-HeroBones[4] := {name: "LadyGeist", head: 11, neck: 10}
-HeroBones[6] := {name: "Abrams", head: 7, neck: 6}
-HeroBones[7] := {name: "Wraith", head: 7, neck: 6}
-HeroBones[8] := {name: "McGinnis", head: 7, neck: 6}
-HeroBones[10] := {name: "Paradox", head: 8, neck: 7}
-HeroBones[11] := {name: "Dynamo", head: 13, neck: 12}
-HeroBones[12] := {name: "Kelvin", head: 12, neck: 11}
-HeroBones[13] := {name: "Haze", head: 8, neck: 7}
-HeroBones[14] := {name: "Holliday", head: 0, neck: 0}
-HeroBones[15] := {name: "Bebop", head: 6, neck: 5}
-HeroBones[17] := {name: "GreyTalon", head: 17, neck: 18}
-HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9}
-HeroBones[19] := {name: "Shiv", head: 13, neck: 12}
-HeroBones[20] := {name: "Ivy", head: 13, neck: 12}
-HeroBones[25] := {name: "Warden", head: 11, neck: 10}
-HeroBones[27] := {name: "Yamato", head: 35, neck: 34}
-HeroBones[31] := {name: "Lash", head: 12, neck: 11}
-HeroBones[35] := {name: "Viscous", head: 7, neck: 6}
-HeroBones[48] := {name: "Wrecker", head: 0, neck: 0}
-HeroBones[50] := {name: "Pocket", head: 13, neck: 12}
-HeroBones[52] := {name: "Mirage", head: 8, neck: 7}
-HeroBones[55] := {name: "Dummy", head: 0, neck: 0}
+; HeroID := 52  ; Присваиваем значение для тестирования
 
+HeroBones := {}
+HeroBones[1] := {name: "Infernus", head: 30, neck: 29, body: 17}
+HeroBones[2] := {name: "Seven", head: 14, neck: 13, body: 11}
+HeroBones[3] := {name: "Vindicta", head: 7, neck: 6, body: 5}
+HeroBones[4] := {name: "LadyGeist", head: 11, neck: 10, body: 9}
+HeroBones[6] := {name: "Abrams", head: 7, neck: 6, body: 5}
+HeroBones[7] := {name: "Wraith", head: 7, neck: 6, body: 5}
+HeroBones[8] := {name: "McGinnis", head: 7, neck: 6, body: 5}
+HeroBones[10] := {name: "Paradox", head: 8, neck: 7, body: 13}
+HeroBones[11] := {name: "Dynamo", head: 13, neck: 12, body: 16}
+HeroBones[12] := {name: "Kelvin", head: 12, neck: 11, body: 10}
+HeroBones[13] := {name: "Haze", head: 8, neck: 7, body: 5}
+HeroBones[14] := {name: "Holliday", head: 0, neck: 0, body: 0}
+HeroBones[15] := {name: "Bebop", head: 6, neck: 5, body: 4}
+HeroBones[17] := {name: "GreyTalon", head: 17, neck: 18, body: 15}
+HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9, body: 15}
+HeroBones[19] := {name: "Shiv", head: 13, neck: 12, body: 10}
+HeroBones[20] := {name: "Ivy", head: 13, neck: 12, body: 18}
+HeroBones[25] := {name: "Warden", head: 11, neck: 10, body: 9}
+HeroBones[27] := {name: "Yamato", head: 35, neck: 34, body: 17}
+HeroBones[31] := {name: "Lash", head: 12, neck: 11, body: 10}
+HeroBones[35] := {name: "Viscous", head: 7, neck: 6, body: 5}
+HeroBones[48] := {name: "Wrecker", head: 0, neck: 0, body: 0}
+HeroBones[50] := {name: "Pocket", head: 13, neck: 12, body: 11}
+HeroBones[52] := {name: "Mirage", head: 8, neck: 7, body: 6}
+HeroBones[55] := {name: "Dummy", head: 0, neck: 0, body: 0}
+
+; SelectBone := HeroBones[HeroID].body
+; msgbox % SelectBone
+
+; if (HeroBones.HasKey(HeroID)) {
+    ; SelectBone := HeroBones[HeroID].body
+    ; MsgBox % "Selected Bone: " SelectBone
+; } else {
+    ; MsgBox % "HeroID " HeroID " not found in HeroBones."
+; }
 
 
 #NoEnv
@@ -58,6 +69,12 @@ IniRead, BoneMode, %iniFile%, Settings, BoneMode, 1
 IniRead, headOrneck, %iniFile%, Settings, headOrneck, 1
 IniRead, circleColor, %iniFile%, Settings, circleColor, 0x8FFF0000
 IniRead, thickness, %iniFile%, Settings, thickness, 1
+IniRead, HeadOrNeckOrBody, %iniFile%, Settings, HeadOrNeckOrBody, 1
+IniRead, key_HeadOrNeckOrBody, %iniFile%, Settings, key_HeadOrNeckOrBody, Numpad0
+Hotkey, *~$%key_HeadOrNeckOrBody%, LabelHeadOrNeckOrBody, on 	;Приостановить-возобновить
+
+
+
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -92,6 +109,7 @@ baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
+currentTarget := false
 Loop
 {
 	if WriteMode
@@ -103,7 +121,7 @@ Loop
 		Sleep %SleepCpu%
 		Sleep 1
 	}
-	KeyWait, %key_aim%, D T3
+	; KeyWait, %key_aim%, D T3
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -173,6 +191,10 @@ Loop
 		
 		VarStart_time := A_TickCount
 	}
+	
+	
+	if (!currentTarget)
+    {
 	Kramindex := 0
 	bones := []
 	distances := []
@@ -184,24 +206,157 @@ Loop
 		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 		MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
-		HeroID := 1337flex.Read(ControllerBase + offsets.m_heroid,"int")
-		DormantVar := 1337flex.Read(ControllerBase + offsets.m_bDormant,"int")
+		HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
+		DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 		if (TeamNum != MyTeamIs)
 		{
-			if DormantVar = 1
+			if DormantVar = 256
 			{
-				Pawn := BubaArray2[Kramindex]
 				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
-				
 				if BoneMode
 				{
-				if headOrneck
-				SelectBone := HeroBones[HeroID].head
+					if HeadOrNeckOrBody = 1
+					SelectBone := HeroBones[HeroID].head
+					if HeadOrNeckOrBody = 2
+					SelectBone := HeroBones[HeroID].neck
+					if HeadOrNeckOrBody = 3
+					SelectBone := HeroBones[HeroID].body
+					if (SelectBone > 0)
+					{
+						enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
+						enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
+						enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
+					}
+					else
+					{
+						highestBoneIndex := -1
+						highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
+						i := 0
+						while (i < 64)
+						{
+							BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
+							if (BoneZLocation > highestBoneZ)
+							{
+								highestBoneZ := BoneZLocation
+								highestBoneIndex := i
+							}
+							i++
+						}
+						if (highestBoneIndex >= 0)
+						{
+							enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
+							enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
+							enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
+						}
+					}
+				}
 				else
-				SelectBone := HeroBones[HeroID].neck
-				if SelectBone
 				{
+					highestBoneIndex := -1
+					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
+					i := 0
+					while (i < 64)
+					{
+						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
+						if (BoneZLocation > highestBoneZ)
+						{
+							highestBoneZ := BoneZLocation
+							highestBoneIndex := i
+						}
+						i++
+					}
+					if (highestBoneIndex >= 0)
+					{
+						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
+						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
+						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
+					}
+				}
+				if (enemyXLocation != 0)
+				{
+					arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight)
+					if (arr) ; Если цель видна на экране
+					{
+						xpos1 := arr[1]
+						ypos1 := arr[2]
+						; Получаем центр экрана
+						centerX := A_ScreenWidth / 2
+						centerY := A_ScreenHeight / 2
+						; Вычисляем смещение от центра экрана до цели
+						deltaX := (xpos1 - centerX)
+						deltaY := (ypos1 - centerY)
+						; Вычисляем расстояние до цели на экране
+						distance := Sqrt(deltaX**2 + deltaY**2)
+						; Добавляем кость в массив, если она находится в пределах видимого диапазона захвата
+						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
+						{
+							; msgbox % Pawn
+							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation, Pawn, ControllerBase])
+						}
+					}
+				}
+			}
+		}
+	}
+	; Заполняем массив расстояний и костей
+	for index, bone in bones
+	{
+		boneX := bone[1]
+		boneY := bone[2]
+		boneZ := bone[3]
+		inIndexX := bone[4]
+		inIndexController := bone[5]
+		dist := getDistance(boneX, boneY, boneZ)
+		distances.Push([dist, bone, inIndexX, inIndexController])
+	}
+	Sort, distances, D
+	closestPindex := ""
+	closestBone := ""
+	closestDistance := -1  ; Начальное значение, которое всегда будет меньше истинного расстояния
+	for index, item in distances
+	{
+		distance := item[1]
+		bone := item[2]
+		inPindex := item[3]
+		inIndexContro := item[4]
+		if (closestDistance = -1 || distance < closestDistance)
+		{
+			closestPindex := inPindex
+			closestBone := bone
+			closestController := inIndexContro
+			closestDistance := distance
+		}
+	}
+    
+    }
+
+	if !GetKeyState(key_aim, "P")
+	{
+	currentTarget := false
+	}
+
+	
+	if (closestBone != "" && GetKeyState(key_aim, "P"))
+	{
+		currentTarget := true
+		DormantVar := 1337flex.Read(closestPindex + offsets.m_lifeState,"int")
+		if DormantVar = 256
+		{
+				HeroID := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
+				GameSceneNode := 1337flex.getAddressFromOffsets(closestPindex + offsets.m_pGameSceneNode, 0x0)
+				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+				if BoneMode
+				{
+				if HeadOrNeckOrBody = 1
+				SelectBone := HeroBones[HeroID].head
+				if HeadOrNeckOrBody = 2
+				SelectBone := HeroBones[HeroID].neck
+				if HeadOrNeckOrBody = 3
+				SelectBone := HeroBones[HeroID].body
+				if (SelectBone > 0)
+				{
+				
 					enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
 					enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
 					enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
@@ -251,58 +406,14 @@ Loop
 						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
 					}
 				}
-				if (enemyXLocation != 0)
-				{
-					arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight)
-					if (arr) ; Если цель видна на экране
-					{
-						xpos1 := arr[1]
-						ypos1 := arr[2]
-						; Получаем центр экрана
-						centerX := A_ScreenWidth / 2
-						centerY := A_ScreenHeight / 2
-						; Вычисляем смещение от центра экрана до цели
-						deltaX := (xpos1 - centerX)
-						deltaY := (ypos1 - centerY)
-						; Вычисляем расстояние до цели на экране
-						distance := Sqrt(deltaX**2 + deltaY**2)
-						; Добавляем кость в массив, если она находится в пределах видимого диапазона захвата
-						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
-						{
-							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation])
-						}
-					}
-				}
-			}
 		}
-	}
-	; Заполняем массив расстояний и костей
-	for index, bone in bones
-	{
-		boneX := bone[1]
-		boneY := bone[2]
-		boneZ := bone[3]
-		dist := getDistance(boneX, boneY, boneZ)
-		distances.Push([dist, bone])
-	}
-	Sort, distances, D
-	closestBone := ""
-	closestDistance := -1  ; Начальное значение, которое всегда будет меньше истинного расстояния
-	for index, item in distances
-	{
-		distance := item[1]
-		bone := item[2]
-		if (closestDistance = -1 || distance < closestDistance)
+		else
 		{
-			closestBone := bone
-			closestDistance := distance
+		currentTarget := false
 		}
-	}
-	if (closestBone != "")
-	{
 		if !WriteMode
 		{
-			if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
+			if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight))
 			{
 				xpos1 := arr[1]
 				ypos1 := arr[2]
@@ -321,7 +432,7 @@ Loop
 			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
 			pitch := 0
 			yaw := 0
-			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
+			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, enemyXLocation, enemyYLocation, enemyZLocation, yaw, pitch)
 			if camera_posXcam
 			{
 				1337flex.write(baseAddress + CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
@@ -330,7 +441,10 @@ Loop
 		}
 		}
 	}
-
+	else
+	{
+	currentTarget := false
+	}
 }
 return
 
@@ -432,6 +546,30 @@ HexFormat(address) {
     return hexAddress
 }
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
+
+LabelHeadOrNeckOrBody:
+    HeadOrNeckOrBody++
+    if (HeadOrNeckOrBody > 3)  ; Если значение больше 3, сбрасываем на 0
+        HeadOrNeckOrBody := 1
+    if HeadOrNeckOrBody = 1
+	{
+	Tooltip, Head
+    Sleep, 500
+    Tooltip
+	}
+	if HeadOrNeckOrBody = 2
+	{
+	Tooltip, Neck
+    Sleep, 500
+    Tooltip
+	}
+	if HeadOrNeckOrBody = 3
+	{
+	Tooltip, Body
+    Sleep, 500
+    Tooltip
+	}
+return
 
 MetkaMenu3:
 Run, notepad.exe "%IniFile%"

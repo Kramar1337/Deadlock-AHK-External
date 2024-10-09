@@ -62,7 +62,8 @@ baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 #include %A_ScriptDir%\data\offsetsdump.ahk
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
-VarStart_time := A_TickCount
+VarStart_time = 0
+ReloadTime = 120000
 Loop
 {
 	if WriteMode
@@ -74,6 +75,19 @@ Loop
 		Sleep %SleepCpu%
 		Sleep 1
 	}
+	IfWinActive, ahk_exe project8.exe
+	{
+	game2.BeginDraw()
+	centerX := A_ScreenWidth / 2
+	centerY := A_ScreenHeight / 2
+	game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
+	game2.EndDraw()
+	}
+	else
+	{
+	game2.BeginDraw()
+	game2.EndDraw()
+	}
 	KeyWait, %key_aim%, D T3
 	j=0
 	ViewMatrix:=Array()
@@ -83,7 +97,7 @@ Loop
 		j++
 	}
 	VarElapsed_time := A_TickCount - VarStart_time
-	if (VarElapsed_time > 3500) ;3000
+	if (VarElapsed_time > ReloadTime) ;3000
 	{
 		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
@@ -160,7 +174,7 @@ Loop
 	{
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
-		DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
+		DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
 			if (DormantVar == "0")
 			{
 			enemyXLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin)
