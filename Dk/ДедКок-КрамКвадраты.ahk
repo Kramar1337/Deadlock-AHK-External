@@ -182,7 +182,7 @@ Loop
 			{
 			BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
 			i := 0
-				while (i < 20)
+				while (i < 64)
 				{
 					BoneXLocation := 1337flex.Read(BoneArray + i * 32, "float")
 					BoneYLocation := 1337flex.Read(BoneArray + i * 32+0x4, "float")
