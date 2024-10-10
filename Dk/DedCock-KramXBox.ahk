@@ -37,6 +37,7 @@ extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 
 textWidth2 := 80  ; Примерная ширина текста
 textHeight2 := 80  ; Примерная высота текста
 extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aRight dsFF000000 dsx1 dsy1 olFF000000"
+bone64 = 64
 
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray, NoStandard
@@ -182,7 +183,7 @@ Loop
 			{
 			BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
 			i := 0
-				while (i < 64)
+				while (i < bone64)
 				{
 					BoneXLocation := 1337flex.Read(BoneArray + i * 32, "float")
 					BoneYLocation := 1337flex.Read(BoneArray + i * 32+0x4, "float")
@@ -487,8 +488,6 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		else
 		{
 		subGoldNetWorth := myGoldNetWorth - GoldNetWorth
-		; msgbox % myGoldNetWorth
-		; msgbox % GoldNetWorth
 		if (myGoldNetWorth < GoldNetWorth)
 		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "15", "0x00FF0000", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
 		else

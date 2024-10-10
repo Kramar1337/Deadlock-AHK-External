@@ -1,44 +1,34 @@
 ﻿
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-; HeroID := 52  ; Присваиваем значение для тестирования
 
 HeroBones := {}
-HeroBones[1] := {name: "Infernus", head: 30, neck: 29, body: 17}
-HeroBones[2] := {name: "Seven", head: 14, neck: 13, body: 11}
-HeroBones[3] := {name: "Vindicta", head: 7, neck: 6, body: 5}
-HeroBones[4] := {name: "LadyGeist", head: 11, neck: 10, body: 9}
+HeroBones[1] := {name: "Infernus", head: 30, neck: 29, body: 11}
+HeroBones[2] := {name: "Seven", head: 14, neck: 11, body: 10}
+HeroBones[3] := {name: "Vindicta", head: 7, neck: 8, body: 4}
+HeroBones[4] := {name: "LadyGeist", head: 11, neck: 12, body: 7}
 HeroBones[6] := {name: "Abrams", head: 7, neck: 6, body: 5}
 HeroBones[7] := {name: "Wraith", head: 7, neck: 6, body: 5}
-HeroBones[8] := {name: "McGinnis", head: 7, neck: 6, body: 5}
-HeroBones[10] := {name: "Paradox", head: 8, neck: 7, body: 13}
+HeroBones[8] := {name: "McGinnis", head: 7, neck: 5, body: 4}
+HeroBones[10] := {name: "Paradox", head: 8, neck: 9, body: 5}
 HeroBones[11] := {name: "Dynamo", head: 13, neck: 12, body: 16}
-HeroBones[12] := {name: "Kelvin", head: 12, neck: 11, body: 10}
-HeroBones[13] := {name: "Haze", head: 8, neck: 7, body: 5}
+HeroBones[12] := {name: "Kelvin", head: 12, neck: 13, body: 9}
+HeroBones[13] := {name: "Haze", head: 8, neck: 5, body: 4}
 HeroBones[14] := {name: "Holliday", head: 0, neck: 0, body: 0}
-HeroBones[15] := {name: "Bebop", head: 6, neck: 5, body: 4}
-HeroBones[17] := {name: "GreyTalon", head: 17, neck: 18, body: 15}
+HeroBones[15] := {name: "Bebop", head: 6, neck: 4, body: 3}
+HeroBones[17] := {name: "GreyTalon", head: 17, neck: 25, body: 15}
 HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9, body: 15}
-HeroBones[19] := {name: "Shiv", head: 13, neck: 12, body: 10}
-HeroBones[20] := {name: "Ivy", head: 13, neck: 12, body: 18}
-HeroBones[25] := {name: "Warden", head: 11, neck: 10, body: 9}
-HeroBones[27] := {name: "Yamato", head: 35, neck: 34, body: 17}
-HeroBones[31] := {name: "Lash", head: 12, neck: 11, body: 10}
-HeroBones[35] := {name: "Viscous", head: 7, neck: 6, body: 5}
+HeroBones[19] := {name: "Shiv", head: 13, neck: 14, body: 9}
+HeroBones[20] := {name: "Ivy", head: 13, neck: 10, body: 9}
+HeroBones[25] := {name: "Warden", head: 11, neck: 12, body: 9}
+HeroBones[27] := {name: "Yamato", head: 35, neck: 18, body: 17}
+HeroBones[31] := {name: "Lash", head: 12, neck: 10, body: 9}
+HeroBones[35] := {name: "Viscous", head: 7, neck: 5, body: 4}
 HeroBones[48] := {name: "Wrecker", head: 0, neck: 0, body: 0}
-HeroBones[50] := {name: "Pocket", head: 13, neck: 12, body: 11}
-HeroBones[52] := {name: "Mirage", head: 8, neck: 7, body: 6}
+HeroBones[50] := {name: "Pocket", head: 13, neck: 11, body: 10}
+HeroBones[52] := {name: "Mirage", head: 8, neck: 9, body: 5}
 HeroBones[55] := {name: "Dummy", head: 0, neck: 0, body: 0}
 
-; SelectBone := HeroBones[HeroID].body
-; msgbox % SelectBone
-
-; if (HeroBones.HasKey(HeroID)) {
-    ; SelectBone := HeroBones[HeroID].body
-    ; MsgBox % "Selected Bone: " SelectBone
-; } else {
-    ; MsgBox % "HeroID " HeroID " not found in HeroBones."
-; }
 
 
 #NoEnv
@@ -109,6 +99,7 @@ baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
+LastTime1 := A_TickCount
 currentTarget := false
 Loop
 {
@@ -133,7 +124,6 @@ Loop
 	if (VarElapsed_time > 3000) ;3000
 	{
 		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
-		; msgbox % HexFormat(baseAddress + dwLocalPlayerPawn)
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -185,10 +175,6 @@ Loop
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
-		
-		; msgbox % HexFormat(baseAddress + CCameraManager + 0x28) ;CCitadel_ThirdPersonCamera
-		; client.dll+0x1F46230
-		
 		VarStart_time := A_TickCount
 	}
 	
@@ -216,8 +202,28 @@ Loop
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
 				if BoneMode
 				{
-					if HeadOrNeckOrBody = 1
-					SelectBone := HeroBones[HeroID].head
+				
+	if HeadOrNeckOrBody = 1
+	{
+    CurrentTime1 := A_TickCount
+    ElapsedTime1 := CurrentTime1 - LastTime1
+    if (ElapsedTime1 >= 500) 
+	{
+        LastTime1 := CurrentTime1
+        Random, HitChance, 1, 100
+        if (HitChance <= 70) 
+		{
+            SelectBone := HeroBones[HeroID].head
+        } 
+		else 
+		{
+			SelectBone := HeroBones[HeroID].neck
+        }
+    }			
+	}			
+				
+					; if HeadOrNeckOrBody = 1
+					; SelectBone := HeroBones[HeroID].head
 					if HeadOrNeckOrBody = 2
 					SelectBone := HeroBones[HeroID].neck
 					if HeadOrNeckOrBody = 3
@@ -280,18 +286,13 @@ Loop
 					{
 						xpos1 := arr[1]
 						ypos1 := arr[2]
-						; Получаем центр экрана
 						centerX := A_ScreenWidth / 2
 						centerY := A_ScreenHeight / 2
-						; Вычисляем смещение от центра экрана до цели
 						deltaX := (xpos1 - centerX)
 						deltaY := (ypos1 - centerY)
-						; Вычисляем расстояние до цели на экране
 						distance := Sqrt(deltaX**2 + deltaY**2)
-						; Добавляем кость в массив, если она находится в пределах видимого диапазона захвата
 						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
 						{
-							; msgbox % Pawn
 							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation, Pawn, ControllerBase])
 						}
 					}
@@ -348,8 +349,27 @@ Loop
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
 				if BoneMode
 				{
-				if HeadOrNeckOrBody = 1
-				SelectBone := HeroBones[HeroID].head
+				
+	if HeadOrNeckOrBody = 1
+	{
+    CurrentTime1 := A_TickCount
+    ElapsedTime1 := CurrentTime1 - LastTime1
+    if (ElapsedTime1 >= 500) 
+	{
+        LastTime1 := CurrentTime1
+        Random, HitChance, 1, 100
+        if (HitChance <= 70) 
+		{
+            SelectBone := HeroBones[HeroID].head
+        } 
+		else 
+		{
+			SelectBone := HeroBones[HeroID].neck
+        }
+    }
+	}	
+				; if HeadOrNeckOrBody = 1
+				; SelectBone := HeroBones[HeroID].head
 				if HeadOrNeckOrBody = 2
 				SelectBone := HeroBones[HeroID].neck
 				if HeadOrNeckOrBody = 3

@@ -2,12 +2,9 @@
 
 Запланировано:
  - HWID Changer
- - Аимбот не сбивается с таргета
  - Нейм ченжер фикс
  - Отображение крипов
  - Отображение коробок
- - Индексы шеи, туловища
- - Переключение аимбота на туловище "NumPad 0"
  - Переключение отображения "F1" - герои, "F2" - герои и крипы, "F3" - герои, крипы, коробки
  - Плавная наводка аимбота в режиме записи
  - Автоматическое парирование
@@ -215,41 +212,28 @@ IfMsgBox OK, {
 } Else IfMsgBox Cancel, {
 Return
 }
-    ; Получаем путь к текущему скрипту
-    scriptPath := A_ScriptDir
-    ; Получаем имя текущего скрипта
-    currentScript := A_ScriptName
+; Основной скрипт
+scriptPath := A_ScriptDir ; Путь к текущему скрипту
+currentScript := A_ScriptName ; Имя текущего скрипта
 
-    ; Подсчитываем количество файлов в папке
-    fileCount := 0
-    Loop, %scriptPath%\*
-    {
-        if (A_LoopFileName != currentScript && !A_LoopFileAttrib.Contains("D")) ; Проверяем, что это не директория
-        {
-            fileCount++
+; Переименовываем файлы в директории
+Loop, %scriptPath%\* ; Проходим по всем файлам в директории
+{
+    ; Пропускаем текущий скрипт
+    if (A_LoopFileName != currentScript && !A_LoopFileAttrib.Contains("D")) { ; Проверяем, что это не директория
+        fileNameWithoutExt := RegExReplace(A_LoopFileName, "\..*$") ; Убираем расширение файла
+        fileExt := A_LoopFileExt ; Сохраняем расширение
+        randomPrefix := GenerateRandomPrefix()
+        if (StrLen(fileNameWithoutExt) > 5) {
+            modifiedName := ModifyFileName(fileNameWithoutExt) ; Изменяем каждый третий символ на цифру
+            newName := randomPrefix . modifiedName ; Собираем новое имя
+        } else {
+            newName := randomPrefix
         }
+        newPath := scriptPath "\" newName "." fileExt
+        FileMove, %A_LoopFileFullPath%, %newPath%
     }
-
-    ; Проверка: если файлов больше 10, выводим ошибку
-    if (fileCount > 10)
-    {
-        MsgBox, 16, Error, Too many files in the folder! (More than 10 files)
-        return
-    }
-
-    ; Переименовываем файлы в директории
-    Loop, %scriptPath%\*
-    {
-        ; Пропускаем текущий скрипт
-        if (A_LoopFileName != currentScript && !A_LoopFileAttrib.Contains("D")) ; Проверяем, что это не директория
-        {
-            newName := GenerateRandomName(16) ; Генерируем новое имя длиной 16 символов
-            newPath := scriptPath "\" newName "." A_LoopFileExt ; Формируем новый путь с расширением
-
-            ; Переименовываем файл
-            FileMove, %A_LoopFileFullPath%, %newPath%
-        }
-    }
+}
 	MsgBox,,, All files renamed except for this script, 1
 return
 
@@ -288,62 +272,47 @@ UpCfg:
 return
 
 HwidSpoofer:
-
-
-
-; MsgBox, MAC-адреса всех адаптеров были успешно изменены.
-
-
-MsgBox 1
-return
-
-; Получаем SID текущего пользователя
-UserSID := GetUserSID()
-if (UserSID = "") {
-    MsgBox, 16, Ошибка, Не удалось получить SID пользователя.
-    return
-}
-
-
-
 MsgBox,,, Пока ничего нет,1
 return
 
 
 
+; Функция для генерации первых 5 случайных символов
+GenerateRandomPrefix() {
+    characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    randomPrefix := ""
+    Loop, 5 {
+        randomPrefix .= SubStr(characters, Random(1, StrLen(characters)), 1)
+    }
+    return randomPrefix
+}
 
-
-
-
-
-GetUserSID() {
-    SID := ""
-    for obj in ComObjGet("winmgmts:\\.\root\cimv2").ExecQuery("SELECT * FROM Win32_UserAccount WHERE Name = '" A_UserName "'") {
-        if (obj.SID != "") {
-            SID := obj.SID
-            break
+ModifyFileName(name) {
+    newName := ""
+    ; Получаем длину имени
+    length := StrLen(name)
+    
+    Loop, %length% {
+        index := A_Index
+        char := SubStr(name, index, 1)
+        
+        ; Проверяем, является ли индекс третьим символом (т.е. 3, 6, 9 и т.д.)
+        if (Mod(index, 4) = 0 && index > 5) { 
+            ; Заменяем на случайную цифру
+            randomDigit := Random(0, 9)
+            newName .= randomDigit
+        } else {
+            newName .= char
         }
     }
-    return SID
+
+    return newName
 }
 
-RegDeleteKey(KeyPath) {
-    try {
-        RegDelete, %KeyPath%
-        MsgBox, 0, Успех, Ключ %KeyPath% успешно удален.
-    } catch {
-        MsgBox, 16, Ошибка, Не удалось удалить ключ %KeyPath%.
-    }
+Random(min, max) {
+    Random, rand, min, max
+    return rand
 }
-RegDeleteValue(KeyPath, ValueName) {
-    try {
-        RegDelete, %KeyPath%, %ValueName%
-        MsgBox, 0, Успех, Параметр %ValueName% в ключе %KeyPath% успешно удален.
-    } catch {
-        MsgBox, 16, Ошибка, Не удалось удалить параметр %ValueName% в ключе %KeyPath%.
-    }
-}
-
 
 
 
