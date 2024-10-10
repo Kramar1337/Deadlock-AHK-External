@@ -1,4 +1,4 @@
-# Deadlock-AHK-External v0.3
+# Deadlock-AHK-External v0.31
 
 ![hippo](https://i.imgur.com/2LV7HZV.jpeg)
 
@@ -126,7 +126,7 @@ captureRange=150
 SleepCpu=0
 ; 1 - кости из базы, 0 - выбрать самую верхнюю кость(промахи, например, поднятые руки выше уровня головы)
 BoneMode=1
-; 1 - Голова, 2 - Шея, 3 - Тело
+; 1 - Голова и Шея рандомно 70/30%, 2 - Шея, 3 - Тело
 HeadOrNeckOrBody=1
 ; Цвет (0xAARRGGBB)
 circleColor=0x8FFF0000
@@ -163,7 +163,7 @@ ESPboxEnemy=1
 ; рекомендую 20. для идеальной плавности 0
 ESPSleepCpu=1
 ; показывать индексы костей для настройки ДедКок-КрамАимбот.ahk
-ESPboneDBGmode=0 	
+ESPboneDBGmode=0
 
 ;===============================================================================
 ; Настройки Radar ДедКок-КрамРадар.ahk
