@@ -39,20 +39,21 @@ gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 
 StartLabelStart:
-sleep 300
+sleep 1500
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+if baseAddress
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+}
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 
-
 vecPunchAngleOld = 0
-
 Loop
 {
 	Sleep 1
-	LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+	LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0) ;мы в игре, а не в лобби?
 	if !(LocalPlayer)
 	Goto StartLabelStart
 	pitch := 0
@@ -60,29 +61,21 @@ Loop
 	;==============Локальный игрок
 	ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 	pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
-	; msgbox % HexFormat(ControllerBase1)
 	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 	Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 
-
-	; msgbox % HexFormat(baseAddress + CCameraManager + 0x28)
-	; msgbox % HexFormat(Pawn1 + offsets.m_pCameraServices)
 	pitch := 1337flex.Read(baseAddress + CCameraManager + 0x28, "Float", 0x44)
 	vecPunchAngle := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "Float", offsets.m_vecPunchAngle) 	;RCS
 	vecPunchAngleOld := vecPunchAngle - vecPunchAngleOld
 	if (vecPunchAngle < 0)
 	{
 		1337flex.write(baseAddress + CCameraManager + 0x28, pitch - vecPunchAngleOld, "Float", 0x44) 		;вертикаль
-		; tooltip % pitch - vecPunchAngleOld
 		vecPunchAngleOld := vecPunchAngle
 	}
 	else
 	{
 		vecPunchAngleOld = 0
 	}
-
-
-
 
 }
 
@@ -95,13 +88,8 @@ AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfgh
 
 
 HexFormat(address) {
-    ; Преобразование адреса в 16-ричный формат без "0x"
     hexAddress := Format("{:X}", address)
-    
-    ; Копирование адреса в буфер обмена
     Clipboard := hexAddress
-    
-    ; Возвращаем 16-ричный адрес
     return hexAddress
 }
 

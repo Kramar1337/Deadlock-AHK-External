@@ -59,10 +59,14 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+if baseAddress
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+}
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time = 0
+VarStart_time2 = 0
 ReloadTime = 120000
 Loop
 {
@@ -75,20 +79,7 @@ Loop
 		Sleep %SleepCpu%
 		Sleep 1
 	}
-	IfWinActive, ahk_exe project8.exe
-	{
-	game2.BeginDraw()
-	centerX := A_ScreenWidth / 2
-	centerY := A_ScreenHeight / 2
-	game2.DrawEllipse(centerX, centerY, captureRange, captureRange, circleColor, thickness)
-	game2.EndDraw()
-	}
-	else
-	{
-	game2.BeginDraw()
-	game2.EndDraw()
-	}
-	KeyWait, %key_aim%, D T3
+	KeyWait, %key_aim%, D T1
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -96,20 +87,26 @@ Loop
 		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
-	VarElapsed_time := A_TickCount - VarStart_time
-	if (VarElapsed_time > ReloadTime) ;3000
+	
+	VarElapsed_time2 := A_TickCount - VarStart_time2
+	if (VarElapsed_time2 > 500)
 	{
-		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
-		if !(LocalPlayer)
-		{
-			game2.BeginDraw()
-			game2.EndDraw()
-			Goto StartLabelStart
-		}
-		else
-		{
+	
+	LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0) ;мы в игре, а не в лобби?
+	if !(LocalPlayer)
+	{
+		sleep 1500
+		game2.EndDraw()
+		game2.BeginDraw()
+		game2.EndDraw()
+		VarStart_time = 0
+		Goto StartLabelStart
+	}
+	else
+	{
 		IfWinActive, ahk_exe project8.exe
 		{
+			game2.EndDraw()
 			game2.BeginDraw()
 			centerX := A_ScreenWidth / 2
 			centerY := A_ScreenHeight / 2
@@ -119,43 +116,31 @@ Loop
 		}
 		else
 		{
+			game2.EndDraw()
 			game2.BeginDraw()
 			game2.EndDraw()
 		}
-		}
-
+	}
+	VarStart_time2 := A_TickCount
+	}
+	
+	
+	VarElapsed_time := A_TickCount - VarStart_time
+	if (VarElapsed_time > ReloadTime) ;3000
+	{
 		playerIndex=0
 		BubaArray := []
-		while(playerIndex < 2064)
+		while(playerIndex < 4064)
 		{
 			;==============Энтити лист
 			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
-			; esignerNameString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
+			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
 			if (pEntityString == "CItemXP")
 			{
 			BubaArray.push(ControllerBase)
-				; MsgBoxVar:=HexFormat(ControllerBase)
-				; MsgBox Index - %playerIndex%`n%pEntityString%`n%esignerNameString%`n%MsgBoxVar%
-				; bDormant2 := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant2)
-				; if (bDormant2 == "0")
-				; {
-				; BubaArray.push(ControllerBase)
-				; BubaArray2.push(Pawn)
-				; MsgBox %XCItemXP%`n%YCItemXP%`n%ZCItemXP%`n%bDormant2%
-				; }
-				; FileAppend, Index - %playerIndex%`n%pEntityString%`n%designerNameString%`n%MsgBoxVar%`n------`n, output.txt
 			}
-			; ControllerBase + 0x38, 0x8, 0x10 14 18 	- координаты души моба
-			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin,"float"
-			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x4,"float"
-			; ControllerBase + offsets.m_pGameSceneNode, offsets.m_vecAbsOrigin + 0x8,"float"
-			
-			; ControllerBase + offsets.m_pGameSceneNode, "int", m_bDormant2
-			; ControllerBase + offsets.m_flSimulationTime 	; Время жизни души
-			
 
 			playerIndex++
 		}
@@ -187,15 +172,11 @@ Loop
 					{
 						xpos1 := arr[1]
 						ypos1 := arr[2]
-						; Получаем центр экрана
 						centerX := A_ScreenWidth / 2
 						centerY := A_ScreenHeight / 2
-						; Вычисляем смещение от центра экрана до цели
 						deltaX := (xpos1 - centerX)
 						deltaY := (ypos1 - centerY)
-						; Вычисляем расстояние до цели на экране
 						distance := Sqrt(deltaX**2 + deltaY**2)
-						; Добавляем кость в массив, если она находится в пределах видимого диапазона захвата
 						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
 						{
 							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation])
@@ -294,26 +275,19 @@ AimAtTargetWrite(camX, camY, camZ, enemyX, enemyY, enemyZ, ByRef yaw, ByRef pitc
 ; Функция для перемещения мыши с помощью mouse_event
 MoveMouseBy(deltaX, deltaY) {
     global
-    ; Преобразуем смещения в целые числа
     deltaX := Round(deltaX)
     deltaY := Round(deltaY)
-    ; Используем mouse_event для перемещения мыши
     DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
-; sensitivity := 0.5
 ; Функция для движения мыши к цели с учетом диапазона захвата
 AimAtTarget(targetX, targetY) {
     global
-    ; Определяем центр экрана (прицел)
     centerX := A_ScreenWidth / 2
     centerY := A_ScreenHeight / 2
-    ; Вычисляем смещение от центра экрана до цели
     deltaX := (targetX - centerX)
     deltaY := (targetY - centerY)
-    ; Применяем чувствительность
     deltaX := deltaX * sensitivity + 1
     deltaY := deltaY * sensitivity + 1
-    ; Двигаем мышь к цели
     MoveMouseBy(deltaX, deltaY)
 }
 
@@ -350,13 +324,8 @@ getDistance(x,y,z)
 }
 
 HexFormat(address) {
-    ; Преобразование адреса в 16-ричный формат без "0x"
     hexAddress := Format("{:X}", address)
-    
-    ; Копирование адреса в буфер обмена
     Clipboard := hexAddress
-    
-    ; Возвращаем 16-ричный адрес
     return hexAddress
 }
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"

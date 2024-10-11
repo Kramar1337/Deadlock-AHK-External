@@ -93,18 +93,24 @@ Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
 
 StartLabelStart:
-sleep 300
+sleep 1500
+game.EndDraw()
+game.BeginDraw()
+game.EndDraw()
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+if baseAddress
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+}
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time = 0
 Loop
 {
-sleep 50
+	sleep 50
 	game.BeginDraw()
-sleep 1
+	sleep 1
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -115,9 +121,10 @@ sleep 1
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0) ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
 		{
+			game.EndDraw()
 			game.BeginDraw()
 			game.EndDraw()
 			Goto StartLabelStart
@@ -258,6 +265,12 @@ sleep 1
 					}
 				}
 			}
+			}
+			else
+			{
+				game.EndDraw()
+				game.BeginDraw()
+				game.EndDraw()
 			}
 			}
 		}

@@ -68,7 +68,10 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+if baseAddress
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+}
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time = 0
@@ -93,7 +96,7 @@ Loop
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > ReloadTime) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int")
+		LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		if !(LocalPlayer)
 		{
 			game.EndDraw()
@@ -114,8 +117,8 @@ Loop
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x28, 0x8, 0x0)
-			
+			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
+			; msgbox % HexFormat(ControllerBase)
 			if ModePlayer
 			if (pEntityString == "CCitadelPlayerController")
 			{

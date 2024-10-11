@@ -95,7 +95,10 @@ StartLabelStart:
 sleep 300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
+if baseAddress
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+}
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
@@ -123,7 +126,7 @@ Loop
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
-		LocalPlayer := 1337flex.read(baseAddress + dwLocalPlayerPawn, "Int") ;мы в игре, а не в лобби?
+		LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0) ;мы в игре, а не в лобби?
 		if !(LocalPlayer)
 		{
 			game2.BeginDraw()
@@ -211,7 +214,7 @@ Loop
 	{
         LastTime1 := CurrentTime1
         Random, HitChance, 1, 100
-        if (HitChance <= 70) 
+        if (HitChance <= 60) 
 		{
             SelectBone := HeroBones[HeroID].head
         } 
