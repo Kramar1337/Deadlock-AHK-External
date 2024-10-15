@@ -1,4 +1,4 @@
-# Deadlock-AHK-External v0.32
+# Deadlock-AHK-External v0.33
 
 ![hippo](https://i.imgur.com/2LV7HZV.jpeg)
 
