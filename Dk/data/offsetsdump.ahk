@@ -5,6 +5,7 @@ offset1 := 0x3
 offset2 := 0x7
 dwEntityList := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
 
+
 PatternVar1 := "48 63 C2 48 8D 0D ? ? ? ? 48 C1 E0"
 aPattern := ConvertBytesStringToArray(PatternVar1)
 gameDLL := "client.dll"
@@ -25,3 +26,11 @@ gameDLL := "client.dll"
 offset1 := 0x3
 offset2 := 0x7
 CCameraManager := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
+
+PatternVar1 := "48 8B 05 ? ? ? ? 44 3B 40"
+aPattern := ConvertBytesStringToArray(PatternVar1)
+gameDLL := "client.dll"
+offset1 := 0x3
+offset2 := 0x7
+GlobalVarsBase := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
+

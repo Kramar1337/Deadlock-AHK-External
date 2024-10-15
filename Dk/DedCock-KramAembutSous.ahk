@@ -20,7 +20,7 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 }
 
 IniFile := A_ScriptDir "\data\config.ini"
-IniRead, key_aim, %iniFile%, Settings, soulkey_aim, N
+IniRead, key_aim, %iniFile%, Settings, soulkey_aim, Rbutton
 IniRead, key_aim2, %iniFile%, Settings, key_aim, V
 IniRead, WriteMode, %iniFile%, Settings, soulWriteMode, 1
 IniRead, sensitivity, %iniFile%, Settings, soulsensitivity, 0.5
@@ -29,6 +29,7 @@ IniRead, captureRange, %iniFile%, Settings, soulcaptureRange, 300
 IniRead, SleepCpu, %iniFile%, Settings, soulSleepCpu, 1
 IniRead, circleColor, %iniFile%, Settings, soulcircleColor, 0x6FFFD800
 IniRead, thickness, %iniFile%, Settings, soulthickness, 1
+IniRead, MaxDistAimSoul, %iniFile%, Settings, MaxDistAimSoul, 150
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
@@ -65,12 +66,13 @@ baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
 #include %A_ScriptDir%\data\offsetsdump.ahk
-SetTimer, ReadEntities, 30000
+SetTimer, ReadEntities, 1000
 Gosub, ReadEntities
 }
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time2 = 0
+
 Loop
 {
 	if WriteMode
@@ -82,7 +84,15 @@ Loop
 		Sleep %SleepCpu%
 		Sleep 1
 	}
-	KeyWait, %key_aim%, D T1
+	KeyWait, %key_aim%, D T2
+	if GetKeyState(key_aim, "P")
+	{
+		SetTimer, ReadEntities, Off
+	}
+	else
+	{
+		SetTimer, ReadEntities, 1000
+	}
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -165,6 +175,7 @@ Loop
 		boneY := bone[2]
 		boneZ := bone[3]
 		dist := getDistance(boneX, boneY, boneZ)
+		if (dist < MaxDistAimSoul)
 		distances.Push([dist, bone])
 	}
 	Sort, distances, D
@@ -212,33 +223,34 @@ Loop
 		}
 		}
 	}
-
 }
+
 return
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 
-; 0 - 3000
-; 16000 - 19000
-; 32000 - 35000
-; 48000 - 51000
-; 64000 - 67000
-; 80000 - 83000
-; 96000 - 99000
-; 112000 - 115000
 
 ReadEntities:
 if (!isReading) ; Проверяем, не запущен ли уже процесс чтения
 {
     isReading := true
-
+	
 	LocalPlayer := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0) ;мы в игре, а не в лобби?
 	if LocalPlayer
 	{
+		EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+		EntityListCout := 1337flex.Read(EntityListCout + offsets.dwGameEntitySystem_highestEntityIndex,"int")
 		playerIndex=0
 		BubaArray := []
-		while(playerIndex < 3000)
+		counter1 := 0
+		while(playerIndex < EntityListCout)
 		{
+			counter1++
+			if (counter1 >= 500)
+			{
+				Sleep 1  ; Пауза на 1 миллисекунду
+				counter1 := 0  ; Сброс счётчика
+			}
 			;==============Энтити лист
 			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
@@ -250,110 +262,6 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 			}
 			playerIndex++
 		}
-		playerIndex=16000
-		while(playerIndex < 19000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=32000
-		while(playerIndex < 35000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=48000
-		while(playerIndex < 51000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=64000
-		while(playerIndex < 67000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=80000
-		while(playerIndex < 83000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=96000
-		while(playerIndex < 99000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		playerIndex=112000
-		while(playerIndex < 115000)
-		{
-			;==============Энтити лист
-			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
-			{
-			BubaArray.push(ControllerBase)
-			}
-			playerIndex++
-		}
-		
-		
-		
-		
-		
-		
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -363,7 +271,9 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 	}
 	
     isReading := false
+	; soundbeep
 }
+
 Return
 
 

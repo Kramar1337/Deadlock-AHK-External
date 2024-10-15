@@ -1,5 +1,6 @@
 ﻿class offsets
 {
+static dwGameEntitySystem_highestEntityIndex = 0x1520
 ; C_BasePlayerPawn
 static m_pCameraServices = 0xdb8
 ; CPlayer_CameraServices
@@ -40,6 +41,9 @@ static m_PlayerDataGlobal = 0x770
 static m_nHeroID = 0x1c
 static m_iGoldNetWorth = 0x20
 static m_iAPNetWorth = 0x24
+static m_bUltimateTrained = 0x68
+static m_flUltimateCooldownStart = 0x6c
+static m_flUltimateCooldownEnd = 0x70
 }
 ; Функция для выполнения поиска паттерна и вычисления адреса
 FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2) {

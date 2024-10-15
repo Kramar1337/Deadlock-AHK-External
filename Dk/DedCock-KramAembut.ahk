@@ -61,6 +61,8 @@ IniRead, circleColor, %iniFile%, Settings, circleColor, 0x8FFF0000
 IniRead, thickness, %iniFile%, Settings, thickness, 1
 IniRead, HeadOrNeckOrBody, %iniFile%, Settings, HeadOrNeckOrBody, 1
 IniRead, key_HeadOrNeckOrBody, %iniFile%, Settings, key_HeadOrNeckOrBody, Numpad0
+IniRead, MaxDistAim, %iniFile%, Settings, MaxDistAim, 150
+
 Hotkey, *~$%key_HeadOrNeckOrBody%, LabelHeadOrNeckOrBody, on 	;Приостановить-возобновить
 
 
@@ -206,27 +208,27 @@ Loop
 				if BoneMode
 				{
 				
-	if HeadOrNeckOrBody = 1
-	{
-    CurrentTime1 := A_TickCount
-    ElapsedTime1 := CurrentTime1 - LastTime1
-    if (ElapsedTime1 >= 500) 
-	{
-        LastTime1 := CurrentTime1
-        Random, HitChance, 1, 100
-        if (HitChance <= 60) 
-		{
-            SelectBone := HeroBones[HeroID].head
-        } 
-		else 
-		{
-			SelectBone := HeroBones[HeroID].neck
-        }
-    }			
-	}			
+	; if HeadOrNeckOrBody = 1
+	; {
+    ; CurrentTime1 := A_TickCount
+    ; ElapsedTime1 := CurrentTime1 - LastTime1
+    ; if (ElapsedTime1 >= 500) 
+	; {
+        ; LastTime1 := CurrentTime1
+        ; Random, HitChance, 1, 100
+        ; if (HitChance <= 60) 
+		; {
+            ; SelectBone := HeroBones[HeroID].head
+        ; } 
+		; else 
+		; {
+			; SelectBone := HeroBones[HeroID].neck
+        ; }
+    ; }			
+	; }			
 				
-					; if HeadOrNeckOrBody = 1
-					; SelectBone := HeroBones[HeroID].head
+					if HeadOrNeckOrBody = 1
+					SelectBone := HeroBones[HeroID].head
 					if HeadOrNeckOrBody = 2
 					SelectBone := HeroBones[HeroID].neck
 					if HeadOrNeckOrBody = 3
@@ -312,6 +314,7 @@ Loop
 		inIndexX := bone[4]
 		inIndexController := bone[5]
 		dist := getDistance(boneX, boneY, boneZ)
+		if (dist < MaxDistAim)
 		distances.Push([dist, bone, inIndexX, inIndexController])
 	}
 	Sort, distances, D

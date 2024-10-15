@@ -21,6 +21,9 @@ IniRead, boxEnemy, %iniFile%, Settings, ESPboxEnemy, 1
 IniRead, SleepCpu, %iniFile%, Settings, ESPSleepCpu, 1
 IniRead, boneDBGmode, %iniFile%, Settings, ESPboneDBGmode, 0
 IniRead, key_NetWorthShow, %iniFile%, Settings, ESPkey_NetWorthShow, Alt
+IniRead, LineOrRectangle, %iniFile%, Settings, LineOrRectangle, 1
+IniRead, ESPShowText, %iniFile%, Settings, ESPShowText, 1
+
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
@@ -34,9 +37,7 @@ imageAlpha = 0.7
 textWidth := 20  ; Примерная ширина текста
 textHeight := 20  ; Примерная высота текста
 extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
-textWidth2 := 80  ; Примерная ширина текста
-textHeight2 := 80  ; Примерная высота текста
-extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aRight dsFF000000 dsx1 dsy1 olFF000000"
+
 bone64 = 64
 
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
@@ -119,9 +120,14 @@ Loop
 
 			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
 			; msgbox % HexFormat(ControllerBase)
+			
+			; if (pEntityString == "C_CitadelTeam")
+			; msgbox % HexFormat(ControllerBase)
+			
 			if ModePlayer
 			if (pEntityString == "CCitadelPlayerController")
 			{
+			; msgbox % HexFormat(ControllerBase)
 			BubaArrayEntity.push(ControllerBase)
 			BubaArrayPawn.push(Pawn)
 			NameArrayEntity.push(pEntityString)
@@ -226,9 +232,10 @@ Loop
 							GoldNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
 							APNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
 							; UltimateTrained := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bUltimateTrained,"int")
-							; UltimateCooldownStart := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownStart,"int")
-							; UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"int")
-							
+							; UltimateCooldownStart := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownStart,"float")
+							; UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"float")
+							; TheTime := 1337flex.Read(baseAddress + GlobalVarsBase, "float", 0x0)
+							; tooltip %UltimateTrained%`n%UltimateCooldownStart%`n%UltimateCooldownEnd%`n%TheTime%
 							DrawESP(xpos1, ypos1, xpos2, ypos2, dist, 0)
 							}
 						}
@@ -455,10 +462,46 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
 		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина
 		boxEnemyColor := 0xff00FF00
+		
+		if LineOrRectangle
+		{
+		minCornerLength := 5   ; Минимальный размер уголков для дальних целей
+		maxCornerLength := 20  ; Максимальный размер уголков для ближних целей
+		minDistance := 15      ; Минимальное расстояние (при котором уголки будут максимальными)
+		maxDistance := 50      ; Максимальное расстояние (при котором уголки будут минимальными)
+		if (dist > maxDistance) {
+			cornerLength := minCornerLength  ; Если цель далеко, уголки минимальные
+		} else if (dist < minDistance) {
+			cornerLength := maxCornerLength  ; Если цель близко, уголки максимальные
+		} else {
+			cornerLength := maxCornerLength - (maxCornerLength - minCornerLength) * ((dist - minDistance) / (maxDistance - minDistance))
+		}
+		xLeft := x1 - (ESPwidth / 2)
+		xRight := x1 + (ESPwidth / 2)
+		yTop := y1 - ESPheight
+		yBottom := y1
+		game.DrawLine(xLeft, yTop, xLeft + cornerLength, yTop, boxEnemyColor, 2)  ; Левый верхний угол
+		game.DrawLine(xRight - cornerLength, yTop, xRight, yTop, boxEnemyColor, 2) ; Правый верхний угол
+		game.DrawLine(xLeft, yBottom, xLeft + cornerLength, yBottom, boxEnemyColor, 2)  ; Левый нижний угол
+		game.DrawLine(xRight - cornerLength, yBottom, xRight, yBottom, boxEnemyColor, 2) ; Правый нижний угол
+		game.DrawLine(xLeft, yTop, xLeft, yTop + cornerLength, boxEnemyColor, 2)         ; Левый верхний угол
+		game.DrawLine(xLeft, yBottom - cornerLength, xLeft, yBottom, boxEnemyColor, 2)   ; Левый нижний угол
+		game.DrawLine(xRight, yTop, xRight, yTop + cornerLength, boxEnemyColor, 2)         ; Правый верхний угол
+		game.DrawLine(xRight, yBottom - cornerLength, xRight, yBottom, boxEnemyColor, 2)   ; Правый нижний угол
+		}
+		else
+		{	
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
-		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-
+		}
+		if ESPShowText
+		{
+		textWidth2 := 80
+		textHeight2 := 80
+		extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
+		xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
+		yDrawText := y1 - ESPheight + ESPheight
+		game.DrawText(HeroNames[HeroID] "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		}
 		if (Health > MaxHealth)
 		MaxHealth:=Health
 		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
@@ -477,30 +520,67 @@ DrawESP(x1,y1,x2,y2,distance, team)
 	{
 		if(boxEnemy)
 		{
+
 		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
-		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина
-		boxEnemyColor := 0xffFF0000
+		ESPwidth := ESPheight / 2.6   ; Пропорциональная ширина
+		boxEnemyColor := 0xffFF0000    ; Цвет рамки
+		if LineOrRectangle
+		{
+		minCornerLength := 5   ; Минимальный размер уголков для дальних целей
+		maxCornerLength := 20  ; Максимальный размер уголков для ближних целей
+		minDistance := 15      ; Минимальное расстояние (при котором уголки будут максимальными)
+		maxDistance := 50      ; Максимальное расстояние (при котором уголки будут минимальными)
+		if (dist > maxDistance) {
+			cornerLength := minCornerLength  ; Если цель далеко, уголки минимальные
+		} else if (dist < minDistance) {
+			cornerLength := maxCornerLength  ; Если цель близко, уголки максимальные
+		} else {
+			cornerLength := maxCornerLength - (maxCornerLength - minCornerLength) * ((dist - minDistance) / (maxDistance - minDistance))
+		}
+		xLeft := x1 - (ESPwidth / 2)
+		xRight := x1 + (ESPwidth / 2)
+		yTop := y1 - ESPheight
+		yBottom := y1
+		game.DrawLine(xLeft, yTop, xLeft + cornerLength, yTop, boxEnemyColor, 2)  ; Левый верхний угол
+		game.DrawLine(xRight - cornerLength, yTop, xRight, yTop, boxEnemyColor, 2) ; Правый верхний угол
+		game.DrawLine(xLeft, yBottom, xLeft + cornerLength, yBottom, boxEnemyColor, 2)  ; Левый нижний угол
+		game.DrawLine(xRight - cornerLength, yBottom, xRight, yBottom, boxEnemyColor, 2) ; Правый нижний угол
+		game.DrawLine(xLeft, yTop, xLeft, yTop + cornerLength, boxEnemyColor, 2)         ; Левый верхний угол
+		game.DrawLine(xLeft, yBottom - cornerLength, xLeft, yBottom, boxEnemyColor, 2)   ; Левый нижний угол
+		game.DrawLine(xRight, yTop, xRight, yTop + cornerLength, boxEnemyColor, 2)         ; Правый верхний угол
+		game.DrawLine(xRight, yBottom - cornerLength, xRight, yBottom, boxEnemyColor, 2)   ; Правый нижний угол
+		}
+		else
+		{	
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
-		
+		}
+		textWidth2 := 80
+		textHeight2 := 80
+		extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
+		xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
+		yDrawText := y1 - ESPheight + ESPheight
 		if !GetKeyState(key_NetWorthShow, "P")
 		{
-		game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		if ESPShowText
+		{
+		game.DrawText(HeroNames[HeroID] "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)
+		; game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
 		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-		
+		}
 		}
 		else
 		{
 		subGoldNetWorth := myGoldNetWorth - GoldNetWorth
 		if (myGoldNetWorth < GoldNetWorth)
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "15", "0x00FF0000", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "14", "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "15", "0x0000FF00", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "14", "0x0000FF00", "Arial", extraOptions2)
 
 		subAPNetWorth := myAPNetWorth - APNetWorth
 		if (myAPNetWorth < APNetWorth)
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "15", "0x00FF0000", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "14", "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "15", "0x0000FF00", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "14", "0x0000FF00", "Arial", extraOptions2)
 		}
 		
 		if (Health > MaxHealth)
@@ -519,6 +599,10 @@ DrawESP(x1,y1,x2,y2,distance, team)
 	}
 }
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
+
+; F1::
+; msgbox % GlobalVarsBase
+; return
 
 WorldToScreen(posx,posy,posz,windowWidth,windowHeight)
 {
