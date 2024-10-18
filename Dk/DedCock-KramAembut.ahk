@@ -62,6 +62,10 @@ IniRead, thickness, %iniFile%, Settings, thickness, 1
 IniRead, HeadOrNeckOrBody, %iniFile%, Settings, HeadOrNeckOrBody, 1
 IniRead, key_HeadOrNeckOrBody, %iniFile%, Settings, key_HeadOrNeckOrBody, Numpad0
 IniRead, MaxDistAim, %iniFile%, Settings, MaxDistAim, 150
+IniRead, LegitCaptureRange, %iniFile%, Settings, LegitCaptureRange, 1
+IniRead, RunDedCockKramAembut, %iniFile%, Settings, RunDedCockKramAembut, 1
+if !RunDedCockKramAembut
+Exitapp
 
 Hotkey, *~$%key_HeadOrNeckOrBody%, LabelHeadOrNeckOrBody, on 	;Приостановить-возобновить
 
@@ -347,6 +351,7 @@ Loop
 	if (closestBone != "" && GetKeyState(key_aim, "P"))
 	{
 		currentTarget := true
+		
 		DormantVar := 1337flex.Read(closestPindex + offsets.m_lifeState,"int")
 		if DormantVar = 256
 		{
@@ -356,24 +361,24 @@ Loop
 				if BoneMode
 				{
 				
-	if HeadOrNeckOrBody = 1
-	{
-    CurrentTime1 := A_TickCount
-    ElapsedTime1 := CurrentTime1 - LastTime1
-    if (ElapsedTime1 >= 500) 
-	{
-        LastTime1 := CurrentTime1
-        Random, HitChance, 1, 100
-        if (HitChance <= 70) 
-		{
-            SelectBone := HeroBones[HeroID].head
-        } 
-		else 
-		{
-			SelectBone := HeroBones[HeroID].neck
-        }
-    }
-	}	
+				if HeadOrNeckOrBody = 1
+				{
+				CurrentTime1 := A_TickCount
+				ElapsedTime1 := CurrentTime1 - LastTime1
+				if (ElapsedTime1 >= 500) 
+				{
+					LastTime1 := CurrentTime1
+					Random, HitChance, 1, 100
+					if (HitChance <= 70) 
+					{
+						SelectBone := HeroBones[HeroID].head
+					} 
+					else 
+					{
+						SelectBone := HeroBones[HeroID].neck
+					}
+				}
+				}	
 				; if HeadOrNeckOrBody = 1
 				; SelectBone := HeroBones[HeroID].head
 				if HeadOrNeckOrBody = 2
@@ -443,8 +448,24 @@ Loop
 			{
 				xpos1 := arr[1]
 				ypos1 := arr[2]
-				IfWinActive, ahk_exe project8.exe
-				AimAtTarget(xpos1, ypos1)
+				if LegitCaptureRange
+				{
+				centerX := A_ScreenWidth / 2
+				centerY := A_ScreenHeight / 2
+				deltaX := (xpos1 - centerX)
+				deltaY := (ypos1 - centerY)
+				distance := Sqrt(deltaX**2 + deltaY**2)
+				if (distance <= captureRange*1.5)  ; Проверяем экранное расстояние, а не мировое
+				{
+					IfWinActive, ahk_exe project8.exe
+					AimAtTarget(xpos1, ypos1)
+				}
+				}
+				else
+				{
+					IfWinActive, ahk_exe project8.exe
+					AimAtTarget(xpos1, ypos1)
+				}
 			}
 		}
 		else

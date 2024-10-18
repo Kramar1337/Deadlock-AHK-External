@@ -7,6 +7,10 @@
  - Переключение отображения "F1" - герои, "F2" - герои и крипы, "F3" - герои, крипы, коробки
  - Плавная наводка аимбота в режиме записи
  - Автоматическое парирование
+ - Кастом радиус(показывать ренж)
+
+
+
 
 
 
@@ -154,7 +158,7 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	ExitApp
 }
 
-
+IniFile := A_ScriptDir "\data\config.ini"
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray, NoStandard
 Menu,Tray, DeleteAll
@@ -162,6 +166,8 @@ Menu,Tray, add, Menu, MetkaMenu3
 Menu,Tray, Disable, Menu
 Menu,Tray, Icon, Menu, shell32.dll,264, 16
 Menu,Tray, add
+Menu,Tray, add, Edit Config, MetkaMenu3
+Menu,Tray, Icon, Edit Config, imageres.dll, 247, 16
 Menu,Tray, add, Reload, MetkaMenu2
 Menu,Tray, Icon, Reload, shell32.dll, 239, 16
 Menu,Tray, add, Exit, MetkaMenu1
@@ -397,7 +403,7 @@ GuiClose:
     ExitApp
 return
 MetkaMenu3:
-Run, notepad.exe "%A_ScriptFullPath%"
+Run, notepad.exe "%IniFile%"
 return
 
 *~$Home::

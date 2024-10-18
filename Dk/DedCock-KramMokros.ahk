@@ -13,6 +13,11 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+IniFile := A_ScriptDir "\data\config.ini"
+IniRead, RunDedCockKramMokros, %iniFile%, Settings, RunDedCockKramMokros, 1
+if !RunDedCockKramMokros
+Exitapp
+
 Hotkey, IfWinActive, ahk_exe project8.exe
 Hotkey, *~$%key_jump%, JumpAction
 Hotkey, IfWinActive

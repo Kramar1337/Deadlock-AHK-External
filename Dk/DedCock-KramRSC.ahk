@@ -16,6 +16,12 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 }
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
+IniFile := A_ScriptDir "\data\config.ini"
+IniRead, RunDedCockKramRSC, %iniFile%, Settings, RunDedCockKramRSC, 1
+if !RunDedCockKramRSC
+Exitapp
+
+
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk
 

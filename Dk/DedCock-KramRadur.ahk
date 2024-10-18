@@ -37,6 +37,12 @@ IniRead, radarTopLeftX, %iniFile%, Settings, radarTopLeftX, 200
 IniRead, radarTopLeftY, %iniFile%, Settings, radarTopLeftY, 200
 IniRead, radarBottomRightX, %iniFile%, Settings, radarBottomRightX, 400
 IniRead, radarBottomRightY, %iniFile%, Settings, radarBottomRightY, 400
+
+IniRead, RunDedCockKramRadur, %iniFile%, Settings, RunDedCockKramRadur, 1
+if !RunDedCockKramRadur
+Exitapp
+
+
 imagePath1 = %A_ScriptDir%\data\red2.png
 imagePath2 = %A_ScriptDir%\data\green2.png
 if radarAutoMode

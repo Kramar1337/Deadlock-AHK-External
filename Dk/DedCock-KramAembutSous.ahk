@@ -30,6 +30,9 @@ IniRead, SleepCpu, %iniFile%, Settings, soulSleepCpu, 1
 IniRead, circleColor, %iniFile%, Settings, soulcircleColor, 0x6FFFD800
 IniRead, thickness, %iniFile%, Settings, soulthickness, 1
 IniRead, MaxDistAimSoul, %iniFile%, Settings, MaxDistAimSoul, 150
+IniRead, RunDedCockKramAembutSous, %iniFile%, Settings, RunDedCockKramAembutSous, 1
+if !RunDedCockKramAembutSous
+Exitapp
 
 #include %A_ScriptDir%\data\offsets.ahk
 #include %A_ScriptDir%\data\classMemory.ahk

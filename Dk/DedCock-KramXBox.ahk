@@ -23,7 +23,9 @@ IniRead, boneDBGmode, %iniFile%, Settings, ESPboneDBGmode, 0
 IniRead, key_NetWorthShow, %iniFile%, Settings, ESPkey_NetWorthShow, Alt
 IniRead, LineOrRectangle, %iniFile%, Settings, LineOrRectangle, 1
 IniRead, ESPShowText, %iniFile%, Settings, ESPShowText, 1
-
+IniRead, RunDedCockKramXBox, %iniFile%, Settings, RunDedCockKramXBox, 1
+if !RunDedCockKramXBox
+Exitapp
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
@@ -73,6 +75,20 @@ if baseAddress
 {
 #include %A_ScriptDir%\data\offsetsdump.ahk
 }
+; msgbox dwEntityList - %dwEntityList%`ndwViewMatrix - %dwViewMatrix%`ndwLocalPlayerPawn - %dwLocalPlayerPawn%`nCCameraManager - %CCameraManager%`nGlobalVarsBase - %GlobalVarsBase%`n
+
+; dwEntityList - 0x1FC9660
+; dwViewMatrix - 0x2192200
+; dwLocalPlayerPawn - 0x2180308
+; CCameraManager - 0x1FEC070
+; GlobalVarsBase - 0x1E5D4A8
+
+; m_pGameRules - 0x560
+
+; Client.dll+dwGameRules(0x218DD28)+C_CitadelGameRules(0x0)+C_CitadelGameRulesProxy(0x8)+m_pGameRules(0x560)+m_bGamePaused(0x38)
+
+
+
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time = 0
