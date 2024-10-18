@@ -1,4 +1,4 @@
-# Deadlock-AHK-External v0.33
+# Deadlock-AHK-External v0.34
 
 ![hippo](https://i.imgur.com/2LV7HZV.jpeg)
 
@@ -72,6 +72,7 @@ ee16-47ba
 __🚀Функционал:🚀__
 
 - Wallhack (Квардаты)
+ + 123
 - AimBot (Автонаводка)
 - AimBot Soul (Автонаводка на души)
 - RCS (Контроль отдачи)
