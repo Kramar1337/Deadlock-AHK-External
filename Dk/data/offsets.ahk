@@ -29,6 +29,7 @@ static m_vecAbsOrigin = 0xd0
 static m_boneArray = 0x80
 ;CBasePlayerController
 static m_hPawn = 0x614
+; static m_iszPlayerName = 0x648
 ;CSkeletonInstance
 static m_modelState = 0x170
 ;C_BasePlayerPawn

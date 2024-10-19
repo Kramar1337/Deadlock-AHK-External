@@ -11,8 +11,15 @@
 
 
 
+cs2-analyzer
+https://a2x.github.io/cs2-analyzer/
 
+Новые оффсеты
+https://pastebin.com/1gqMqP5V
 
+старые оффсеты
+https://pastebin.com/raw/vqU9fdR1
+https://pastebin.com/raw/TDCdVjax
 
 dwEntityList = 0x1FC5460
 dwGameEntitySystem_highestEntityIndex - 0x21E3E90
@@ -51,7 +58,7 @@ client.dll + 0x1FC5460 - dwEntityList
 
 
 48 8B 0D ? ? ? ? 48 83 ? ? E8 - новый
-E8 ? ? ? ? 33 DB 39 5C 24 ? 7C - срарый
+E8 ? ? ? ? 33 DB 39 5C 24 ? 7C - старый
 GameEntitySystem
 
 

@@ -177,7 +177,7 @@ Loop
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
-	if DormantVar = 256
+	if (DormantVar = 256 and Health > 0)
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
