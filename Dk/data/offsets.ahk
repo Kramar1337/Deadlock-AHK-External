@@ -3,6 +3,8 @@
 static dwGameEntitySystem_highestEntityIndex = 0x1520
 ; C_BasePlayerPawn
 static m_pCameraServices = 0xdb8
+; C_BasePlayerPawn
+static v_angle = 0xe24
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
 static m_vecPunchAngleVel = 0x58
@@ -10,35 +12,36 @@ static m_vecPunchAngleVel = 0x58
 static m_pEntity = 0x10
 ; CEntityIdentity
 static m_designerName = 0x20
-; C_BaseEntity
-static m_flSimulationTime = 0x3c0
+; CGameSceneNode
+static m_vecAbsOrigin = 0xd0
 ; CGameSceneNode
 static m_bDormant = 0xef
-;C_BaseEntity
+; ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
+static m_bDormant2 = 0x7b8
+; C_BaseEntity
 static m_pGameSceneNode = 0x330
-;C_BaseEntity. старое: ControllerBase в CE отмотать 0x7A0 в поисках хп, преобразовать в 4 байт целое
-static m_ihealth = 0x354
-static m_iMaxHealth = 0x350
-; 256 жив 258 мертв
-static m_lifeState = 0x358
-;C_BaseEntity
+; C_BaseEntity
 static m_iTeamNum = 0x3f3
-;CGameSceneNode
-static m_vecAbsOrigin = 0xd0
-;????????
+; C_BaseEntity
+static m_ihealth = 0x354
+; C_BaseEntity
+static m_iMaxHealth = 0x350
+; C_BaseEntity 256 жив 258 мертв
+static m_lifeState = 0x358
+; ????????
 static m_boneArray = 0x80
-;CBasePlayerController
+; CBasePlayerController
 static m_hPawn = 0x614
 ; static m_iszPlayerName = 0x648
-;CSkeletonInstance
+; CSkeletonInstance
 static m_modelState = 0x170
-;C_BasePlayerPawn
-static v_angle = 0xe24
-;CModelState
+; CModelState
 static m_hModel = 0xd0
-;CCitadelPlayerController
+; CCitadelPlayerController
 static m_PlayerDataGlobal = 0x770
-;PlayerDataGlobal
+; PlayerDataGlobal_t
+static m_iHealthMax = 0x10
+static m_bAlive = 0x60
 static m_nHeroID = 0x1c
 static m_iGoldNetWorth = 0x20
 static m_iAPNetWorth = 0x24

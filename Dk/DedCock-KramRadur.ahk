@@ -29,7 +29,8 @@ IniRead, imageOrpoint, %iniFile%, Settings, imageOrpoint, 1
 IniRead, pointSize, %iniFile%, Settings, pointSize, 8
 IniRead, borderSize, %iniFile%, Settings, borderSize, 2
 IniRead, imageSize, %iniFile%, Settings, imageSize, 40
-IniRead, imageAlpha, %iniFile%, Settings, imageAlpha, 0.8
+IniRead, imageAlphaTeam, %iniFile%, Settings, imageAlphaTeam, 0.8
+IniRead, imageAlphaEnemy, %iniFile%, Settings, imageAlphaEnemy, 0.8
 IniRead, imageSizeOrigin, %iniFile%, Settings, imageSizeOrigin, 128
 
 IniRead, radarAutoMode, %iniFile%, Settings, radarAutoMode, 1
@@ -58,7 +59,7 @@ radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
 radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
 radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
 radarBorderThickness := 2  ; Толщина рамки радара
-maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+; maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
 ; Размеры области для центрирования текста
 textWidth := 150  ; Примерная ширина текста
 textHeight := 50  ; Примерная высота текста
@@ -177,7 +178,8 @@ Loop
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
-	if (DormantVar = 256 and Health > 0)
+	bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	if (DormantVar = 256 and Health > 0 and bAlive = 1)
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
@@ -205,8 +207,10 @@ Loop
 			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 			if MyTeamIs = 2
 			{
+			; msgbox 2
 			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
 			mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
+			maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
 			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
 			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
 			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
@@ -214,8 +218,10 @@ Loop
 			}
 			if MyTeamIs = 3
 			{
+			; msgbox 3
 			mapCenterX := 180  ; Центр карты по X в игровом мире (условно)
 			mapCenterY := -180  ; Центр карты по Y в игровом мире (условно)
+			maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
 			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
 			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
 			radarX := radarTopLeftX + (radarWidth / 2) - (relativeX * radarWidth / 2)  ; Инверсия по X
@@ -231,20 +237,20 @@ Loop
 				if radarShowTeam
 				{
 				if imageOrpoint
-				game.DrawImage(imagePath2, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlpha, 1, 0, 0)
+				game.DrawImage(imagePath2, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlphaTeam, 1, 0, 0)
 				else
 				{
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
 				}
 				if radarShowNameTeam
-				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
+				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
 				}
 			} 
 			else
 			{
 				if imageOrpoint
-				game.DrawImage(imagePath1, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlpha, 1, 0, 0)
+				game.DrawImage(imagePath1, radarX - pointSize / 2, radarY - pointSize / 2, imageSize, imageSize, 0, 0, imageSizeOrigin, imageSizeOrigin, imageAlphaEnemy, 1, 0, 0)
 				else
 				{
 				game.FillEllipse(radarX - (pointSize + borderSize) / 2, radarY - (pointSize + borderSize) / 2, pointSize + borderSize, pointSize + borderSize, 0xFFFFFFFF)  ; Белая обводка
@@ -254,20 +260,20 @@ Loop
 				{
 					if !GetKeyState(key_NetWorthShow, "P")
 					{
-					game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFFFFF", "Arial", extraOptions)
+					game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
 					}
 					else
 					{
 					subGoldNetWorth := myGoldNetWorth - GoldNetWorth
 					if (myGoldNetWorth < GoldNetWorth)
-					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFA0AB", "Arial", extraOptions)
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFA0AB", "Arial", extraOptions)
 					else
-					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x0000FF00", "Arial", extraOptions)
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x0000FF00", "Arial", extraOptions)
 					subAPNetWorth := myAPNetWorth - APNetWorth
 					if (myAPNetWorth < APNetWorth)
-					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x00FFA0AB", "Arial", extraOptions)
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFA0AB", "Arial", extraOptions)
 					else
-					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "15", "0x0000FF00", "Arial", extraOptions)
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x0000FF00", "Arial", extraOptions)
 					}
 				}
 			}

@@ -68,7 +68,7 @@ game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 StartLabelStart:
-sleep 300
+sleep 1300
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
@@ -114,9 +114,12 @@ Loop
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			PawnGet := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			
+			Health := 1337flex.Read(PawnGet + offsets.m_ihealth,"int")
+			if Health
+			{
 			BubaArrayEntity.push(ControllerBase)
 			BubaArrayPawn.push(PawnGet)
+			}
 			playerIndex++
 		}
 		;==============Локальный игрок
@@ -136,12 +139,16 @@ Loop
 	Pawn := BubaArrayPawn[Kramindex]
 	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-	if (DormantVar = 256 and Health > 0)
+	bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	; iHealthMax := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
+	; msgbox % iHealthMax
+	if (DormantVar = 256 and Health > 0  and bAlive = 1)
 	{
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
-			MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+			MaxHealth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
+			; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 			HeroID := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
@@ -314,8 +321,8 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		{	
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
 		}
-		textWidth2 := 80
-		textHeight2 := 80
+		textWidth2 := 180
+		textHeight2 := 180
 		extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
 		xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
 		yDrawText := y1 - ESPheight + ESPheight
@@ -332,15 +339,15 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		{
 		subGoldNetWorth := myGoldNetWorth - GoldNetWorth
 		if (myGoldNetWorth < GoldNetWorth)
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "14", "0x00FF0000", "Arial", extraOptions2)
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "16", "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "14", "0x0000FF00", "Arial", extraOptions2)
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "16", "0x0000FF00", "Arial", extraOptions2)
 
 		subAPNetWorth := myAPNetWorth - APNetWorth
 		if (myAPNetWorth < APNetWorth)
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "14", "0x00FF0000", "Arial", extraOptions2)
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "16", "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "14", "0x0000FF00", "Arial", extraOptions2)
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "16", "0x0000FF00", "Arial", extraOptions2)
 		}
 		
 		if (Health > MaxHealth)
@@ -391,13 +398,8 @@ getDistance(x,y,z)
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 HexFormat(address) {
-    ; Преобразование адреса в 16-ричный формат без "0x"
     hexAddress := Format("{:X}", address)
-    
-    ; Копирование адреса в буфер обмена
     Clipboard := hexAddress
-    
-    ; Возвращаем 16-ричный адрес
     return hexAddress
 }
 
