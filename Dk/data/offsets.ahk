@@ -17,7 +17,7 @@ static m_vecAbsOrigin = 0xd0
 ; CGameSceneNode
 static m_bDormant = 0xef
 ; ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
-static m_bDormant2 = 0x7b8
+static m_bDormant2 = 0x7d0
 ; C_BaseEntity
 static m_pGameSceneNode = 0x330
 ; C_BaseEntity
@@ -26,6 +26,8 @@ static m_iTeamNum = 0x3f3
 static m_ihealth = 0x354
 ; C_BaseEntity
 static m_iMaxHealth = 0x350
+; C_BaseEntity
+static m_vecVelocity = 0x410
 ; C_BaseEntity 256 жив 258 мертв
 static m_lifeState = 0x358
 ; ????????

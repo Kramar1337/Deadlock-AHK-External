@@ -137,20 +137,24 @@ Loop
 	Kramindex++
 	ControllerBaseEntity := BubaArrayEntity[Kramindex]
 	Pawn := BubaArrayPawn[Kramindex]
-	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
-	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-	bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
+	; msgbox % Dormant2
+	; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
+	; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+	; bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 	; iHealthMax := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
 	; msgbox % iHealthMax
-	if (DormantVar = 256 and Health > 0  and bAlive = 1)
+	if (Dormant2 = 1)
 	{
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
+			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 			MaxHealth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
 			; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 			HeroID := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+			; msgbox % HexFormat(Pawn + offsets.m_pGameSceneNode)
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")

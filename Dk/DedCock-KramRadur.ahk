@@ -173,13 +173,14 @@ Loop
 	Kramindex++
 	ControllerBase := BubaArray[Kramindex]
 	Pawn := BubaArray2[Kramindex]
-	Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-	MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+	; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+	; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+	; bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
-	DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
-	bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
-	if (DormantVar = 256 and Health > 0 and bAlive = 1)
+	Dormant2 := 1337flex.Read(ControllerBase + offsets.m_bDormant2,"int")
+	if (Dormant2 = 1)
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{

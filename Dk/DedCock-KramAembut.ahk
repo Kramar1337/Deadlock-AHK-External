@@ -63,6 +63,8 @@ IniRead, HeadOrNeckOrBody, %iniFile%, Settings, HeadOrNeckOrBody, 1
 IniRead, key_HeadOrNeckOrBody, %iniFile%, Settings, key_HeadOrNeckOrBody, Numpad0
 IniRead, MaxDistAim, %iniFile%, Settings, MaxDistAim, 150
 IniRead, LegitCaptureRange, %iniFile%, Settings, LegitCaptureRange, 1
+IniRead, CalcPredictionAim, %iniFile%, Settings, CalcPredictionAim, 1
+IniRead, velocityDiv, %iniFile%, Settings, velocityDiv, 10
 IniRead, RunDedCockKramAembut, %iniFile%, Settings, RunDedCockKramAembut, 1
 if !RunDedCockKramAembut
 Exitapp
@@ -99,6 +101,7 @@ AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfgh
 
 StartLabelStart:
 sleep 1500
+VindictaCuted := false
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
@@ -129,6 +132,27 @@ Loop
 		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
+	
+if (!VindictaCuted) 
+{
+	EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+	EntityIndex := 1337flex.Read(EntityListCout + offsets.dwGameEntitySystem_highestEntityIndex,"int")
+	playerIndex=0
+	while(playerIndex < EntityIndex)
+	{
+	EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+	AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
+	ControllerBaseVindicta := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
+	pEntityString := 1337flex.readString(ControllerBaseVindicta + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
+	if (pEntityString == "CCitadel_Ability_PrimaryWeapon_Empty")
+	{
+		break
+	}
+	playerIndex++
+	}
+    VindictaCuted := true
+}
+	
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
@@ -170,6 +194,9 @@ Loop
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			; msgbox % pEntityString
+			; msgbox % HexFormat(ControllerBase)
+			; msgbox % HexFormat(ControllerBase + offsets.m_pEntity)
 			if Health
 			{
 				BubaArray.push(ControllerBase)
@@ -177,6 +204,7 @@ Loop
 			}
 			playerIndex++
 		}
+		; msgbox 1
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -211,26 +239,6 @@ Loop
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
 				if BoneMode
 				{
-				
-	; if HeadOrNeckOrBody = 1
-	; {
-    ; CurrentTime1 := A_TickCount
-    ; ElapsedTime1 := CurrentTime1 - LastTime1
-    ; if (ElapsedTime1 >= 500) 
-	; {
-        ; LastTime1 := CurrentTime1
-        ; Random, HitChance, 1, 100
-        ; if (HitChance <= 60) 
-		; {
-            ; SelectBone := HeroBones[HeroID].head
-        ; } 
-		; else 
-		; {
-			; SelectBone := HeroBones[HeroID].neck
-        ; }
-    ; }			
-	; }			
-				
 					if HeadOrNeckOrBody = 1
 					SelectBone := HeroBones[HeroID].head
 					if HeadOrNeckOrBody = 2
@@ -442,6 +450,28 @@ Loop
 		{
 		currentTarget := false
 		}
+		if CalcPredictionAim
+		{
+		vecVelocityX := 1337flex.Read(closestPindex + offsets.m_vecVelocity,"float")
+		vecVelocityY := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x4,"float")
+		vecVelocityZ := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x8,"float")
+		dist := getDistance(enemyXLocation, enemyYLocation, enemyZLocation)
+		velocityDiv2 := 0.05
+		;=====================если Виндикта в прицеле то другое упреждение
+		VindictaUlt := 1337flex.Read(ControllerBaseVindicta + 0x718,"int")
+		if (VindictaUlt == 0)
+		{
+		enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv2 / 100
+		enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv2 / 100
+		enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv2 / 100
+		}
+		else
+		{
+		enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv / 100
+		enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv / 100
+		enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv / 100
+		}
+		}
 		if !WriteMode
 		{
 			if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight))
@@ -533,7 +563,6 @@ MoveMouseBy(deltaX, deltaY) {
     ; Используем mouse_event для перемещения мыши
     DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
-; sensitivity := 0.5
 ; Функция для движения мыши к цели с учетом диапазона захвата
 AimAtTarget(targetX, targetY) {
     global
@@ -583,13 +612,8 @@ getDistance(x,y,z)
 }
 
 HexFormat(address) {
-    ; Преобразование адреса в 16-ричный формат без "0x"
     hexAddress := Format("{:X}", address)
-    
-    ; Копирование адреса в буфер обмена
     Clipboard := hexAddress
-    
-    ; Возвращаем 16-ричный адрес
     return hexAddress
 }
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
