@@ -247,6 +247,14 @@ imageSizeOrigin=128
 
 ```
 
+__🔗Ресурсы которые я использовал:🔗__
+| Ссылка | Название | Описание |
+| --- | --- | --- |
+| [Github](https://github.com/Loara228/deadlock-esp) | Deadlock-esp | External Cheat for Deadlock от Loara228 |
+| [Github](https://github.com/neverlosecc/source2gen) | Source2gen | Source2 games SDK generator |
+| [Github](https://a2x.github.io/cs2-analyzer/) | CS2-analyzer | Offsets + SDK generator |
+| [UC](https://www.unknowncheats.me/forum/deadlock/639185-deadlock-reversal-structs-offsets.html) | UC Deadlock | Обсуждение игры |
+
 ## Disclaimer 
 This project is intended solely for educational purposes. 
 
