@@ -130,6 +130,13 @@ RunDedCockKramRSC=1
 RunDedCockKramXBox=1
 
 ;================================================================
+; Настройки DedCock-KramMokros.ahk
+; Shift + Space + Ctrl
+key_jump=C
+; Spam Ctrl
+key_crouch=N
+
+;================================================================
 ; Настройки AimBot DedCock-KramAembut.ahk
 ; Рассчитать упреждение
 CalcPredictionAim=1
