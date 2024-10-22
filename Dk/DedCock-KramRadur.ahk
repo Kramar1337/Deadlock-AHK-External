@@ -206,7 +206,7 @@ Loop
 			game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
 			}
 			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
-			if MyTeamIs = 2
+			if MyTeamIs = 2 ;Янтарные
 			{
 			; msgbox 2
 			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
@@ -217,12 +217,12 @@ Loop
 			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
 			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
 			}
-			if MyTeamIs = 3
+			if MyTeamIs = 3 ;Сапфир
 			{
 			; msgbox 3
 			mapCenterX := 180  ; Центр карты по X в игровом мире (условно)
 			mapCenterY := -180  ; Центр карты по Y в игровом мире (условно)
-			maxDistance := 10000 ; Максимальная дальность видимости на радаре в игровых единицах
+			maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
 			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
 			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
 			radarX := radarTopLeftX + (radarWidth / 2) - (relativeX * radarWidth / 2)  ; Инверсия по X

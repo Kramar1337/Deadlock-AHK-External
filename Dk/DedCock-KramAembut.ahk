@@ -229,6 +229,10 @@ if (!VindictaCuted)
 		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
 		MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
+		
+		; FlaggedAsCheater := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + 0x76,"int")
+		; msgbox % FlaggedAsCheater
+		
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 		DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 		if (TeamNum != MyTeamIs)

@@ -17,15 +17,6 @@
 
 
 
-ВебРадар
-https://telebit.cloud/
-
-
-
-
-
-
-
 cs2-analyzer
 https://a2x.github.io/cs2-analyzer/
 
@@ -42,40 +33,6 @@ dwGameEntitySystem_highestEntityIndex - 0x21E3E90
 
 Signature GetEntityUnderCrosshair("48 89 5c 24 ? 57 48 81 ec ? ? ? ? 33 ff 8b cf", 0, 0);
 
-	float RealTime; //0x0000
-	uint32_t FrameCount; //0x0004
-	float IntervalPerTick1; //0x0008
-	float IntervalPerTick2; //0x000C
-	uint32_t MaxClients; //0x0010
-	uint32_t unk; //0x0014
-	uint32_t unk1; //0x0018
-	float N00001935; //0x001C
-	double N00001953; //0x0020
-	char pad_0028[8]; //0x0028
-	float N00001937; //0x0030
-	float Curtime; //0x0034
-	float Curtime2; //0x0038
-	uint32_t N0000195B; //0x003C
-	uint32_t N00001939; //0x0040
-	uint32_t N0000195E; //0x0044
-	uint32_t outSequenceNumber; //0x0048
-	uint32_t inSequenceNumber; //0x004C
-	float ServerTime; //0x0050
-	char pad_0054[4]; //0x0054
-	float sendInterval; //0x0058
-	uint32_t N00001969; //0x005C
-	class N0000196D* NetChanPtr; //0x0060
-	char pad_0068[280]; //0x0068
-	char* CurrentMap; //0x0180
-	char* CurrentMapName; //0x0188
-
-client.dll + 0x1FC5460 - dwEntityList
-
-
-48 8B 0D ? ? ? ? 48 83 ? ? E8 - новый
-E8 ? ? ? ? 33 DB 39 5C 24 ? 7C - старый
-GameEntitySystem
-
 
 ; STeamFOWEntity
 m_nEntIndex = 0x30
@@ -90,21 +47,12 @@ STeamFOWEntity array = [C_CitadelTeam + m_vecFOWEntities]
 [STeamFOWEntity + m_nEntIndex]
 [STeamFOWEntity + m_bVisibleOnMap]
 
-28D79016200 это я
-
-
-bSpottedByMask
-
 
 Originally Posted by hoomanlegit View Post
 I see, ty. Is CCitadel_Ability_PrimaryWeaponVData a field from CBaseEntity? or controllers? Can you give example on how to reach that field?
 1: C_BasePlayerPawn->m_pWeaponServices->m_hActiveWeapon(CBaseHandle)
 
 2:C_CitadelPlayerPawn->m_CCitadelAbilityComponent->m_vecAbilities(CUtlVector<CBaseHandle>) get Element[0] is CCitadel_Ability_PrimaryWeapon_Empty than get public C_BaseEntity->m_nSubclassID+0x8 == CitadelAbilityVData
-
-ejy
-
-
 
 
 тяжелая атака
