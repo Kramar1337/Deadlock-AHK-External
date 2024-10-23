@@ -377,7 +377,7 @@ if (!VindictaCuted)
 				{
 				CurrentTime1 := A_TickCount
 				ElapsedTime1 := CurrentTime1 - LastTime1
-				if (ElapsedTime1 >= 500) 
+				if (ElapsedTime1 >= 350) 
 				{
 					LastTime1 := CurrentTime1
 					Random, HitChance, 1, 100

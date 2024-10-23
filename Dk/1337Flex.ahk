@@ -15,6 +15,12 @@
 
 
 
+-console -novid -dx11 -m_rawinput 1 +exec autoexec.cfg -high -preload -fullscreen +@panorama_min_comp_layer_cache_cost_TURNED_OFF 256
+H:\SteamHDD\steamapps\common\Deadlock
+r_shadows 0
+
+
+
 
 
 cs2-analyzer
