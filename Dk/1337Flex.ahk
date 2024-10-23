@@ -64,7 +64,7 @@ I see, ty. Is CCitadel_Ability_PrimaryWeaponVData a field from CBaseEntity? or c
 тяжелая атака
 Pawn->GameSceneNode + 0x4D0
 
-
+-console -novid -dx11 -m_rawinput 1 +exec autoexec.cfg -high -preload +@panorama_min_comp_layer_cache_cost_TURNED_OFF 256
 -insecure -console -novid
 
 

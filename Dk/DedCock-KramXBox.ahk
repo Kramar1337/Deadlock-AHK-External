@@ -137,7 +137,22 @@ Loop
 	Kramindex++
 	ControllerBaseEntity := BubaArrayEntity[Kramindex]
 	Pawn := BubaArrayPawn[Kramindex]
+	; msgbox % HexFormat(Pawn)
+	; msgbox % HexFormat(ControllerBaseEntity)
+	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+	; msgbox % HexFormat(GameSceneNode)
+	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
+	; msgbox % HexFormat(GameSceneNode + offsets.m_bDormant)
+	
+	; GameSceneNode := 1337flex.getAddressFromOffsets(ControllerBaseEntity + offsets.m_pGameSceneNode, 0x0)
+	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
+	; msgbox % HexFormat(GameSceneNode + offsets.m_bDormant)
+	
+	
+	; DormantVar := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
 	Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
+	; Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
+	; msgbox % DormantVar2
 	; msgbox % Dormant2
 	; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 	; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")

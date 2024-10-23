@@ -16,8 +16,8 @@ static m_designerName = 0x20
 static m_vecAbsOrigin = 0xd0
 ; CGameSceneNode
 static m_bDormant = 0xef
-; ControllerBase в CE отмотать 0x7b8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
-static m_bDormant2 = 0x7E0
+; ControllerBase в CE отмотать 0x7d8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
+static m_bDormant2 = 0x7d8
 ; C_BaseEntity
 static m_pGameSceneNode = 0x330
 ; C_BaseEntity
