@@ -146,11 +146,35 @@ Loop
 	
 	; GameSceneNode := 1337flex.getAddressFromOffsets(ControllerBaseEntity + offsets.m_pGameSceneNode, 0x0)
 	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
-	; msgbox % HexFormat(GameSceneNode + offsets.m_bDormant)
-	
-	
+	; msgbox % HexFormat(ControllerBaseEntity)
+	; msgbox % HexFormat(ControllerBaseEntity + offsets.m_pGameSceneNode + offsets.m_bDormant)
+	; GameSceneNode := 1337flex.getAddressFromOffsets(ControllerBaseEntity + offsets.m_pGameSceneNode, 0x0)
+	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
 	; DormantVar := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
-	Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
+	; msgbox % DormantVar
+	; msgbox % HexFormat(ControllerBaseEntity + offsets.m_pGameSceneNode)
+	; DormantVar := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
+	
+	
+	; msgbox % HexFormat(PawnGet)
+	; PawnGet = 20D7A0A1E00
+	; m_pGameSceneNode = 0x330
+	; m_bDormant = 0xef
+	
+	; msgbox % HexFormat(PawnGet + offsets.m_pGameSceneNode)
+	; GameSceneNode := 1337flex.Read(PawnGet + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
+	; msgbox % GameSceneNode
+	; BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
+	
+	
+	; GameSceneNode := 1337flex.getAddressFromOffsets(PawnGet + offsets.m_pGameSceneNode, 0x0)
+	; msgbox % HexFormat(GameSceneNode)
+	; GameSceneNode := 1337flex.getAddressFromOffsets(PawnGet + offsets.m_pGameSceneNode + offsets.m_bDormant)
+	; msgbox % HexFormat(GameSceneNode)
+	
+	
+	
+	
 	; Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
 	; msgbox % DormantVar2
 	; msgbox % Dormant2
@@ -159,6 +183,7 @@ Loop
 	; bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 	; iHealthMax := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
 	; msgbox % iHealthMax
+	Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
 	if (Dormant2 = 1)
 	{
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
@@ -175,7 +200,7 @@ Loop
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
 			if boneDBGmode
 			{
-				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
 				i := 0
 				while (i < bone64)
 				{

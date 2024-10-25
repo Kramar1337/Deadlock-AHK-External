@@ -153,6 +153,9 @@ Gui, Add, Button, gStart w100 h30, Start
 Gui, Add, Button, gHashChanger w100 h30, Hash Changer
 Gui, Add, Button, gNameChanger w100 h30, Name Changer
 Gui, Add, Button, gUpCfg w100 h30, Import Config
+Gui, Add, Button, gMetkaMenu3 w100 h30, Edit Config
+
+
 ; Gui, Add, Button, gHwidSpoofer w100 h30, HWID Spoofer
 Gui, Add, Button, gExit w100 h30, Exit
 randomName := GenerateRandomName(15) ; 10 - длина имени

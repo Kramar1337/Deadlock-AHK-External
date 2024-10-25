@@ -240,7 +240,7 @@ if (!VindictaCuted)
 			if DormantVar = 256
 			{
 				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
 				if BoneMode
 				{
 					if HeadOrNeckOrBody = 1
@@ -369,7 +369,7 @@ if (!VindictaCuted)
 		{
 				HeroID := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 				GameSceneNode := 1337flex.getAddressFromOffsets(closestPindex + offsets.m_pGameSceneNode, 0x0)
-				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + Offsets.m_boneArray, 0x0)
+				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
 				if BoneMode
 				{
 				
