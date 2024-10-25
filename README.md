@@ -11,8 +11,6 @@ Deadlock External Cheat на AHK для игры [Deadlock](https://store.steamp
 <details>
 <summary>💪Информация по банам + Spoofer(кликни сюда)💪</summary>
 
-
-
 Информация актуальна на момент публикации (22.10.2024)
 
 - Ручные жалобы
@@ -89,8 +87,8 @@ __🚀Функционал:🚀__
   + Расстояние до цели
   + Режим только чтение, режим записи
 - AimBot Soul (Автонаводка на души, работает криво)
-- RCS (Контроль отдачи)
-- Radar (Радар)
+- RCS (Контроль отдачи, режим записи)
+- Radar
 - Обновлятор оффсетов
 - Полуавтоматический импорт настроек
 
@@ -264,6 +262,7 @@ __🔗Ресурсы которые я использовал:🔗__
 | [Github](https://github.com/neverlosecc/source2gen) | Source2gen | Source2 games SDK generator |
 | [Github](https://a2x.github.io/cs2-analyzer/) | CS2-analyzer | Offsets + SDK generator |
 | [UC](https://www.unknowncheats.me/forum/deadlock/639185-deadlock-reversal-structs-offsets.html) | UC Deadlock | Обсуждение игры |
+| [ChatGpt](https://chatgpt.com) | Chatgpt | Chatgpt |
 
 ## Disclaimer 
 This project is intended solely for educational purposes. 
