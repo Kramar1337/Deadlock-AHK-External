@@ -21,8 +21,16 @@ IniRead, boxEnemy, %iniFile%, Settings, ESPboxEnemy, 1
 IniRead, SleepCpu, %iniFile%, Settings, ESPSleepCpu, 1
 IniRead, boneDBGmode, %iniFile%, Settings, ESPboneDBGmode, 0
 IniRead, key_NetWorthShow, %iniFile%, Settings, ESPkey_NetWorthShow, Alt
-IniRead, LineOrRectangle, %iniFile%, Settings, LineOrRectangle, 1
+IniRead, ESPLineOrRectangle, %iniFile%, Settings, ESPLineOrRectangle, 1
 IniRead, ESPShowText, %iniFile%, Settings, ESPShowText, 1
+
+IniRead, ESPLineOrRectangleTeam, %iniFile%, Settings, ESPLineOrRectangleTeam, 1
+IniRead, ESPShowTextTeam, %iniFile%, Settings, ESPShowTextTeam, 1
+IniRead, ESPShowUltCDTeam, %iniFile%, Settings, ESPShowUltCDTeam, 1
+IniRead, ESPHPbarTeam, %iniFile%, Settings, ESPHPbarTeam, 1
+
+
+IniRead, ESPShowUltCD, %iniFile%, Settings, ESPShowUltCD, 1
 IniRead, RunDedCockKramXBox, %iniFile%, Settings, RunDedCockKramXBox, 1
 if !RunDedCockKramXBox
 Exitapp
@@ -56,24 +64,30 @@ Menu,Tray, Icon, Reload, shell32.dll, 239, 16
 Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
+HeroArray := {}
+#include %A_ScriptDir%\data\HeroArray.ahk
 
-HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
 
 
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
+Toggler1 := false
 
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 StartLabelStart:
-sleep 1300
+sleep 500
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
+if (!Toggler1) 
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+Toggler1 := true
+}
 }
 
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
@@ -112,9 +126,10 @@ Loop
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
+			; msgbox % pawnHandle
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			PawnGet := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(PawnGet + offsets.m_ihealth,"int")
+			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
 			if Health
 			{
 			BubaArrayEntity.push(ControllerBase)
@@ -122,6 +137,7 @@ Loop
 			}
 			playerIndex++
 		}
+		; msgbox 1
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -137,64 +153,44 @@ Loop
 	Kramindex++
 	ControllerBaseEntity := BubaArrayEntity[Kramindex]
 	Pawn := BubaArrayPawn[Kramindex]
+
+
+	/*
 	; msgbox % HexFormat(Pawn)
+
+	Ability_component := 1337flex.getAddressFromOffsets(Pawn, 0x0)
+	Ability_component := 1337flex.getAddressFromOffsets(Ability_component + 0xfe8, 0x70 + 0x8)
+	i := 0
+	while (i < 22)
+	{
+	; AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
+	AbilityHandle := 83485640
+	; msgbox % HexFormat(AbilityHandle)
+	EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+	Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0)
+	if Ability
+	msgbox % HexFormat(Ability)
+	i++
+	}
+	exitapp
 	; msgbox % HexFormat(ControllerBaseEntity)
-	; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-	; msgbox % HexFormat(GameSceneNode)
-	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
-	; msgbox % HexFormat(GameSceneNode + offsets.m_bDormant)
-	
-	; GameSceneNode := 1337flex.getAddressFromOffsets(ControllerBaseEntity + offsets.m_pGameSceneNode, 0x0)
-	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
-	; msgbox % HexFormat(ControllerBaseEntity)
-	; msgbox % HexFormat(ControllerBaseEntity + offsets.m_pGameSceneNode + offsets.m_bDormant)
-	; GameSceneNode := 1337flex.getAddressFromOffsets(ControllerBaseEntity + offsets.m_pGameSceneNode, 0x0)
-	; Dormant2 := 1337flex.Read(GameSceneNode + offsets.m_bDormant,"int")
-	; DormantVar := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
-	; msgbox % DormantVar
-	; msgbox % HexFormat(ControllerBaseEntity + offsets.m_pGameSceneNode)
-	; DormantVar := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
-	
-	
-	; msgbox % HexFormat(PawnGet)
-	; PawnGet = 20D7A0A1E00
-	; m_pGameSceneNode = 0x330
-	; m_bDormant = 0xef
-	
-	; msgbox % HexFormat(PawnGet + offsets.m_pGameSceneNode)
-	; GameSceneNode := 1337flex.Read(PawnGet + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
-	; msgbox % GameSceneNode
-	; BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
-	
-	
-	; GameSceneNode := 1337flex.getAddressFromOffsets(PawnGet + offsets.m_pGameSceneNode, 0x0)
-	; msgbox % HexFormat(GameSceneNode)
-	; GameSceneNode := 1337flex.getAddressFromOffsets(PawnGet + offsets.m_pGameSceneNode + offsets.m_bDormant)
-	; msgbox % HexFormat(GameSceneNode)
+	; msgbox % HexFormat(Pawn)
+	*/
 	
 	
 	
-	
-	; Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
-	; msgbox % DormantVar2
-	; msgbox % Dormant2
-	; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
-	; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-	; bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
-	; iHealthMax := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
-	; msgbox % iHealthMax
-	Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
-	if (Dormant2 = 1)
+	bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	iHealth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+	; Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
+	if (bAlive = 1 && iHealth > 0)
 	{
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
-			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			Health := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
 			MaxHealth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealthMax,"int")
-			; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 			HeroID := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 			GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
-			; msgbox % HexFormat(Pawn + offsets.m_pGameSceneNode)
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
@@ -229,6 +225,30 @@ Loop
 					{
 						if (dist > 1.2)
 						{
+							myGoldNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
+							myAPNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
+							
+							GoldNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
+							APNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
+							UltimateTrained := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bUltimateTrained,"int")
+							; UltimateCooldownStart := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownStart,"float")
+							UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"float")
+							CurrentTime := 1337flex.Read(baseAddress + dwGlobalVars + 0x0, "float", 0x34)
+							TotalPausedTicksAddress := 1337flex.getAddressFromOffsets(baseAddress + dwGameRules, 0x0)
+							TotalPausedTicks := 1337flex.Read(TotalPausedTicksAddress + offsets.m_nTotalPausedTicks, "int")
+							TotalPausedTicks := TotalPausedTicks * 0.016666666
+							UltimateCooldownMath := UltimateCooldownEnd - CurrentTime + TotalPausedTicks
+							UltimateTime := ""
+							if (UltimateCooldownMath > 1)
+							{
+								UltimateTime:=round(UltimateCooldownMath)
+							}
+							else
+							{
+								if UltimateTrained = 1
+								UltimateTime = U
+							}
+						
 							MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 							if (TeamNum == MyTeamIs)
 							{
@@ -236,16 +256,6 @@ Loop
 							}
 							else
 							{
-							myGoldNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
-							myAPNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
-							
-							GoldNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
-							APNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
-							; UltimateTrained := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bUltimateTrained,"int")
-							; UltimateCooldownStart := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownStart,"float")
-							; UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"float")
-							; TheTime := 1337flex.Read(baseAddress + GlobalVarsBase, "float", 0x0)
-							; tooltip %UltimateTrained%`n%UltimateCooldownStart%`n%UltimateCooldownEnd%`n%TheTime%
 							DrawESP(xpos1, ypos1, xpos2, ypos2, dist, 0)
 							}
 						}
@@ -259,6 +269,10 @@ Loop
 	game.EndDraw()
 }
 return
+
+
+
+
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
@@ -274,47 +288,59 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		ESPwidth := ESPheight / 2.6            ; Пропорциональная ширина
 		boxEnemyColor := 0xff00FF00
 		
-		if LineOrRectangle
+		if ESPLineOrRectangleTeam = 1
 		{
-		minCornerLength := 5   ; Минимальный размер уголков для дальних целей
-		maxCornerLength := 20  ; Максимальный размер уголков для ближних целей
-		minDistance := 15      ; Минимальное расстояние (при котором уголки будут максимальными)
-		maxDistance := 50      ; Максимальное расстояние (при котором уголки будут минимальными)
-		if (dist > maxDistance) {
-			cornerLength := minCornerLength  ; Если цель далеко, уголки минимальные
-		} else if (dist < minDistance) {
-			cornerLength := maxCornerLength  ; Если цель близко, уголки максимальные
-		} else {
-			cornerLength := maxCornerLength - (maxCornerLength - minCornerLength) * ((dist - minDistance) / (maxDistance - minDistance))
+			minCornerLength := 5   ; Минимальный размер уголков для дальних целей
+			maxCornerLength := 20  ; Максимальный размер уголков для ближних целей
+			minDistance := 15      ; Минимальное расстояние (при котором уголки будут максимальными)
+			maxDistance := 50      ; Максимальное расстояние (при котором уголки будут минимальными)
+			if (dist > maxDistance) {
+				cornerLength := minCornerLength  ; Если цель далеко, уголки минимальные
+			} else if (dist < minDistance) {
+				cornerLength := maxCornerLength  ; Если цель близко, уголки максимальные
+			} else {
+				cornerLength := maxCornerLength - (maxCornerLength - minCornerLength) * ((dist - minDistance) / (maxDistance - minDistance))
+			}
+			xLeft := x1 - (ESPwidth / 2)
+			xRight := x1 + (ESPwidth / 2)
+			yTop := y1 - ESPheight
+			yBottom := y1
+			game.DrawLine(xLeft, yTop, xLeft + cornerLength, yTop, boxEnemyColor, 2)  ; Левый верхний угол
+			game.DrawLine(xRight - cornerLength, yTop, xRight, yTop, boxEnemyColor, 2) ; Правый верхний угол
+			game.DrawLine(xLeft, yBottom, xLeft + cornerLength, yBottom, boxEnemyColor, 2)  ; Левый нижний угол
+			game.DrawLine(xRight - cornerLength, yBottom, xRight, yBottom, boxEnemyColor, 2) ; Правый нижний угол
+			game.DrawLine(xLeft, yTop, xLeft, yTop + cornerLength, boxEnemyColor, 2)         ; Левый верхний угол
+			game.DrawLine(xLeft, yBottom - cornerLength, xLeft, yBottom, boxEnemyColor, 2)   ; Левый нижний угол
+			game.DrawLine(xRight, yTop, xRight, yTop + cornerLength, boxEnemyColor, 2)         ; Правый верхний угол
+			game.DrawLine(xRight, yBottom - cornerLength, xRight, yBottom, boxEnemyColor, 2)   ; Правый нижний угол
 		}
-		xLeft := x1 - (ESPwidth / 2)
-		xRight := x1 + (ESPwidth / 2)
-		yTop := y1 - ESPheight
-		yBottom := y1
-		game.DrawLine(xLeft, yTop, xLeft + cornerLength, yTop, boxEnemyColor, 2)  ; Левый верхний угол
-		game.DrawLine(xRight - cornerLength, yTop, xRight, yTop, boxEnemyColor, 2) ; Правый верхний угол
-		game.DrawLine(xLeft, yBottom, xLeft + cornerLength, yBottom, boxEnemyColor, 2)  ; Левый нижний угол
-		game.DrawLine(xRight - cornerLength, yBottom, xRight, yBottom, boxEnemyColor, 2) ; Правый нижний угол
-		game.DrawLine(xLeft, yTop, xLeft, yTop + cornerLength, boxEnemyColor, 2)         ; Левый верхний угол
-		game.DrawLine(xLeft, yBottom - cornerLength, xLeft, yBottom, boxEnemyColor, 2)   ; Левый нижний угол
-		game.DrawLine(xRight, yTop, xRight, yTop + cornerLength, boxEnemyColor, 2)         ; Правый верхний угол
-		game.DrawLine(xRight, yBottom - cornerLength, xRight, yBottom, boxEnemyColor, 2)   ; Правый нижний угол
-		}
-		else
+		if ESPLineOrRectangleTeam = 2
 		{	
-		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
+			game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
 		}
-		if ESPShowText
+		if ESPShowTextTeam
 		{
-		textWidth2 := 80
-		textHeight2 := 80
+			textWidth2 := 80
+			textHeight2 := 80
+			extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
+			xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
+			yDrawText := y1 - ESPheight + ESPheight
+			game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		}
+		
+		textWidth2 := 180
+		textHeight2 := 180
 		extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
 		xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
 		yDrawText := y1 - ESPheight + ESPheight
-		game.DrawText(HeroNames[HeroID] "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-		}
+		
+		if ESPShowUltCDTeam
+			game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, "15", "0x00FFFFFF", "Arial", extraOptions2)
+		
+		if ESPHPbarTeam
+		{
 		if (Health > MaxHealth)
-		MaxHealth:=Health
+			MaxHealth:=Health
 		HPHeight := ESPheight * (Health / MaxHealth)  ; Высота полосы пропорциональна проценту здоровья
 		HPWidth := ESPwidth / 8  ; Ширина полосы, можно отрегулировать по вашему вкусу
 		if (Health / MaxHealth <= 0.25) {
@@ -326,6 +352,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		}
 		game.FillRectangle(x1 - (ESPwidth / 2) - HPWidth - 5, y1 - HPHeight, HPWidth, HPHeight, HPColor, "1")
 		}
+		}
 	} 
 	else 
 	{
@@ -335,7 +362,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		ESPheight := (y1 - y2) * 1.3  ; Регулируемая высота
 		ESPwidth := ESPheight / 2.6   ; Пропорциональная ширина
 		boxEnemyColor := 0xffFF0000    ; Цвет рамки
-		if LineOrRectangle
+		if ESPLineOrRectangle = 1
 		{
 		minCornerLength := 5   ; Минимальный размер уголков для дальних целей
 		maxCornerLength := 20  ; Максимальный размер уголков для ближних целей
@@ -361,7 +388,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		game.DrawLine(xRight, yTop, xRight, yTop + cornerLength, boxEnemyColor, 2)         ; Правый верхний угол
 		game.DrawLine(xRight, yBottom - cornerLength, xRight, yBottom, boxEnemyColor, 2)   ; Правый нижний угол
 		}
-		else
+		if ESPLineOrRectangle = 2
 		{	
 		game.DrawRectangle(x1-(ESPwidth/2), y1-ESPheight, ESPwidth, ESPheight, boxEnemyColor, "2")
 		}
@@ -374,10 +401,10 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		{
 		if ESPShowText
 		{
-		game.DrawText(HeroNames[HeroID] "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)
-		; game.DrawText(HeroNames[HeroID] "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+		game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)
 		}
+		if ESPShowUltCD
+		game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, "15", "0x00FFFFFF", "Arial", extraOptions2)
 		}
 		else
 		{

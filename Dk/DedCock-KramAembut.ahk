@@ -1,40 +1,12 @@
 ﻿
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-
-HeroBones := {}
-HeroBones[1] := {name: "Infernus", head: 30, neck: 29, body: 11}
-HeroBones[2] := {name: "Seven", head: 14, neck: 11, body: 10}
-HeroBones[3] := {name: "Vindicta", head: 7, neck: 8, body: 4}
-HeroBones[4] := {name: "LadyGeist", head: 11, neck: 12, body: 7}
-HeroBones[6] := {name: "Abrams", head: 7, neck: 6, body: 5}
-HeroBones[7] := {name: "Wraith", head: 7, neck: 6, body: 5}
-HeroBones[8] := {name: "McGinnis", head: 7, neck: 5, body: 4}
-HeroBones[10] := {name: "Paradox", head: 8, neck: 9, body: 5}
-HeroBones[11] := {name: "Dynamo", head: 13, neck: 12, body: 16}
-HeroBones[12] := {name: "Kelvin", head: 12, neck: 13, body: 9}
-HeroBones[13] := {name: "Haze", head: 8, neck: 5, body: 4}
-HeroBones[14] := {name: "Holliday", head: 0, neck: 0, body: 0}
-HeroBones[15] := {name: "Bebop", head: 6, neck: 4, body: 3}
-HeroBones[17] := {name: "GreyTalon", head: 17, neck: 25, body: 15}
-HeroBones[18] := {name: "MoAndKrill", head: 10, neck: 9, body: 15}
-HeroBones[19] := {name: "Shiv", head: 13, neck: 14, body: 9}
-HeroBones[20] := {name: "Ivy", head: 13, neck: 10, body: 9}
-HeroBones[25] := {name: "Warden", head: 11, neck: 12, body: 9}
-HeroBones[27] := {name: "Yamato", head: 35, neck: 18, body: 17}
-HeroBones[31] := {name: "Lash", head: 12, neck: 10, body: 9}
-HeroBones[35] := {name: "Viscous", head: 7, neck: 5, body: 4}
-HeroBones[48] := {name: "Wrecker", head: 0, neck: 0, body: 0}
-HeroBones[50] := {name: "Pocket", head: 13, neck: 11, body: 10}
-HeroBones[52] := {name: "Mirage", head: 8, neck: 9, body: 5}
-HeroBones[55] := {name: "Dummy", head: 0, neck: 0, body: 0}
-
-
-
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
+HeroArray := {}
+#include %A_ScriptDir%\data\HeroArray.ahk
 
 CommandLine := DllCall("GetCommandLine", "Str")
 If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
@@ -98,15 +70,20 @@ game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",,
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
+Toggler1 := false
 
 StartLabelStart:
-sleep 1500
+sleep 500
 VindictaCuted := false
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
+if (!Toggler1) 
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+Toggler1 := true
+}
 }
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
@@ -194,9 +171,6 @@ if (!VindictaCuted)
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-			; msgbox % pEntityString
-			; msgbox % HexFormat(ControllerBase)
-			; msgbox % HexFormat(ControllerBase + offsets.m_pEntity)
 			if Health
 			{
 				BubaArray.push(ControllerBase)
@@ -204,7 +178,6 @@ if (!VindictaCuted)
 			}
 			playerIndex++
 		}
-		; msgbox 1
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -234,21 +207,25 @@ if (!VindictaCuted)
 		; msgbox % FlaggedAsCheater
 		
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
-		DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
+		bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+		iHealth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+		; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 		if (TeamNum != MyTeamIs)
 		{
-			if DormantVar = 256
+			if (bAlive = 1 && iHealth > 0)
 			{
 				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
 				if BoneMode
 				{
 					if HeadOrNeckOrBody = 1
-					SelectBone := HeroBones[HeroID].head
+					SelectBone := HeroArray[HeroID].head
 					if HeadOrNeckOrBody = 2
-					SelectBone := HeroBones[HeroID].neck
+					SelectBone := HeroArray[HeroID].neck
 					if HeadOrNeckOrBody = 3
-					SelectBone := HeroBones[HeroID].body
+					SelectBone := HeroArray[HeroID].body
+					if HeadOrNeckOrBody = 4
+					SelectBone := HeroArray[HeroID].head
 					if (SelectBone > 0)
 					{
 						enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
@@ -364,8 +341,10 @@ if (!VindictaCuted)
 	{
 		currentTarget := true
 		
-		DormantVar := 1337flex.Read(closestPindex + offsets.m_lifeState,"int")
-		if DormantVar = 256
+		bAlive := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+		iHealth := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+		; DormantVar := 1337flex.Read(closestPindex + offsets.m_lifeState,"int")
+		if (bAlive = 1 && iHealth > 0)
 		{
 				HeroID := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 				GameSceneNode := 1337flex.getAddressFromOffsets(closestPindex + offsets.m_pGameSceneNode, 0x0)
@@ -383,20 +362,39 @@ if (!VindictaCuted)
 					Random, HitChance, 1, 100
 					if (HitChance <= 70) 
 					{
-						SelectBone := HeroBones[HeroID].head
+						SelectBone := HeroArray[HeroID].head
 					} 
 					else 
 					{
-						SelectBone := HeroBones[HeroID].neck
+						SelectBone := HeroArray[HeroID].neck
 					}
 				}
 				}	
 				; if HeadOrNeckOrBody = 1
-				; SelectBone := HeroBones[HeroID].head
+				; SelectBone := HeroArray[HeroID].head
 				if HeadOrNeckOrBody = 2
-				SelectBone := HeroBones[HeroID].neck
+				SelectBone := HeroArray[HeroID].neck
 				if HeadOrNeckOrBody = 3
-				SelectBone := HeroBones[HeroID].body
+				SelectBone := HeroArray[HeroID].body
+				if HeadOrNeckOrBody = 4
+				{
+				CurrentTime1 := A_TickCount
+				ElapsedTime1 := CurrentTime1 - LastTime1
+				if (ElapsedTime1 >= 250) 
+				{
+					LastTime1 := CurrentTime1
+					Random, HitChance, 1, 100
+					if (HitChance <= 90) 
+					{
+						SelectBone := HeroArray[HeroID].head
+					} 
+					else 
+					{
+						SelectBone := HeroArray[HeroID].neck
+					}
+				}
+				}
+				
 				if (SelectBone > 0)
 				{
 				
@@ -624,11 +622,11 @@ AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfgh
 
 LabelHeadOrNeckOrBody:
     HeadOrNeckOrBody++
-    if (HeadOrNeckOrBody > 3)  ; Если значение больше 3, сбрасываем на 0
+    if (HeadOrNeckOrBody > 4)  ; Если значение больше 3, сбрасываем на 0
         HeadOrNeckOrBody := 1
     if HeadOrNeckOrBody = 1
 	{
-	Tooltip, Head
+	Tooltip, Head 60`%
     Sleep, 500
     Tooltip
 	}
@@ -641,6 +639,12 @@ LabelHeadOrNeckOrBody:
 	if HeadOrNeckOrBody = 3
 	{
 	Tooltip, Body
+    Sleep, 500
+    Tooltip
+	}
+	if HeadOrNeckOrBody = 4
+	{
+	Tooltip, Head 90`%
     Sleep, 500
     Tooltip
 	}

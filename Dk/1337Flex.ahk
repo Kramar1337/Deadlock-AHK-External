@@ -5,21 +5,22 @@
  - Автоматическое парирование
  - Кастом радиус(показывать ренж)
  - Тавер радиус
- - Триггер из GetEntityUnderCrosshair
- ; - Поправить радар
- ; - Проверка m_bAlive
- ; - Удобный текст нетворса
- ; - Радар прозрачность тиммейтов
- ; - Оптимизация оффсета
- ; - фикс хпмакс новый
+ - обновлятор структур
+ - обновлятор имен персонажей
+ - Список наблюдателей
 
 
 
--console -novid -dx11 -m_rawinput 1 +exec autoexec.cfg -high -preload -fullscreen +@panorama_min_comp_layer_cache_cost_TURNED_OFF 256
+
+-console -novid -dx11 -m_rawinput 1 +exec autoexec.cfg -high -preload +@panorama_min_comp_layer_cache_cost_TURNED_OFF 256
+
+-insecure -console -novid
+
 H:\SteamHDD\steamapps\common\Deadlock
 r_shadows 0
 
-
+map street_test
+exec citadel_botmatch_practice_6v6_hard.cfg
 
 
 
@@ -154,14 +155,90 @@ Gui, Add, Button, gHashChanger w100 h30, Hash Changer
 Gui, Add, Button, gNameChanger w100 h30, Name Changer
 Gui, Add, Button, gUpCfg w100 h30, Import Config
 Gui, Add, Button, gMetkaMenu3 w100 h30, Edit Config
-
+Gui, Add, Button, gUpOffsets w100 h30, UpOffsets
 
 ; Gui, Add, Button, gHwidSpoofer w100 h30, HWID Spoofer
 Gui, Add, Button, gExit w100 h30, Exit
 randomName := GenerateRandomName(15) ; 10 - длина имени
-yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (300 / 1440))
+yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (500 / 1440))
 Gui, Show, y%yPosGui%, %randomName%
 return
+
+
+
+UpOffsets:
+; https://github.com/ouwou/source2sdk-deadlock
+MsgBox 0x1, ,Ручное обновление оффсетов`nПеред продолжением отключи AV
+IfMsgBox OK, {
+} Else IfMsgBox Cancel, {
+Return
+}
+FileCreateDir, %A_ScriptDir%\TempFlex
+
+; Базовый URL
+URLDeadlockSdk := "https://raw.githubusercontent.com/ouwou/source2sdk-deadlock/refs/heads/master/include/source2sdk"
+
+; Скачивание файлов
+URLDownloadToFile, % URLDeadlockSdk "/client/C_BasePlayerPawn.hpp", %A_ScriptDir%\TempFlex\C_BasePlayerPawn.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CPlayer_CameraServices.hpp", %A_ScriptDir%\TempFlex\CPlayer_CameraServices.hpp
+URLDownloadToFile, % URLDeadlockSdk "/entity2/CEntityInstance.hpp", %A_ScriptDir%\TempFlex\CEntityInstance.hpp
+URLDownloadToFile, % URLDeadlockSdk "/entity2/CEntityIdentity.hpp", %A_ScriptDir%\TempFlex\CEntityIdentity.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CGameSceneNode.hpp", %A_ScriptDir%\TempFlex\CGameSceneNode.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/C_BaseEntity.hpp", %A_ScriptDir%\TempFlex\C_BaseEntity.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CBasePlayerController.hpp", %A_ScriptDir%\TempFlex\CBasePlayerController.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CSkeletonInstance.hpp", %A_ScriptDir%\TempFlex\CSkeletonInstance.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CModelState.hpp", %A_ScriptDir%\TempFlex\CModelState.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/CCitadelPlayerController.hpp", %A_ScriptDir%\TempFlex\CCitadelPlayerController.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/PlayerDataGlobal_t.hpp", %A_ScriptDir%\TempFlex\PlayerDataGlobal_t.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/C_GameRules.hpp", %A_ScriptDir%\TempFlex\C_GameRules.hpp
+
+
+combinedResult := ""
+combinedResult .= GetKramOffsets("CPlayer_CameraServices.hpp", "m_vecPunchAngle") . "`n"
+combinedResult .= GetKramOffsets("CPlayer_CameraServices.hpp", "m_vecPunchAngleVel") . "`n"
+combinedResult .= GetKramOffsets("C_BasePlayerPawn.hpp", "m_pCameraServices") . "`n"
+combinedResult .= GetKramOffsets("CEntityInstance.hpp", "m_pEntity") . "`n"
+combinedResult .= GetKramOffsets("CEntityIdentity.hpp", "m_designerName") . "`n"
+combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_vecAbsOrigin") . "`n"
+combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_bDormant") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_pGameSceneNode") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_iTeamNum") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_iMaxHealth") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_vecVelocity") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_lifeState") . "`n"
+combinedResult .= GetKramOffsets("CBasePlayerController.hpp", "m_hPawn") . "`n"
+combinedResult .= GetKramOffsets("CSkeletonInstance.hpp", "m_modelState") . "`n"
+combinedResult .= GetKramOffsets("CModelState.hpp", "m_hModel") . "`n"
+combinedResult .= GetKramOffsets("CCitadelPlayerController.hpp", "m_PlayerDataGlobal") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iHealth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iHealthMax") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bAlive") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_nHeroID") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iGoldNetWorth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iAPNetWorth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bUltimateTrained") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_flUltimateCooldownEnd") . "`n"
+combinedResult .= GetKramOffsets("C_GameRules.hpp", "m_nTotalPausedTicks") . "`n"
+
+
+Clipboard := combinedResult
+MsgBox, %combinedResult%
+FileRemoveDir, %A_ScriptDir%\TempFlex, 1
+return
+
+
+
+GetKramOffsets(fileName, serviceName) {
+    FileRead, content, %A_ScriptDir%\TempFlex\%fileName%
+    if RegExMatch(content, serviceName . "[^\n]*//.*?0x[a-fA-F0-9]+", match)
+	{
+	RegExMatch(match, "(0x[a-fA-F0-9]+)[\s\n]*$", match1)
+    return "static " . serviceName . " = " . match1
+	}
+    return ""
+}
+
+
 
 Start:
     ; Получаем путь к текущему скрипту

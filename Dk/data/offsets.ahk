@@ -14,14 +14,10 @@ static m_designerName = 0x20
 static m_vecAbsOrigin = 0xd0
 ; CGameSceneNode
 static m_bDormant = 0xef
-; ControllerBase в CE отмотать 0x7d8 в поисках Dormant 1-жив 0-мертв, преобразовать в 4 байт целое
-static m_bDormant2 = 0x7d8
 ; C_BaseEntity
 static m_pGameSceneNode = 0x330
 ; C_BaseEntity
 static m_iTeamNum = 0x3f3
-; C_BaseEntity
-static m_ihealth = 0x354
 ; C_BaseEntity
 static m_iMaxHealth = 0x350
 ; C_BaseEntity
@@ -38,11 +34,16 @@ static m_hModel = 0xd0
 ; CCitadelPlayerController
 static m_PlayerDataGlobal = 0x778
 ; PlayerDataGlobal_t
+static m_iHealth = 0x48
 static m_iHealthMax = 0x10
 static m_bAlive = 0x60
 static m_nHeroID = 0x1c
 static m_iGoldNetWorth = 0x20
 static m_iAPNetWorth = 0x24
+static m_bUltimateTrained = 0x68
+static m_flUltimateCooldownEnd = 0x70
+; C_GameRules
+static m_nTotalPausedTicks = 0x30
 }
 ; Функция для выполнения поиска паттерна и вычисления адреса
 FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2) {

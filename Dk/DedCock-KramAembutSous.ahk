@@ -1,7 +1,6 @@
 ﻿
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
@@ -58,17 +57,22 @@ game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",,
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 global isReading := false
-
+Toggler1 := false
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 StartLabelStart:
-sleep 1500
+sleep 500
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
+if (!Toggler1) 
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+Toggler1 := true
+}
+
 SetTimer, ReadEntities, 1000
 Gosub, ReadEntities
 }

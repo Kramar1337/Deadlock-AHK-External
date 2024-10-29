@@ -43,14 +43,19 @@ AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfgh
 
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
+Toggler1 := false
 
 StartLabelStart:
-sleep 1500
+sleep 500
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
+if (!Toggler1) 
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+Toggler1 := true
+}
 }
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20

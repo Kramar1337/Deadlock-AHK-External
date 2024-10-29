@@ -1,5 +1,4 @@
-﻿
-#NoEnv
+﻿#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -16,6 +15,9 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 	}
 	ExitApp
 }
+
+HeroArray := {}
+#include %A_ScriptDir%\data\HeroArray.ahk
 
 IniFile := A_ScriptDir "\data\config.ini"
 IniRead, key_NetWorthShow, %iniFile%, Settings, key_NetWorthShow, Ctrl
@@ -53,18 +55,14 @@ if radarAutoMode
 	radarBottomRightX := round(A_ScreenWidth * (2519 / 2560))
 	radarBottomRightY := round(A_ScreenHeight * (1380 / 1440))
 }
-
 radarWidth := radarBottomRightX - radarTopLeftX  ; Ширина радара
 radarHeight := radarBottomRightY - radarTopLeftY  ; Высота радара
 radarFillColor := 0x10000000  ; Полупрозрачный черный (альфа 0x10)
 radarBorderColor := 0xFFFFFFFF  ; Белый цвет для рамки радара
 radarBorderThickness := 2  ; Толщина рамки радара
-; maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
-; Размеры области для центрирования текста
 textWidth := 150  ; Примерная ширина текста
 textHeight := 50  ; Примерная высота текста
 extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
-
 
 
 #include %A_ScriptDir%\data\offsets.ahk
@@ -87,10 +85,6 @@ Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
 
-; Создание массива героев
-HeroNames := {1: "Infernus", 2: "Seven", 3: "Vindicta", 4: "LadyGeist", 6: "Abrams", 7: "Wraith", 8: "McGinnis", 10: "Paradox", 11: "Dynamo", 12: "Kelvin", 13: "Haze", 14: "Holliday", 15: "Bebop", 17: "GreyTalon", 18: "MoAndKrill", 19: "Shiv", 20: "Ivy", 25: "Warden", 27: "Yamato", 31: "Lash", 35: "Viscous", 48: "Wrecker", 50: "Pocket", 52: "Mirage", 55: "Dummy"}
-
-
 gameEXE:= "ahk_exe project8.exe"
 gameDLL:= "client.dll"
 
@@ -98,9 +92,10 @@ AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfgh
 
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
+Toggler1 := false
 
 StartLabelStart:
-sleep 1500
+sleep 500
 game.EndDraw()
 game.BeginDraw()
 game.EndDraw()
@@ -108,7 +103,11 @@ game.EndDraw()
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
 {
+if (!Toggler1) 
+{
 #include %A_ScriptDir%\data\offsetsdump.ahk
+Toggler1 := true
+}
 }
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
@@ -148,7 +147,7 @@ Loop
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
 			; TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
 			if Health
 			{
@@ -173,14 +172,13 @@ Loop
 	Kramindex++
 	ControllerBase := BubaArray[Kramindex]
 	Pawn := BubaArray2[Kramindex]
-	; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-	; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
-	; bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
-	; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
+
 	TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
-	Dormant2 := 1337flex.Read(ControllerBase + offsets.m_bDormant2,"int")
-	if (Dormant2 = 1)
+	bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
+	iHealth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+	; Dormant2 := 1337flex.Read(ControllerBase + offsets.m_bDormant2,"int")
+	if (bAlive = 1 && iHealth > 0)
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
 		{
@@ -193,40 +191,36 @@ Loop
 			myAPNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
 			GoldNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
 			APNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
-
 			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 			if(enemyXLocation!=0)
 			{
 			IfWinActive, ahk_exe project8.exe
 			{
-			; Координаты верхнего левого и нижнего правого углов радара
 			if radarBoxEnable
 			{
-			game.FillRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarFillColor)
-			game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
+				game.FillRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarFillColor)
+				game.DrawRectangle(radarTopLeftX, radarTopLeftY, radarWidth, radarHeight, radarBorderColor, radarBorderThickness)
 			}
 			MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
 			if MyTeamIs = 2 ;Янтарные
 			{
-			; msgbox 2
-			mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
-			mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
-			maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
-			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
-			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
-			radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
-			radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
+				mapCenterX := -180  ; Центр карты по X в игровом мире (условно)
+				mapCenterY := 180  ; Центр карты по Y в игровом мире (условно)
+				maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
+				relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
+				relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
+				radarX := radarTopLeftX + (radarWidth / 2) + (relativeX * radarWidth / 2)
+				radarY := radarTopLeftY + (radarHeight / 2) - (relativeY * radarHeight / 2)  ; Y-инверсия
 			}
 			if MyTeamIs = 3 ;Сапфир
 			{
-			; msgbox 3
-			mapCenterX := 180  ; Центр карты по X в игровом мире (условно)
-			mapCenterY := -180  ; Центр карты по Y в игровом мире (условно)
-			maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
-			relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
-			relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
-			radarX := radarTopLeftX + (radarWidth / 2) - (relativeX * radarWidth / 2)  ; Инверсия по X
-			radarY := radarTopLeftY + (radarHeight / 2) + (relativeY * radarHeight / 2)  ; Инверсия по Y
+				mapCenterX := 180  ; Центр карты по X в игровом мире (условно)
+				mapCenterY := -180  ; Центр карты по Y в игровом мире (условно)
+				maxDistance := 10800 ; Максимальная дальность видимости на радаре в игровых единицах
+				relativeX := (enemyXLocation - mapCenterX) / maxDistance  ; Преобразуем координаты врага по X относительно центра
+				relativeY := (enemyYLocation - mapCenterY) / maxDistance  ; Преобразуем координаты врага по Y относительно центра
+				radarX := radarTopLeftX + (radarWidth / 2) - (relativeX * radarWidth / 2)  ; Инверсия по X
+				radarY := radarTopLeftY + (radarHeight / 2) + (relativeY * radarHeight / 2)  ; Инверсия по Y
 			}
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
@@ -245,7 +239,7 @@ Loop
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
 				}
 				if radarShowNameTeam
-				game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
+				game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
 				}
 			} 
 			else
@@ -261,7 +255,7 @@ Loop
 				{
 					if !GetKeyState(key_NetWorthShow, "P")
 					{
-					game.DrawText(HeroNames[HeroID], radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
+					game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
 					}
 					else
 					{
@@ -335,13 +329,8 @@ getDistance(x,y,z)
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
 HexFormat(address) {
-    ; Преобразование адреса в 16-ричный формат без "0x"
     hexAddress := Format("{:X}", address)
-    
-    ; Копирование адреса в буфер обмена
     Clipboard := hexAddress
-    
-    ; Возвращаем 16-ричный адрес
     return hexAddress
 }
 
