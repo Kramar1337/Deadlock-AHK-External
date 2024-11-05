@@ -200,7 +200,7 @@ if (!VindictaCuted)
 		ControllerBase := BubaArray[Kramindex]
 		Pawn := BubaArray2[Kramindex]
 		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-		MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
+		; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
 		
 		; FlaggedAsCheater := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + 0x76,"int")
@@ -377,23 +377,7 @@ if (!VindictaCuted)
 				if HeadOrNeckOrBody = 3
 				SelectBone := HeroArray[HeroID].body
 				if HeadOrNeckOrBody = 4
-				{
-				CurrentTime1 := A_TickCount
-				ElapsedTime1 := CurrentTime1 - LastTime1
-				if (ElapsedTime1 >= 250) 
-				{
-					LastTime1 := CurrentTime1
-					Random, HitChance, 1, 100
-					if (HitChance <= 90) 
-					{
-						SelectBone := HeroArray[HeroID].head
-					} 
-					else 
-					{
-						SelectBone := HeroArray[HeroID].neck
-					}
-				}
-				}
+				SelectBone := HeroArray[HeroID].head
 				
 				if (SelectBone > 0)
 				{
@@ -644,7 +628,7 @@ LabelHeadOrNeckOrBody:
 	}
 	if HeadOrNeckOrBody = 4
 	{
-	Tooltip, Head 90`%
+	Tooltip, Head 100`%
     Sleep, 500
     Tooltip
 	}

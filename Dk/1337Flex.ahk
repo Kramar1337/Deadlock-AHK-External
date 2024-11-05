@@ -3,11 +3,45 @@
 Запланировано:
  - HWID Changer
  - Автоматическое парирование
- - Кастом радиус(показывать ренж)
- - Тавер радиус
- - обновлятор структур
- - обновлятор имен персонажей
  - Список наблюдателей
+
+
+Типы обновлений:
+10 мб
+100 мб
+1 гб
+
+
+
+Параметры запуска:
+-insecure -console -novid
+
+Обновить "m_" offsets.ahk:
+Поиск по гитхабу:
+https://github.com/search?q=m_flUltimateCooldownEnd&type=code
+или
+https://github.com/ouwou/source2sdk-deadlock
+Поиск по UC:
+https://www.unknowncheats.me/forum/deadlock/639185-deadlock-reversal-structs-offsets.html
+Ручной дамп:
+https://github.com/neverlosecc/source2gen
+Онлайн дампер:
+https://a2x.github.io/cs2-analyzer/
+Авто открытие папки с файлом client.dll:
+
+
+Отладочные инструменты:
+Pawn + ControllerBase
+Экспорт списка сущностей
+Режим отладки костей
+Обновлятор HeroArray.ahk
+Выравниватель структур
+
+Обновление offsetsdump.ahk:
+https://a2x.github.io/cs2-analyzer/
+Авто открытие папки с файлом client.dll:
+Cheat engine
+
 
 
 
@@ -34,25 +68,7 @@ https://pastebin.com/1gqMqP5V
 https://pastebin.com/raw/vqU9fdR1
 https://pastebin.com/raw/TDCdVjax
 
-dwEntityList = 0x1FC5460
-dwGameEntitySystem_highestEntityIndex - 0x21E3E90
 
-
-Signature GetEntityUnderCrosshair("48 89 5c 24 ? 57 48 81 ec ? ? ? ? 33 ff 8b cf", 0, 0);
-
-
-; STeamFOWEntity
-m_nEntIndex = 0x30
-m_bVisibleOnMap = 0x41
-; C_CitadelTeam
-m_vecFOWEntities = 0x628
-
-C_CitadelTeam
-Он находится в глобальном списке сущностей
-Есть сущность для каждой команды
-STeamFOWEntity array = [C_CitadelTeam + m_vecFOWEntities]
-[STeamFOWEntity + m_nEntIndex]
-[STeamFOWEntity + m_bVisibleOnMap]
 
 
 Originally Posted by hoomanlegit View Post
@@ -78,7 +94,7 @@ citadel_hero_testing_enabled 1
 citadel_hero_testing_infinite_money
 trooper_kill_all
 host_timescale 1
-l_ent_actornames
+cl_ent_actornames
 
 
 https://www.youtube.com/watch?v=VPskGHjG-bA
@@ -155,90 +171,60 @@ Gui, Add, Button, gHashChanger w100 h30, Hash Changer
 Gui, Add, Button, gNameChanger w100 h30, Name Changer
 Gui, Add, Button, gUpCfg w100 h30, Import Config
 Gui, Add, Button, gMetkaMenu3 w100 h30, Edit Config
-Gui, Add, Button, gUpOffsets w100 h30, UpOffsets
+Gui, Add, Button, gUpOffsets w100 h30, DBG
 
-; Gui, Add, Button, gHwidSpoofer w100 h30, HWID Spoofer
+Gui, Add, Button, gHwidSpoofer w100 h30, HWID Spoofer
 Gui, Add, Button, gExit w100 h30, Exit
 randomName := GenerateRandomName(15) ; 10 - длина имени
-yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (500 / 1440))
-Gui, Show, y%yPosGui%, %randomName%
+; yPosGui := A_ScreenHeight // 2 - round(A_ScreenHeight * (500 / 1440))
+Gui, Show, y0, %randomName%
 return
 
+;============================Спуфер
+HwidSpoofer:
+VarMsgbox1=
+(
+Проводим спуферизацию
+*Не забудь отключить AV
+*Не забудь перезагрузить компьютер
 
+Что делает скрипт:
+ - Чистит реестр
+ - Чистит папку игры
+ - Изменияет MachineGuid
+ - Изменияет MAC-адреса
 
-UpOffsets:
-; https://github.com/ouwou/source2sdk-deadlock
-MsgBox 0x1, ,Ручное обновление оффсетов`nПеред продолжением отключи AV
+Проблемы:
+ - Сгорят настройки и сохранения всех игр Steam
+ - Сгорят лицензии некоторых программ
+)
+
+MsgBox 0x1, , % VarMsgbox1
 IfMsgBox OK, {
 } Else IfMsgBox Cancel, {
 Return
 }
-FileCreateDir, %A_ScriptDir%\TempFlex
+processes := ["Steam.exe", "Deadlock.exe", "Project8.exe", "Citadel.exe"]
 
-; Базовый URL
-URLDeadlockSdk := "https://raw.githubusercontent.com/ouwou/source2sdk-deadlock/refs/heads/master/include/source2sdk"
-
-; Скачивание файлов
-URLDownloadToFile, % URLDeadlockSdk "/client/C_BasePlayerPawn.hpp", %A_ScriptDir%\TempFlex\C_BasePlayerPawn.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CPlayer_CameraServices.hpp", %A_ScriptDir%\TempFlex\CPlayer_CameraServices.hpp
-URLDownloadToFile, % URLDeadlockSdk "/entity2/CEntityInstance.hpp", %A_ScriptDir%\TempFlex\CEntityInstance.hpp
-URLDownloadToFile, % URLDeadlockSdk "/entity2/CEntityIdentity.hpp", %A_ScriptDir%\TempFlex\CEntityIdentity.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CGameSceneNode.hpp", %A_ScriptDir%\TempFlex\CGameSceneNode.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/C_BaseEntity.hpp", %A_ScriptDir%\TempFlex\C_BaseEntity.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CBasePlayerController.hpp", %A_ScriptDir%\TempFlex\CBasePlayerController.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CSkeletonInstance.hpp", %A_ScriptDir%\TempFlex\CSkeletonInstance.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CModelState.hpp", %A_ScriptDir%\TempFlex\CModelState.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/CCitadelPlayerController.hpp", %A_ScriptDir%\TempFlex\CCitadelPlayerController.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/PlayerDataGlobal_t.hpp", %A_ScriptDir%\TempFlex\PlayerDataGlobal_t.hpp
-URLDownloadToFile, % URLDeadlockSdk "/client/C_GameRules.hpp", %A_ScriptDir%\TempFlex\C_GameRules.hpp
-
-
-combinedResult := ""
-combinedResult .= GetKramOffsets("CPlayer_CameraServices.hpp", "m_vecPunchAngle") . "`n"
-combinedResult .= GetKramOffsets("CPlayer_CameraServices.hpp", "m_vecPunchAngleVel") . "`n"
-combinedResult .= GetKramOffsets("C_BasePlayerPawn.hpp", "m_pCameraServices") . "`n"
-combinedResult .= GetKramOffsets("CEntityInstance.hpp", "m_pEntity") . "`n"
-combinedResult .= GetKramOffsets("CEntityIdentity.hpp", "m_designerName") . "`n"
-combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_vecAbsOrigin") . "`n"
-combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_bDormant") . "`n"
-combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_pGameSceneNode") . "`n"
-combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_iTeamNum") . "`n"
-combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_iMaxHealth") . "`n"
-combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_vecVelocity") . "`n"
-combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_lifeState") . "`n"
-combinedResult .= GetKramOffsets("CBasePlayerController.hpp", "m_hPawn") . "`n"
-combinedResult .= GetKramOffsets("CSkeletonInstance.hpp", "m_modelState") . "`n"
-combinedResult .= GetKramOffsets("CModelState.hpp", "m_hModel") . "`n"
-combinedResult .= GetKramOffsets("CCitadelPlayerController.hpp", "m_PlayerDataGlobal") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iHealth") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iHealthMax") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bAlive") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_nHeroID") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iGoldNetWorth") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iAPNetWorth") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bUltimateTrained") . "`n"
-combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_flUltimateCooldownEnd") . "`n"
-combinedResult .= GetKramOffsets("C_GameRules.hpp", "m_nTotalPausedTicks") . "`n"
-
-
-Clipboard := combinedResult
-MsgBox, %combinedResult%
-FileRemoveDir, %A_ScriptDir%\TempFlex, 1
+; Перебираем процессы
+for index, process in processes {
+    if (ProcessExist(process)) {
+        MsgBox, % process " запущен. Закрой."
+        return  ; Завершает выполнение скрипта
+    }
+}
+Run *RunAs "%A_ScriptDir%\data\Spoofer\DeadlockSpoofer.bat"
 return
-
-
-
-GetKramOffsets(fileName, serviceName) {
-    FileRead, content, %A_ScriptDir%\TempFlex\%fileName%
-    if RegExMatch(content, serviceName . "[^\n]*//.*?0x[a-fA-F0-9]+", match)
-	{
-	RegExMatch(match, "(0x[a-fA-F0-9]+)[\s\n]*$", match1)
-    return "static " . serviceName . " = " . match1
-	}
-    return ""
+; Функция для проверки наличия процесса
+ProcessExist(processName) {
+    Process, Exist, %processName%
+    return ErrorLevel  ; Возвращает 1, если процесс существует
 }
 
-
+;============================Отдельный скрипт для отладки и ручного обновления офсетов
+UpOffsets:
+Run, %A_ScriptDir%\data\ManualUpdater.ahk
+return
 
 Start:
     ; Получаем путь к текущему скрипту
@@ -398,9 +384,6 @@ UpCfg:
     MsgBox,,, Настройки импортированы,1
 return
 
-HwidSpoofer:
-MsgBox,,, Пока ничего нет,1
-return
 
 
 

@@ -156,25 +156,57 @@ Loop
 
 
 	/*
-	; msgbox % HexFormat(Pawn)
 
-	Ability_component := 1337flex.getAddressFromOffsets(Pawn, 0x0)
-	Ability_component := 1337flex.getAddressFromOffsets(Ability_component + 0xfe8, 0x70 + 0x8)
+
+; C_CitadelBaseAbility
+; static m_eAbilitySlot = 0x6e8
+; CEntityComponent
+; static m_vecAbilities = 0x70
+; C_CitadelPlayerPawn
+; static m_CCitadelAbilityComponent = 0xFE8
+; CCitadel_Ability_HoldMelee
+; static m_eCurrentAttackState = 0xd28
+; static m_bCreatedChargeEffects = 0xd3d 
+
+
+	Loop
+	{
+	Ability_component := 1337flex.getAddressFromOffsets(Pawn + offsets.m_CCitadelAbilityComponent + offsets.m_vecAbilities + 0x8, 0x0)
 	i := 0
 	while (i < 22)
 	{
-	; AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
-	AbilityHandle := 83485640
-	; msgbox % HexFormat(AbilityHandle)
-	EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
-	Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0)
-	if Ability
-	msgbox % HexFormat(Ability)
-	i++
+		AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
+		EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+		Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0)
+		if Ability
+		{
+			nUpgradeBits := 1337flex.Read(Ability + 0x6c8,"int")
+			bIsCoolingDownInternal := 1337flex.Read(Ability + 0x684,"int")
+			eAbilitySlot := 1337flex.Read(Ability + offsets.m_eAbilitySlot,"int")
+			if eAbilitySlot = 21
+			{
+				eCurrentAttackState := 1337flex.Read(Ability + offsets.m_eCurrentAttackState,"int")
+				bCreatedChargeEffects := 1337flex.Read(Ability + offsets.m_bCreatedChargeEffects,"int")
+				if (bCreatedChargeEffects = 1 and eCurrentAttackState > 0)
+				{
+				Tooltip Charge
+				}
+				else
+				{
+				Tooltip
+				}
+			}
+			Tooltip i - %i%`n%nUpgradeBits%`n%bIsCoolingDownInternal%`n%eAbilitySlot%`n%Pawn%
+			; sleep 500
+		}
+		i++
+		; msgbox %i%`n%Ability_component%`n%AbilityHandle%`n%Ability%`n%eAbilitySlot%
+		; msgbox % HexFormat(Ability)
+		
 	}
-	exitapp
-	; msgbox % HexFormat(ControllerBaseEntity)
-	; msgbox % HexFormat(Pawn)
+	}
+	Exitapp
+
 	*/
 	
 	

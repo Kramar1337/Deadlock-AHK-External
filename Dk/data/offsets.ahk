@@ -5,7 +5,6 @@ static dwGameEntitySystem_highestEntityIndex = 0x1530
 static m_pCameraServices = 0xD40
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
-static m_vecPunchAngleVel = 0x58
 ; CEntityInstance
 static m_pEntity = 0x10
 ; CEntityIdentity
@@ -19,14 +18,9 @@ static m_pGameSceneNode = 0x330
 ; C_BaseEntity
 static m_iTeamNum = 0x3f3
 ; C_BaseEntity
-static m_iMaxHealth = 0x350
-; C_BaseEntity
 static m_vecVelocity = 0x410
-; C_BaseEntity 256 жив 258 мертв
-static m_lifeState = 0x358
 ; CBasePlayerController
 static m_hPawn = 0x614
-; static m_iszPlayerName = 0x648
 ; CSkeletonInstance
 static m_modelState = 0x170
 ; CModelState

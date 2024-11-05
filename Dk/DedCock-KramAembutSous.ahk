@@ -250,7 +250,7 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 		playerIndex=0
 		BubaArray := []
 		counter1 := 0
-		while(playerIndex < EntityListCout)
+		while(playerIndex < EntityListCout + 1)
 		{
 			counter1++
 			if (counter1 >= 500)
@@ -262,8 +262,11 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 			EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			if (pEntityString == "CItemXP")
+			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
+			; pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
+			; item_xp
+			; CItemXP
+			if (pEntityString == "item_xp")
 			{
 			BubaArray.push(ControllerBase)
 			}
