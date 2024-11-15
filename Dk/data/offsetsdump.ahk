@@ -39,3 +39,12 @@ gameDLL := "client.dll"
 offset1 := 0x3
 offset2 := 0x7
 dwGameRules := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
+
+PatternVar1 := "48 89 1d ? ? ? ? ff 15 ? ? ? ? 84 c0"
+aPattern := ConvertBytesStringToArray(PatternVar1)
+gameDLL := "client.dll"
+offset1 := 0x3
+offset2 := 0x7
+dwGameRules := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
+
+dwGameEntitySystem_highestEntityIndex = 0x1530

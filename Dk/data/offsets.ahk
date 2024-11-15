@@ -1,32 +1,27 @@
 ﻿class offsets
 {
-static dwGameEntitySystem_highestEntityIndex = 0x1530
 ; C_BasePlayerPawn
-static m_pCameraServices = 0xD40
+static m_pCameraServices = 0xd60
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
 ; CEntityInstance
 static m_pEntity = 0x10
-; CEntityIdentity
 static m_designerName = 0x20
 ; CGameSceneNode
 static m_vecAbsOrigin = 0xd0
-; CGameSceneNode
 static m_bDormant = 0xef
 ; C_BaseEntity
-static m_pGameSceneNode = 0x330
-; C_BaseEntity
-static m_iTeamNum = 0x3f3
-; C_BaseEntity
-static m_vecVelocity = 0x410
+static m_pGameSceneNode = 0x338
+static m_iTeamNum = 0x3fb
+static m_vecVelocity = 0x418
 ; CBasePlayerController
-static m_hPawn = 0x614
+static m_hPawn = 0x61c
 ; CSkeletonInstance
 static m_modelState = 0x170
 ; CModelState
 static m_hModel = 0xd0
 ; CCitadelPlayerController
-static m_PlayerDataGlobal = 0x778
+static m_PlayerDataGlobal = 0x780
 ; PlayerDataGlobal_t
 static m_iHealth = 0x48
 static m_iHealthMax = 0x10
@@ -38,6 +33,8 @@ static m_bUltimateTrained = 0x68
 static m_flUltimateCooldownEnd = 0x70
 ; C_GameRules
 static m_nTotalPausedTicks = 0x30
+; C_CitadelPlayerPawn
+static m_angLockedEyeAngles = 0x1014
 }
 ; Функция для выполнения поиска паттерна и вычисления адреса
 FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2) {

@@ -21,7 +21,6 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 IniFile := A_ScriptDir "\data\config.ini"
 IniRead, key_aim, %iniFile%, Settings, soulkey_aim, Rbutton
 IniRead, key_aim2, %iniFile%, Settings, key_aim, V
-IniRead, WriteMode, %iniFile%, Settings, soulWriteMode, 1
 IniRead, sensitivity, %iniFile%, Settings, soulsensitivity, 0.5
 IniRead, tolerance, %iniFile%, Settings, soultolerance, 0
 IniRead, captureRange, %iniFile%, Settings, soulcaptureRange, 300
@@ -82,15 +81,9 @@ VarStart_time2 = 0
 
 Loop
 {
-	if WriteMode
-	{
-		Sleep %SleepCpu%
-	}
-	else
-	{
-		Sleep %SleepCpu%
-		Sleep 1
-	}
+	Sleep %SleepCpu%
+	Sleep 1
+	
 	KeyWait, %key_aim%, D T2
 	if GetKeyState(key_aim, "P")
 	{
@@ -200,34 +193,12 @@ Loop
 	}
 	if (closestBone != "")
 	{
-		if !WriteMode
+		if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
 		{
-			if (arr := WorldToScreen(closestBone[1], closestBone[2], closestBone[3], A_ScreenWidth, A_ScreenHeight))
-			{
-				xpos1 := arr[1]
-				ypos1 := arr[2]
-				IfWinActive, ahk_exe project8.exe
-				AimAtTarget(xpos1, ypos1)
-			}
-		}
-		else
-		{
-		IfWinActive, ahk_exe project8.exe
-		{
-			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + CCameraManager + 0x28, 0x38)
-			camera_posXcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38)
-			camera_posYcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x4)
-			camera_posZcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x8)
-			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
-			pitch := 0
-			yaw := 0
-			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, closestBone[1], closestBone[2], closestBone[3], yaw, pitch)
-			if camera_posXcam
-			{
-				1337flex.write(baseAddress + CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
-				1337flex.write(baseAddress + CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
-			}
-		}
+			xpos1 := arr[1]
+			ypos1 := arr[2]
+			IfWinActive, ahk_exe project8.exe
+			AimAtTarget(xpos1, ypos1)
 		}
 	}
 }
@@ -246,7 +217,7 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 	if LocalPlayer
 	{
 		EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-		EntityListCout := 1337flex.Read(EntityListCout + offsets.dwGameEntitySystem_highestEntityIndex,"int")
+		EntityListCout := 1337flex.Read(EntityListCout + dwGameEntitySystem_highestEntityIndex,"int")
 		playerIndex=0
 		BubaArray := []
 		counter1 := 0
@@ -263,9 +234,6 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
-			; pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-			; item_xp
-			; CItemXP
 			if (pEntityString == "item_xp")
 			{
 			BubaArray.push(ControllerBase)
@@ -281,48 +249,11 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 	}
 	
     isReading := false
-	; soundbeep
 }
 
 Return
 
 
-
-
-AimAtTargetWrite(camX, camY, camZ, enemyX, enemyY, enemyZ, ByRef yaw, ByRef pitch) {
-    ; Объявляем Pi
-    Pi := 3.141592653589793
-    ; Вычисляем разницу координат между камерой и противником
-    deltaX := enemyX - camX
-    deltaY := enemyY - camY
-    deltaZ := enemyZ - camZ
-    ; Проверка: вычисляем Yaw (азимут) только если deltaX не равен нулю
-    if (deltaX != 0) {
-        yaw := ATan(deltaY / deltaX) * (180 / Pi)
-        if (deltaX < 0) {
-            yaw += 180  ; Корректируем угол, если противник слева
-        }
-    } else {
-        yaw := deltaY > 0 ? 90 : -90  ; Противник прямо перед нами или позади
-    }
-	; Вычисляем Pitch (тангаж) — угол по вертикали
-	distance := Sqrt(deltaX**2 + deltaY**2)  ; Горизонтальное расстояние
-	if (distance != 0) {
-		angleInRadians := ATan(deltaZ / distance)  ; Угол в радианах
-		pitch := angleInRadians * (180 / Pi) * -1  ; Преобразуем в градусы и меняем знак
-	} else {
-		pitch := 0  ; Если противник на одной высоте
-	}
-}
-
-
-; Функция для перемещения мыши с помощью mouse_event
-MoveMouseBy(deltaX, deltaY) {
-    global
-    deltaX := Round(deltaX)
-    deltaY := Round(deltaY)
-    DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
-}
 ; Функция для движения мыши к цели с учетом диапазона захвата
 AimAtTarget(targetX, targetY) {
     global
@@ -330,9 +261,9 @@ AimAtTarget(targetX, targetY) {
     centerY := A_ScreenHeight / 2
     deltaX := (targetX - centerX)
     deltaY := (targetY - centerY)
-    deltaX := deltaX * sensitivity + 1
-    deltaY := deltaY * sensitivity + 1
-    MoveMouseBy(deltaX, deltaY)
+    deltaX := Round(deltaX * sensitivity + 1)
+    deltaY := Round(deltaY * sensitivity + 1)
+    DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"

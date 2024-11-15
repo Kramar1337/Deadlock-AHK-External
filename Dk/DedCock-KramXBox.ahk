@@ -1,5 +1,4 @@
-﻿
-#NoEnv
+﻿#NoEnv
 SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
@@ -19,10 +18,13 @@ IniFile := A_ScriptDir "\data\config.ini"
 IniRead, boxTeam, %iniFile%, Settings, ESPboxTeam, 0
 IniRead, boxEnemy, %iniFile%, Settings, ESPboxEnemy, 1
 IniRead, SleepCpu, %iniFile%, Settings, ESPSleepCpu, 1
-IniRead, boneDBGmode, %iniFile%, Settings, ESPboneDBGmode, 0
 IniRead, key_NetWorthShow, %iniFile%, Settings, ESPkey_NetWorthShow, Alt
 IniRead, ESPLineOrRectangle, %iniFile%, Settings, ESPLineOrRectangle, 1
 IniRead, ESPShowText, %iniFile%, Settings, ESPShowText, 1
+
+IniRead, TextSizeHero, %iniFile%, Settings, TextSizeHero, 14
+IniRead, TextSizeUltCD, %iniFile%, Settings, TextSizeUltCD, 15
+IniRead, TextSizeNetWorth, %iniFile%, Settings, TextSizeNetWorth, 16
 
 IniRead, ESPLineOrRectangleTeam, %iniFile%, Settings, ESPLineOrRectangleTeam, 1
 IniRead, ESPShowTextTeam, %iniFile%, Settings, ESPShowTextTeam, 1
@@ -47,8 +49,6 @@ imageAlpha = 0.7
 textWidth := 20  ; Примерная ширина текста
 textHeight := 20  ; Примерная высота текста
 extraOptions := "w" . textWidth . " h" . textHeight . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
-
-bone64 = 64
 
 Menu,Tray, Icon, %A_ScriptDir%\data\icon.ico
 Menu,Tray, NoStandard
@@ -93,7 +93,7 @@ Toggler1 := true
 WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
 SetFormat, float, 2.20
 VarStart_time = 0
-EntityIndex = 64
+EntityIndex = 32
 ReloadTime = 5000
 Loop
 {
@@ -126,7 +126,6 @@ Loop
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
-			; msgbox % pawnHandle
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			PawnGet := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
@@ -137,7 +136,6 @@ Loop
 			}
 			playerIndex++
 		}
-		; msgbox 1
 		;==============Локальный игрок
 		ControllerBase1 := 1337flex.getAddressFromOffsets(baseAddress + dwLocalPlayerPawn, 0x0)
 		pawnHandle1 := 1337flex.Read(ControllerBase1 + offsets.m_hPawn,"int")
@@ -159,14 +157,14 @@ Loop
 
 
 ; C_CitadelBaseAbility
-; static m_eAbilitySlot = 0x6e8
+; static m_eAbilitySlot = 0x6f0
 ; CEntityComponent
 ; static m_vecAbilities = 0x70
 ; C_CitadelPlayerPawn
-; static m_CCitadelAbilityComponent = 0xFE8
+; static m_CCitadelAbilityComponent = 0x1020
 ; CCitadel_Ability_HoldMelee
-; static m_eCurrentAttackState = 0xd28
-; static m_bCreatedChargeEffects = 0xd3d 
+; static m_eCurrentAttackState = 0xd30
+; static m_bCreatedChargeEffects = 0xd45 
 
 
 	Loop
@@ -178,6 +176,7 @@ Loop
 		AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
 		EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0)
+		
 		if Ability
 		{
 			nUpgradeBits := 1337flex.Read(Ability + 0x6c8,"int")
@@ -185,6 +184,7 @@ Loop
 			eAbilitySlot := 1337flex.Read(Ability + offsets.m_eAbilitySlot,"int")
 			if eAbilitySlot = 21
 			{
+				msgbox % HexFormat(Ability)
 				eCurrentAttackState := 1337flex.Read(Ability + offsets.m_eCurrentAttackState,"int")
 				bCreatedChargeEffects := 1337flex.Read(Ability + offsets.m_bCreatedChargeEffects,"int")
 				if (bCreatedChargeEffects = 1 and eCurrentAttackState > 0)
@@ -196,7 +196,7 @@ Loop
 				Tooltip
 				}
 			}
-			Tooltip i - %i%`n%nUpgradeBits%`n%bIsCoolingDownInternal%`n%eAbilitySlot%`n%Pawn%
+			; Tooltip i - %i%`n%nUpgradeBits%`n%bIsCoolingDownInternal%`n%eAbilitySlot%`n%Pawn%
 			; sleep 500
 		}
 		i++
@@ -213,7 +213,6 @@ Loop
 	
 	bAlive := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 	iHealth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-	; Dormant2 := 1337flex.Read(ControllerBaseEntity + offsets.m_bDormant2,"int")
 	if (bAlive = 1 && iHealth > 0)
 	{
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
@@ -226,22 +225,6 @@ Loop
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
-			if boneDBGmode
-			{
-				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
-				i := 0
-				while (i < bone64)
-				{
-					BoneXLocation := 1337flex.Read(BoneArray + i * 32, "float")
-					BoneYLocation := 1337flex.Read(BoneArray + i * 32+0x4, "float")
-					BoneZLocation := 1337flex.Read(BoneArray + i * 32+0x8, "float")
-					arr:=WorldToScreen(BoneXLocation,BoneYLocation,BoneZLocation,windowWidth,windowHeight)
-					xpos1:=arr[1]
-					ypos1:=arr[2]
-					game.DrawText(i, xpos1, ypos1, "10", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
-					i++
-				}
-			}
 			WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe project8.exe
 			if (enemyXLocation != 0)
 			{
@@ -263,7 +246,6 @@ Loop
 							GoldNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
 							APNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
 							UltimateTrained := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bUltimateTrained,"int")
-							; UltimateCooldownStart := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownStart,"float")
 							UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"float")
 							CurrentTime := 1337flex.Read(baseAddress + dwGlobalVars + 0x0, "float", 0x34)
 							TotalPausedTicksAddress := 1337flex.getAddressFromOffsets(baseAddress + dwGameRules, 0x0)
@@ -301,9 +283,6 @@ Loop
 	game.EndDraw()
 }
 return
-
-
-
 
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
@@ -357,7 +336,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 			extraOptions2 := "w" . textWidth2 . " h" . textHeight2 . " aCenter dsFF000000 dsx1 dsy1 olFF000000"
 			xDrawText := x1 - (ESPwidth / 2) + (ESPwidth / 2) - textWidth2 / 2
 			yDrawText := y1 - ESPheight + ESPheight
-			game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
+			game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, TextSizeHero, "0x00FFFFFF", "Arial", extraOptions2)		; game.DrawText(HeroID "`n" Health " / " MaxHealth " %", x1-(ESPwidth/2), y1 + ESPheight * 0.01, "14", "0x00FFFFFF", "Arial", "dsFF000000 dsx1 dsy1 olFF000000")
 		}
 		
 		textWidth2 := 180
@@ -367,7 +346,7 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		yDrawText := y1 - ESPheight + ESPheight
 		
 		if ESPShowUltCDTeam
-			game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, "15", "0x00FFFFFF", "Arial", extraOptions2)
+			game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, TextSizeUltCD, "0x00FFFFFF", "Arial", extraOptions2)
 		
 		if ESPHPbarTeam
 		{
@@ -433,24 +412,24 @@ DrawESP(x1,y1,x2,y2,distance, team)
 		{
 		if ESPShowText
 		{
-		game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, "14", "0x00FFFFFF", "Arial", extraOptions2)
+		game.DrawText(HeroArray[HeroID].name "`n" Health " HP", xDrawText, yDrawText, TextSizeHero, "0x00FFFFFF", "Arial", extraOptions2)
 		}
 		if ESPShowUltCD
-		game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, "15", "0x00FFFFFF", "Arial", extraOptions2)
+		game.DrawText(UltimateTime, xDrawText, y1 - ESPheight - 20, TextSizeUltCD, "0x00FFFFFF", "Arial", extraOptions2)
 		}
 		else
 		{
 		subGoldNetWorth := myGoldNetWorth - GoldNetWorth
 		if (myGoldNetWorth < GoldNetWorth)
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "16", "0x00FF0000", "Arial", extraOptions2)
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, TextSizeNetWorth, "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, "16", "0x0000FF00", "Arial", extraOptions2)
+		game.DrawText("G " GoldNetWorth " (" subGoldNetWorth ")", xDrawText, yDrawText, TextSizeNetWorth, "0x0000FF00", "Arial", extraOptions2)
 
 		subAPNetWorth := myAPNetWorth - APNetWorth
 		if (myAPNetWorth < APNetWorth)
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "16", "0x00FF0000", "Arial", extraOptions2)
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, TextSizeNetWorth, "0x00FF0000", "Arial", extraOptions2)
 		else
-		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, "16", "0x0000FF00", "Arial", extraOptions2)
+		game.DrawText("`nA " APNetWorth " (" subAPNetWorth ")", xDrawText, yDrawText, TextSizeNetWorth, "0x0000FF00", "Arial", extraOptions2)
 		}
 		
 		if (Health > MaxHealth)

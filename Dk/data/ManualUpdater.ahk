@@ -67,6 +67,7 @@ Gui, 2: Add, Button, gLBoneDbgStart x104 y32 w80 h23, Start BoneDbg
 Gui, 2: Add, Button, gLBoneDbgEnd x104 y64 w80 h23, End BoneDbg
 Gui, 2: Add, Button, gLHeroAndBoneOpen x104 y96 w80 h23, HeroAndBone
 Gui, 2: Add, Button, gLoffsetsahk x200 y32 w80 h23, Offsets.ahk
+Gui, 2: Add, Button, gLoffsetsdumpahk x200 y64 w80 h23, OffDump.ahk
 Gui, 2: Tab, 3
 Gui, 2: Add, Edit, vCparam1 x8 y32 w255 h21 +ReadOnly, -insecure -console -novid
 Gui, 2: Add, Edit, vCparam2 x8 y64 w255 h21 +ReadOnly, -console -novid -dx11 -m_rawinput 1 +exec autoexec.cfg -high -preload +@panorama_min_comp_layer_cache_cost_TURNED_OFF 256
@@ -244,6 +245,11 @@ Loffsetsdump:
 #include %A_ScriptDir%\offsetsdump.ahk
 return
 
+;=======================offsetsdump.ahk
+Loffsetsdumpahk:
+Run, notepad.exe "%A_ScriptDir%\offsetsdump.ahk"
+return
+
 ;=======================offsets.ahk
 Loffsetsahk:
 Run, notepad.exe "%A_ScriptDir%\offsets.ahk"
@@ -327,7 +333,7 @@ MsgBox,,, Оффсеты устарели или ты не в песочнице
 return
 }
 EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-EntityListCout := 1337flex.Read(EntityListCout + offsets.dwGameEntitySystem_highestEntityIndex,"int")
+EntityListCout := 1337flex.Read(EntityListCout + dwGameEntitySystem_highestEntityIndex,"int")
 playerIndex=0
 while(playerIndex < EntityListCout + 1)
 {
@@ -418,10 +424,10 @@ URLDownloadToFile, % URLDeadlockSdk "/client/CModelState.hpp", %A_ScriptDir%\Tem
 URLDownloadToFile, % URLDeadlockSdk "/client/CCitadelPlayerController.hpp", %A_ScriptDir%\TempFlex\CCitadelPlayerController.hpp
 URLDownloadToFile, % URLDeadlockSdk "/client/PlayerDataGlobal_t.hpp", %A_ScriptDir%\TempFlex\PlayerDataGlobal_t.hpp
 URLDownloadToFile, % URLDeadlockSdk "/client/C_GameRules.hpp", %A_ScriptDir%\TempFlex\C_GameRules.hpp
+URLDownloadToFile, % URLDeadlockSdk "/client/C_CitadelPlayerPawn.hpp", %A_ScriptDir%\TempFlex\C_CitadelPlayerPawn.hpp
 
 
 combinedResult := ""
-combinedResult .= "static dwGameEntitySystem_highestEntityIndex = 0x1530" . "`n"
 combinedResult .= "; C_BasePlayerPawn" . "`n"
 combinedResult .= GetKramOffsets("C_BasePlayerPawn.hpp", "m_pCameraServices") . "`n"
 combinedResult .= "; CPlayer_CameraServices" . "`n"
@@ -455,7 +461,8 @@ combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bUltimateTrained")
 combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_flUltimateCooldownEnd") . "`n"
 combinedResult .= "; C_GameRules" . "`n"
 combinedResult .= GetKramOffsets("C_GameRules.hpp", "m_nTotalPausedTicks") . "`n"
-
+combinedResult .= "; C_CitadelPlayerPawn" . "`n"
+combinedResult .= GetKramOffsets("C_CitadelPlayerPawn.hpp", "m_angLockedEyeAngles") . "`n"
 
 Clipboard := combinedResult
 Run, notepad.exe "%A_ScriptDir%\offsets.ahk"

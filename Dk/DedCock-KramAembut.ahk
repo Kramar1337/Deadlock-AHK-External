@@ -22,12 +22,10 @@ If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
 
 IniFile := A_ScriptDir "\data\config.ini"
 IniRead, key_aim, %iniFile%, Settings, key_aim, V
-IniRead, WriteMode, %iniFile%, Settings, WriteMode, 1
 IniRead, sensitivity, %iniFile%, Settings, sensitivity, 0.5
 IniRead, tolerance, %iniFile%, Settings, tolerance, 0
 IniRead, captureRange, %iniFile%, Settings, captureRange, 150
 IniRead, SleepCpu, %iniFile%, Settings, SleepCpu, 0
-IniRead, BoneMode, %iniFile%, Settings, BoneMode, 1
 IniRead, headOrneck, %iniFile%, Settings, headOrneck, 1
 IniRead, circleColor, %iniFile%, Settings, circleColor, 0x8FFF0000
 IniRead, thickness, %iniFile%, Settings, thickness, 1
@@ -37,6 +35,10 @@ IniRead, MaxDistAim, %iniFile%, Settings, MaxDistAim, 150
 IniRead, LegitCaptureRange, %iniFile%, Settings, LegitCaptureRange, 1
 IniRead, CalcPredictionAim, %iniFile%, Settings, CalcPredictionAim, 1
 IniRead, velocityDiv, %iniFile%, Settings, velocityDiv, 10
+IniRead, VindictaPrediction, %iniFile%, Settings, VindictaPrediction, 1
+IniRead, AimSafeModeTest, %iniFile%, Settings, AimSafeModeTest, 1
+
+
 IniRead, RunDedCockKramAembut, %iniFile%, Settings, RunDedCockKramAembut, 1
 if !RunDedCockKramAembut
 Exitapp
@@ -74,7 +76,6 @@ Toggler1 := false
 
 StartLabelStart:
 sleep 500
-VindictaCuted := false
 1337flex := new _ClassMemory(gameEXE)
 baseAddress := 1337flex.getModuleBaseAddress(gameDLL)
 if baseAddress
@@ -92,16 +93,9 @@ LastTime1 := A_TickCount
 currentTarget := false
 Loop
 {
-	if WriteMode
-	{
-		Sleep %SleepCpu%
-	}
-	else
-	{
-		Sleep %SleepCpu%
-		Sleep 1
-	}
-	; KeyWait, %key_aim%, D T3
+	Sleep %SleepCpu%
+	Sleep 1
+	
 	j=0
 	ViewMatrix:=Array()
 	while(j<16)
@@ -109,27 +103,7 @@ Loop
 		ViewMatrix.Push(1337flex.Read(baseAddress + dwViewMatrix + (j * 0x4),"float"))
 		j++
 	}
-	
-if (!VindictaCuted) 
-{
-	EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-	EntityIndex := 1337flex.Read(EntityListCout + offsets.dwGameEntitySystem_highestEntityIndex,"int")
-	playerIndex=0
-	while(playerIndex < EntityIndex)
-	{
-	EntityList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
-	AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
-	ControllerBaseVindicta := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
-	pEntityString := 1337flex.readString(ControllerBaseVindicta + offsets.m_pEntity,, "utf-8", 0x8, 0x30, 0x8, 0x0)
-	if (pEntityString == "CCitadel_Ability_PrimaryWeapon_Empty")
-	{
-		break
-	}
-	playerIndex++
-	}
-    VindictaCuted := true
-}
-	
+
 	VarElapsed_time := A_TickCount - VarStart_time
 	if (VarElapsed_time > 3000) ;3000
 	{
@@ -185,6 +159,7 @@ if (!VindictaCuted)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum,"int")
+		MyHeroID := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 		VarStart_time := A_TickCount
 	}
 	
@@ -199,83 +174,31 @@ if (!VindictaCuted)
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
 		Pawn := BubaArray2[Kramindex]
-		Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
-		; MaxHealth := 1337flex.Read(Pawn + offsets.m_iMaxHealth,"int")
 		TeamNum := 1337flex.Read(Pawn + offsets.m_iTeamNum,"int")
-		
-		; FlaggedAsCheater := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + 0x76,"int")
-		; msgbox % FlaggedAsCheater
-		
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 		bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 		iHealth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-		; DormantVar := 1337flex.Read(Pawn + offsets.m_lifeState,"int")
 		if (TeamNum != MyTeamIs)
 		{
 			if (bAlive = 1 && iHealth > 0)
 			{
 				GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
-				if BoneMode
+				
+				if HeadOrNeckOrBody = 1
+				SelectBone := HeroArray[HeroID].head
+				if HeadOrNeckOrBody = 2
+				SelectBone := HeroArray[HeroID].neck
+				if HeadOrNeckOrBody = 3
+				SelectBone := HeroArray[HeroID].body
+				if HeadOrNeckOrBody = 4
+				SelectBone := HeroArray[HeroID].head
+				
+				if (SelectBone > 0)
 				{
-					if HeadOrNeckOrBody = 1
-					SelectBone := HeroArray[HeroID].head
-					if HeadOrNeckOrBody = 2
-					SelectBone := HeroArray[HeroID].neck
-					if HeadOrNeckOrBody = 3
-					SelectBone := HeroArray[HeroID].body
-					if HeadOrNeckOrBody = 4
-					SelectBone := HeroArray[HeroID].head
-					if (SelectBone > 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
-					}
-					else
-					{
-						highestBoneIndex := -1
-						highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-						i := 0
-						while (i < 64)
-						{
-							BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-							if (BoneZLocation > highestBoneZ)
-							{
-								highestBoneZ := BoneZLocation
-								highestBoneIndex := i
-							}
-							i++
-						}
-						if (highestBoneIndex >= 0)
-						{
-							enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-							enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-							enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-						}
-					}
-				}
-				else
-				{
-					highestBoneIndex := -1
-					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-					i := 0
-					while (i < 64)
-					{
-						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-						if (BoneZLocation > highestBoneZ)
-						{
-							highestBoneZ := BoneZLocation
-							highestBoneIndex := i
-						}
-						i++
-					}
-					if (highestBoneIndex >= 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-					}
+					enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
+					enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
+					enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
 				}
 				if (enemyXLocation != 0)
 				{
@@ -289,7 +212,7 @@ if (!VindictaCuted)
 						deltaX := (xpos1 - centerX)
 						deltaY := (ypos1 - centerY)
 						distance := Sqrt(deltaX**2 + deltaY**2)
-						if (distance <= captureRange)  ; Проверяем экранное расстояние, а не мировое
+						if (distance <= captureRange)  ; Проверяем экранное расстояние
 						{
 							bones.Push([enemyXLocation, enemyYLocation, enemyZLocation, Pawn, ControllerBase])
 						}
@@ -313,7 +236,7 @@ if (!VindictaCuted)
 	Sort, distances, D
 	closestPindex := ""
 	closestBone := ""
-	closestDistance := -1  ; Начальное значение, которое всегда будет меньше истинного расстояния
+	closestDistance := -1
 	for index, item in distances
 	{
 		distance := item[1]
@@ -343,15 +266,12 @@ if (!VindictaCuted)
 		
 		bAlive := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 		iHealth := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-		; DormantVar := 1337flex.Read(closestPindex + offsets.m_lifeState,"int")
 		if (bAlive = 1 && iHealth > 0)
 		{
 				HeroID := 1337flex.Read(closestController + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 				GameSceneNode := 1337flex.getAddressFromOffsets(closestPindex + offsets.m_pGameSceneNode, 0x0)
 				BoneArray := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
-				if BoneMode
-				{
-				
+
 				if HeadOrNeckOrBody = 1
 				{
 				CurrentTime1 := A_TickCount
@@ -381,56 +301,11 @@ if (!VindictaCuted)
 				
 				if (SelectBone > 0)
 				{
-				
 					enemyXLocation := 1337flex.Read(BoneArray + SelectBone * 32, "float")
 					enemyYLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x4, "float")
 					enemyZLocation := 1337flex.Read(BoneArray + SelectBone * 32+0x8, "float")
 				}
-				else
-				{
-					highestBoneIndex := -1
-					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-					i := 0
-					while (i < 64)
-					{
-						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-						if (BoneZLocation > highestBoneZ)
-						{
-							highestBoneZ := BoneZLocation
-							highestBoneIndex := i
-						}
-						i++
-					}
-					if (highestBoneIndex >= 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-					}
-				}
-				}
-				else
-				{
-					highestBoneIndex := -1
-					highestBoneZ := -999999  ; Установим минимально возможное значение для сравнения
-					i := 0
-					while (i < 64)
-					{
-						BoneZLocation := 1337flex.Read(BoneArray + i * 32 + 0x8, "float")
-						if (BoneZLocation > highestBoneZ)
-						{
-							highestBoneZ := BoneZLocation
-							highestBoneIndex := i
-						}
-						i++
-					}
-					if (highestBoneIndex >= 0)
-					{
-						enemyXLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32, "float")
-						enemyYLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x4, "float")
-						enemyZLocation := 1337flex.Read(BoneArray + highestBoneIndex * 32+0x8, "float")
-					}
-				}
+
 		}
 		else
 		{
@@ -438,34 +313,43 @@ if (!VindictaCuted)
 		}
 		if CalcPredictionAim
 		{
-		vecVelocityX := 1337flex.Read(closestPindex + offsets.m_vecVelocity,"float")
-		vecVelocityY := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x4,"float")
-		vecVelocityZ := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x8,"float")
-		dist := getDistance(enemyXLocation, enemyYLocation, enemyZLocation)
-		velocityDiv2 := 0.05
-		;=====================если Виндикта в прицеле то другое упреждение
-		VindictaUlt := 1337flex.Read(ControllerBaseVindicta + 0x718,"int")
-		if (VindictaUlt == 0)
-		{
-		enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv2 / 100
-		enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv2 / 100
-		enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv2 / 100
-		}
-		else
-		{
-		enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv / 100
-		enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv / 100
-		enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv / 100
-		}
-		}
-		if !WriteMode
-		{
-			if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight))
+			vecVelocityX := 1337flex.Read(closestPindex + offsets.m_vecVelocity,"float")
+			vecVelocityY := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x4,"float")
+			vecVelocityZ := 1337flex.Read(closestPindex + offsets.m_vecVelocity+0x8,"float")
+			dist := getDistance(enemyXLocation, enemyYLocation, enemyZLocation)
+			if !((AimSafeModeTest = 1) and (dist > 40))
 			{
-				xpos1 := arr[1]
-				ypos1 := arr[2]
-				if LegitCaptureRange
+				;=====================если Виндикта то другое упреждение
+				if (MyHeroID = 3)
 				{
+					if VindictaPrediction
+					{
+					enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv / 100
+					enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv / 100
+					enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv / 100
+					}
+					else
+					{
+					velocityDiv2 := 0.05
+					enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv2 / 100
+					enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv2 / 100
+					enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv2 / 100
+					}
+				}
+				else
+				{
+					enemyXLocation := enemyXLocation + vecVelocityX * dist * velocityDiv / 100
+					enemyYLocation := enemyYLocation + vecVelocityY * dist * velocityDiv / 100
+					enemyZLocation := enemyZLocation + vecVelocityZ * dist * velocityDiv / 100
+				}
+			}
+		}
+		if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, A_ScreenWidth, A_ScreenHeight))
+		{
+			xpos1 := arr[1]
+			ypos1 := arr[2]
+			if LegitCaptureRange
+			{
 				centerX := A_ScreenWidth / 2
 				centerY := A_ScreenHeight / 2
 				deltaX := (xpos1 - centerX)
@@ -476,32 +360,12 @@ if (!VindictaCuted)
 					IfWinActive, ahk_exe project8.exe
 					AimAtTarget(xpos1, ypos1)
 				}
-				}
-				else
-				{
-					IfWinActive, ahk_exe project8.exe
-					AimAtTarget(xpos1, ypos1)
-				}
 			}
-		}
-		else
-		{
-		IfWinActive, ahk_exe project8.exe
-		{
-			CCitadelCameraManager := 1337flex.getAddressFromOffsets(baseAddress + CCameraManager + 0x28, 0x38)
-			camera_posXcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38)
-			camera_posYcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x4)
-			camera_posZcam := 1337flex.Read(baseAddress + CCameraManager + 0x28, "float",0x38+0x8)
-			CCameraServices := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "float", offsets.m_vecPunchAngle) 	;RCS
-			pitch := 0
-			yaw := 0
-			AimAtTargetWrite(camera_posXcam, camera_posYcam, camera_posZcam, enemyXLocation, enemyYLocation, enemyZLocation, yaw, pitch)
-			if camera_posXcam
+			else
 			{
-				1337flex.write(baseAddress + CCameraManager + 0x28, pitch - CCameraServices, "Float", 0x44) 		;вертикаль
-				1337flex.write(baseAddress + CCameraManager + 0x28, yaw, "Float", 0x44+0x4) 	;горизонталь
+				IfWinActive, ahk_exe project8.exe
+				AimAtTarget(xpos1, ypos1)
 			}
-		}
 		}
 	}
 	else
@@ -513,42 +377,7 @@ return
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-AimAtTargetWrite(camX, camY, camZ, enemyX, enemyY, enemyZ, ByRef yaw, ByRef pitch) {
-    ; Объявляем Pi
-    Pi := 3.141592653589793
-    ; Вычисляем разницу координат между камерой и противником
-    deltaX := enemyX - camX
-    deltaY := enemyY - camY
-    deltaZ := enemyZ - camZ
-    ; Проверка: вычисляем Yaw (азимут) только если deltaX не равен нулю
-    if (deltaX != 0) {
-        yaw := ATan(deltaY / deltaX) * (180 / Pi)
-        if (deltaX < 0) {
-            yaw += 180  ; Корректируем угол, если противник слева
-        }
-    } else {
-        yaw := deltaY > 0 ? 90 : -90  ; Противник прямо перед нами или позади
-    }
-	; Вычисляем Pitch (тангаж) — угол по вертикали
-	distance := Sqrt(deltaX**2 + deltaY**2)  ; Горизонтальное расстояние
-	if (distance != 0) {
-		angleInRadians := ATan(deltaZ / distance)  ; Угол в радианах
-		pitch := angleInRadians * (180 / Pi) * -1  ; Преобразуем в градусы и меняем знак
-	} else {
-		pitch := 0  ; Если противник на одной высоте
-	}
-}
 
-
-; Функция для перемещения мыши с помощью mouse_event
-MoveMouseBy(deltaX, deltaY) {
-    global
-    ; Преобразуем смещения в целые числа
-    deltaX := Round(deltaX)
-    deltaY := Round(deltaY)
-    ; Используем mouse_event для перемещения мыши
-    DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
-}
 ; Функция для движения мыши к цели с учетом диапазона захвата
 AimAtTarget(targetX, targetY) {
     global
@@ -559,10 +388,10 @@ AimAtTarget(targetX, targetY) {
     deltaX := (targetX - centerX)
     deltaY := (targetY - centerY)
     ; Применяем чувствительность
-    deltaX := deltaX * sensitivity + 1
-    deltaY := deltaY * sensitivity + 1
+    deltaX := Round(deltaX * sensitivity + 1)
+    deltaY := Round(deltaY * sensitivity + 1)
     ; Двигаем мышь к цели
-    MoveMouseBy(deltaX, deltaY)
+    DllCall("mouse_event", "UInt", 0x0001, "Int", deltaX, "Int", deltaY, "UInt", 0, "UInt", 0)
 }
 
 

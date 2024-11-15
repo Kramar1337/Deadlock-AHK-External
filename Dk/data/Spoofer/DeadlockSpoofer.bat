@@ -10,8 +10,9 @@ for /f "usebackq tokens=2*" %%A in (`reg query "HKLM\SOFTWARE\WOW6432Node\Valve\
 :: Если путь к Steam не найден, использовать стандартное значение по умолчанию
 if not defined steam (
     set "steam=C:\Program Files (x86)\Steam"
+	echo Autopath not found, using default path
 )
-
+echo %steam%
 
 set "file0=%~dp0"
 set guid=%file0%\1.txt

@@ -1,16 +1,49 @@
 ﻿/*
 
+
+Аим легит:
+проверка растояния
+отключение упреждения
+
+
+
 Запланировано:
- - HWID Changer
  - Автоматическое парирование
  - Список наблюдателей
 
 
-Типы обновлений:
-10 мб
-100 мб
-1 гб
+Ручная проверка:
+Win + R = regedit
 
+ID "MachineGuid"
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography
+
+Просмотреть сетевые адаптеры "NetworkAddress" и есть мак адрес
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002bE10318}
+
+Информация о стиме
+HKEY_CURRENT_USER\SOFTWARE\Valve
+HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve
+HKEY_CLASSES_ROOT\steam
+HKEY_CLASSES_ROOT\steamlink
+HKEY_CURRENT_USER\SOFTWARE\Classes\steam
+HKEY_CURRENT_USER\SOFTWARE\Classes\steamlink
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\steam
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\steamlink
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\EventLog\Application\Steam Client Service
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Steam Client Service
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\Application\Steam Client Service
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Steam Client Service
+
+Папки и файлы Win + R:
+%USERPROFILE%\AppData\Local\Steam
+
+"C:\Program Files (x86)\Steam"
+Steam\ssfn* (скрытые файлы)
+Steam\appcache
+Steam\userdata
+Steam\logs
+Steam\config
 
 
 Параметры запуска:

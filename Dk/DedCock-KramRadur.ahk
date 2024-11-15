@@ -41,6 +41,9 @@ IniRead, radarTopLeftY, %iniFile%, Settings, radarTopLeftY, 200
 IniRead, radarBottomRightX, %iniFile%, Settings, radarBottomRightX, 400
 IniRead, radarBottomRightY, %iniFile%, Settings, radarBottomRightY, 400
 
+IniRead, TextSizeRadar, %iniFile%, Settings, TextSizeRadar, 16
+
+
 IniRead, RunDedCockKramRadur, %iniFile%, Settings, RunDedCockKramRadur, 1
 if !RunDedCockKramRadur
 Exitapp
@@ -148,7 +151,6 @@ Loop
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-			; TeamNum := 1337flex.Read(ControllerBase + offsets.m_iTeamNum,"int")
 			if Health
 			{
 				BubaArray.push(ControllerBase)
@@ -177,7 +179,6 @@ Loop
 	HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 	bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 	iHealth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-	; Dormant2 := 1337flex.Read(ControllerBase + offsets.m_bDormant2,"int")
 	if (bAlive = 1 && iHealth > 0)
 	{
 		if(TeamNum=1 or TeamNum=2 or TeamNum=3)
@@ -224,8 +225,6 @@ Loop
 			}
 			radarX := Max(radarTopLeftX, Min(radarX, radarBottomRightX))
 			radarY := Max(radarTopLeftY, Min(radarY, radarBottomRightY))
-			; MyTeamIs := 1337flex.Read(ControllerBase1 + offsets.m_iTeamNum, "int")
-			
 
 			if (TeamNum == MyTeamIs) 
 			{
@@ -239,7 +238,7 @@ Loop
 				game.FillEllipse(radarX - pointSize / 2, radarY - pointSize / 2, pointSize, pointSize, 0xff00FF00)  ; Зеленый для союзников
 				}
 				if radarShowNameTeam
-				game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
+				game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x00FFFFFF", "Arial", extraOptions)
 				}
 			} 
 			else
@@ -255,20 +254,20 @@ Loop
 				{
 					if !GetKeyState(key_NetWorthShow, "P")
 					{
-					game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFFFFF", "Arial", extraOptions)
+					game.DrawText(HeroArray[HeroID].name, radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x00FFFFFF", "Arial", extraOptions)
 					}
 					else
 					{
 					subGoldNetWorth := myGoldNetWorth - GoldNetWorth
 					if (myGoldNetWorth < GoldNetWorth)
-					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFA0AB", "Arial", extraOptions)
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x00FFA0AB", "Arial", extraOptions)
 					else
-					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x0000FF00", "Arial", extraOptions)
+					game.DrawText("G " GoldNetWorth "(" subGoldNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x0000FF00", "Arial", extraOptions)
 					subAPNetWorth := myAPNetWorth - APNetWorth
 					if (myAPNetWorth < APNetWorth)
-					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x00FFA0AB", "Arial", extraOptions)
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x00FFA0AB", "Arial", extraOptions)
 					else
-					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, "16", "0x0000FF00", "Arial", extraOptions)
+					game.DrawText("`nA " APNetWorth "(" subAPNetWorth ")", radarX - pointSize / 2 - textWidth / 2, radarY - pointSize / 2 - textHeight / 2, TextSizeRadar, "0x0000FF00", "Arial", extraOptions)
 					}
 				}
 			}
