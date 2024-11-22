@@ -29,33 +29,58 @@ Deadlock External Cheat на AHK для игры [Deadlock](https://store.steamp
 <details>
 <summary>☢️Как обновлять оффсеты?☢️</summary>
 
-Оффсеты тип "m_": (устаревают раз в 2-4 недели)
+__Оффсеты тип "m_": (устаревают раз в 2-4 недели)__
 
-Простой способ(челу надоест продлевать виртуалку и все):
+__Простой способ(челу надоест продлевать виртуалку и все):__
  - Запустить "1337Flex.ahk" => "DBG"
  - AutoUp
  - В конце откроется блокнот и оффсеты. Оффсеты уже скопированы в буфер обмена
  - Убрать старые и просто вставить
 
-Сложный способ:
+__Сложный способ(сложный по началу):__
 
 1. Скачать Репозиторий
 https://github.com/neverlosecc/source2gen
 
 3. Установить:
+
 Visual Studio 2019 or newer
+
 CMake
 
-4. Команды для сборки source2gen в CMD
+5. Команды для сборки source2gen в CMD
+
 cd C:\Dk\source2gen-main
+
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DSOURCE2GEN_GAME=DEADLOCK
+
 cmake --build build
 
-5. Запустить source2gen-main\build\bin\Debug\source2gen-loader.exe
+6. Запустить source2gen-main\build\bin\Debug\source2gen-loader.exe
 
-6. Нажать "MnlUp" и указать путь к папке "sdk\include\source2sdk"
+7. Нажать "MnlUp" и указать путь к папке с sdk "sdk\include\source2sdk"
 
-Оффсеты тип "dw_": (устаревают оч редко)
+__Странный способ(онлайн-оффлайн веб дампер)__
+
+1. Открыть: https://a2x.github.io/cs2-analyzer/
+2. Отдать ему "steamapps\common\Deadlock\game\citadel\bin\win64\client.dll"
+3. Открыть вкладку "Classes"
+4. Искать оффсеты
+
+Пример:
+```
+; C_BasePlayerPawn
+static m_pCameraServices = 0xd58
+```
+
+m_pCameraServices - имя оффсета
+
+0xd58 - адрес
+
+C_BasePlayerPawn - это имя раздела
+
+
+__Оффсеты тип "dw_": (устаревают оч редко)__
 
  - Запустить "1337Flex.ahk" => "DBG"
  - Open client.dll, автоматически откроет папку с файлом если открыта игра или искать путь самому
