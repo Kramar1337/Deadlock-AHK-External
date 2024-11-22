@@ -75,8 +75,11 @@ Loop
 	listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 	Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 
+	
 	pitch := 1337flex.Read(baseAddress + CCameraManager + 0x28, "Float", 0x44)
+	; msgbox % HexFormat(Pawn1)
 	vecPunchAngle := 1337flex.Read(Pawn1 + offsets.m_pCameraServices, "Float", offsets.m_vecPunchAngle) 	;RCS
+	
 	vecPunchAngleOld := vecPunchAngle - vecPunchAngleOld
 	if (vecPunchAngle < 0)
 	{

@@ -1,7 +1,7 @@
 ﻿class offsets
 {
 ; C_BasePlayerPawn
-static m_pCameraServices = 0xd60
+static m_pCameraServices = 0xd58
 ; CPlayer_CameraServices
 static m_vecPunchAngle = 0x40
 ; CEntityInstance
@@ -21,7 +21,7 @@ static m_modelState = 0x170
 ; CModelState
 static m_hModel = 0xd0
 ; CCitadelPlayerController
-static m_PlayerDataGlobal = 0x780
+static m_PlayerDataGlobal = 0x7b0
 ; PlayerDataGlobal_t
 static m_iHealth = 0x48
 static m_iHealthMax = 0x10
@@ -34,7 +34,7 @@ static m_flUltimateCooldownEnd = 0x70
 ; C_GameRules
 static m_nTotalPausedTicks = 0x30
 ; C_CitadelPlayerPawn
-static m_angLockedEyeAngles = 0x1014
+static m_angLockedEyeAngles = 0x100c
 }
 ; Функция для выполнения поиска паттерна и вычисления адреса
 FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2) {

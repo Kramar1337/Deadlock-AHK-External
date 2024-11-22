@@ -54,7 +54,8 @@ Gui, 2: Add, GroupBox, x8 y80 w176 h58, Оффлайн дампер
 Gui, 2: Add, Link, x16 y112 w75 h23, <a href="https://github.com/neverlosecc/source2gen">Source2gen</a>
 Gui, 2: Add, Link, x200 y48 w76 h20, <a href="https://github.com/ouwou/source2sdk-deadlock">SdkDeadlock</a>
 Gui, 2: Add, GroupBox, x192 y24 w176 h50, Онлайн автообновление
-Gui, 2: Add, Button, gLGuideoff x96 y104 w80 h23, Guide
+Gui, 2: Add, Button, gLGuideoff x96 y104 w40 h23, Guide
+Gui, 2: Add, Button, gMnlUp x136 y104 w40 h23, MnlUp
 Gui, 2: Add, Button, gUpOffsets x280 y40 w80 h23, AutoUp
 Gui, 2: Add, GroupBox, x192 y80 w176 h58, Ручной поиск
 Gui, 2: Add, Link, x296 y112 w66 h20, <a href="https://github.com/search?q=m_flUltimateCooldownEnd&type=code">Github</a>
@@ -374,7 +375,9 @@ cd C:\Dk\source2gen-main
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DSOURCE2GEN_GAME=DEADLOCK
 cmake --build build
 
-4. Запустить source2gen-main\build\bin\Debug\source2gen.exe
+4. Запустить source2gen-main\build\bin\Debug\source2gen-loader.exe
+
+5. Нажать "MnlUp" и указать путь к "source2sdk"
 )
 Clipboard := VarLGuideoff
 MsgBox, Скопировано в буфер обмена`n%VarLGuideoff%
@@ -397,6 +400,85 @@ else
     MsgBox, Процесс "%processName%" не найден!
 }
 return
+
+;======================MnlUp
+MnlUp:
+MsgBox 0x1, ,Ручное обновление оффсетов из дампера
+IfMsgBox OK, {
+} Else IfMsgBox Cancel, {
+Return
+}
+LocalDeadlockSdk = %A_ScriptDir%\Dumper\sdk\include\source2sdk
+InputBox, UserInput2, Open, Путь к папке с оффсетами например "C:\Dk\source2gen-main\build\bin\Debug\sdk\include\source2sdk",,700,150,,,,, %LocalDeadlockSdk%
+if ErrorLevel or UserInput2 = ""
+return
+FileCreateDir, %A_ScriptDir%\TempFlex
+FileCopy, % LocalDeadlockSdk "/client/C_BasePlayerPawn.hpp", % A_ScriptDir "\TempFlex\C_BasePlayerPawn.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CPlayer_CameraServices.hpp", % A_ScriptDir "\TempFlex\CPlayer_CameraServices.hpp"
+FileCopy, % LocalDeadlockSdk "/entity2/CEntityInstance.hpp", % A_ScriptDir "\TempFlex\CEntityInstance.hpp"
+FileCopy, % LocalDeadlockSdk "/entity2/CEntityIdentity.hpp", % A_ScriptDir "\TempFlex\CEntityIdentity.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CGameSceneNode.hpp", % A_ScriptDir "\TempFlex\CGameSceneNode.hpp"
+FileCopy, % LocalDeadlockSdk "/client/C_BaseEntity.hpp", % A_ScriptDir "\TempFlex\C_BaseEntity.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CBasePlayerController.hpp", % A_ScriptDir "\TempFlex\CBasePlayerController.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CSkeletonInstance.hpp", % A_ScriptDir "\TempFlex\CSkeletonInstance.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CModelState.hpp", % A_ScriptDir "\TempFlex\CModelState.hpp"
+FileCopy, % LocalDeadlockSdk "/client/CCitadelPlayerController.hpp", % A_ScriptDir "\TempFlex\CCitadelPlayerController.hpp"
+FileCopy, % LocalDeadlockSdk "/client/PlayerDataGlobal_t.hpp", % A_ScriptDir "\TempFlex\PlayerDataGlobal_t.hpp"
+FileCopy, % LocalDeadlockSdk "/client/C_GameRules.hpp", % A_ScriptDir "\TempFlex\C_GameRules.hpp"
+FileCopy, % LocalDeadlockSdk "/client/C_CitadelPlayerPawn.hpp", % A_ScriptDir "\TempFlex\C_CitadelPlayerPawn.hpp"
+
+combinedResult := ""
+combinedResult .= "; C_BasePlayerPawn" . "`n"
+combinedResult .= GetKramOffsets("C_BasePlayerPawn.hpp", "m_pCameraServices") . "`n"
+combinedResult .= "; CPlayer_CameraServices" . "`n"
+combinedResult .= GetKramOffsets("CPlayer_CameraServices.hpp", "m_vecPunchAngle") . "`n"
+combinedResult .= "; CEntityInstance" . "`n"
+combinedResult .= GetKramOffsets("CEntityInstance.hpp", "m_pEntity") . "`n"
+combinedResult .= GetKramOffsets("CEntityIdentity.hpp", "m_designerName") . "`n"
+combinedResult .= "; CGameSceneNode" . "`n"
+combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_vecAbsOrigin") . "`n"
+combinedResult .= GetKramOffsets("CGameSceneNode.hpp", "m_bDormant") . "`n"
+combinedResult .= "; C_BaseEntity" . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_pGameSceneNode") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_iTeamNum") . "`n"
+combinedResult .= GetKramOffsets("C_BaseEntity.hpp", "m_vecVelocity") . "`n"
+combinedResult .= "; CBasePlayerController" . "`n"
+combinedResult .= GetKramOffsets("CBasePlayerController.hpp", "m_hPawn") . "`n"
+combinedResult .= "; CSkeletonInstance" . "`n"
+combinedResult .= GetKramOffsets("CSkeletonInstance.hpp", "m_modelState") . "`n"
+combinedResult .= "; CModelState" . "`n"
+combinedResult .= GetKramOffsets("CModelState.hpp", "m_hModel") . "`n"
+combinedResult .= "; CCitadelPlayerController" . "`n"
+combinedResult .= GetKramOffsets("CCitadelPlayerController.hpp", "m_PlayerDataGlobal") . "`n"
+combinedResult .= "; PlayerDataGlobal_t" . "`n"
+combinedResult .= GetKramOffsets2("PlayerDataGlobal_t.hpp", "m_iHealth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iHealthMax") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bAlive") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_nHeroID") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iGoldNetWorth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_iAPNetWorth") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_bUltimateTrained") . "`n"
+combinedResult .= GetKramOffsets("PlayerDataGlobal_t.hpp", "m_flUltimateCooldownEnd") . "`n"
+combinedResult .= "; C_GameRules" . "`n"
+combinedResult .= GetKramOffsets("C_GameRules.hpp", "m_nTotalPausedTicks") . "`n"
+combinedResult .= "; C_CitadelPlayerPawn" . "`n"
+combinedResult .= GetKramOffsets("C_CitadelPlayerPawn.hpp", "m_angLockedEyeAngles") . "`n"
+
+Clipboard := combinedResult
+Run, notepad.exe "%A_ScriptDir%\offsets.ahk"
+WinWait, ahk_exe notepad.exe, , 2
+MsgBox, Отправлено в буфер обмена`n`n%combinedResult%
+
+MsgBox 0x1, ,Очистить?`n%A_ScriptDir%\TempFlex
+IfMsgBox OK, {
+FileRemoveDir, %A_ScriptDir%\TempFlex, 1
+} Else IfMsgBox Cancel, {
+Return
+}
+
+
+return
+
 
 
 ;======================AutoUp

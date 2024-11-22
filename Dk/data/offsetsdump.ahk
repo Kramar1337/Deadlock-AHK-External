@@ -40,4 +40,5 @@ offset1 := 0x3
 offset2 := 0x7
 dwGameRules := FindAndCalculateAddress(aPattern, gameDLL, offset1, offset2)
 
-dwGameEntitySystem_highestEntityIndex = 0x1530
+dwGameEntitySystem_highestEntityIndex = 0x2100
+

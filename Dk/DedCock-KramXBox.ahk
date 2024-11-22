@@ -129,8 +129,13 @@ Loop
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			PawnGet := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+			; msgbox % HexFormat(ControllerBase)
 			if Health
 			{
+			; m_PlayerDataGlobal = 0x7d0
+			; m_iHealth = 0x48
+			; msgbox % HexFormat(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth)
+			; msgbox % HexFormat(ControllerBase)
 			BubaArrayEntity.push(ControllerBase)
 			BubaArrayPawn.push(PawnGet)
 			}
@@ -142,6 +147,9 @@ Loop
 		listEntry1 := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle1 & 0x7FFF) >> 0x9) + 0x10, 0x0)
 		Pawn1 := 1337flex.getAddressFromOffsets(listEntry1 + 0x78 * (pawnHandle1 & 0x1FF), 0x0)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
+		myXLocation := 1337flex.Read(GameSceneNode1 + offsets.m_vecAbsOrigin,"float")
+		; msgbox % myXLocation
+		; msgbox % HexFormat(ControllerBase1)
 		VarStart_time := A_TickCount
 	}
 	Kramindex := 0
@@ -153,61 +161,93 @@ Loop
 	Pawn := BubaArrayPawn[Kramindex]
 
 
-	/*
-
-
+/*
 ; C_CitadelBaseAbility
-; static m_eAbilitySlot = 0x6f0
-; CEntityComponent
-; static m_vecAbilities = 0x70
+static m_eAbilitySlot = 0x6f0
+static m_nUpgradeBits = 0x6d0
+static m_bIsCoolingDownInternal = 0x68c  
+; CCitadelAbilityComponent
+static m_vecAbilities = 0x70
 ; C_CitadelPlayerPawn
-; static m_CCitadelAbilityComponent = 0x1020
+static m_CCitadelAbilityComponent = 0x1020
 ; CCitadel_Ability_HoldMelee
-; static m_eCurrentAttackState = 0xd30
-; static m_bCreatedChargeEffects = 0xd45 
+static m_eCurrentAttackState = 0xd30
+static m_bCreatedChargeEffects = 0xd45 
 
 
-	Loop
+Ability (CCitadel_Ability_HoldMelee) 19AE1170000
+m_eCurrentAttackState B98
+m_bCreatedChargeEffects BAD
+
+
+*/
+;BoneArray = GameSceneNode + Offsets.m_modelState(0x170) + m_skeletonInstance(0x80)
+; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+; ssmodelState := 1337flex.getAddressFromOffsets(GameSceneNode + Offsets.m_modelState + 0x80, 0x0)
+; msgbox % HexFormat(Pawn)
+; msgbox % HexFormat(ssmodelState)
+; msgbox % HexFormat(GameSceneNode + Offsets.m_modelState)
+
+
+/*
+
+; 19936D706C8
+; 19936D788A0
+; 81D8
+
+; Ability := 1337flex.getAddressFromOffsets(0x19936D706C8 + 0x78 * (0x4A0115 & 0x1FF), 0x0)
+
+; Ability := 1337flex.getAddressFromOffsets(0x19936D788A0, 0x0)
+
+
+; 19A7E7B0040 я Ability_component
+; 1999E790540 враг Ability_component
+
+; Loop
+; {
+; GameSceneNode := 1337flex.getAddressFromOffsets(Pawn + offsets.m_pGameSceneNode, 0x0)
+msgbox % HexFormat(ControllerBaseEntity)
+
+
+Ability_component := 1337flex.getAddressFromOffsets(Pawn + offsets.m_CCitadelAbilityComponent + offsets.m_vecAbilities + 0x8, 0x0)
+i := 0
+while (i < 42)
+{
+	AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
+	EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
+	Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0) ; 19BBCE70000 = 19936D706C8 + 81D8, 0x0
+	if Ability
 	{
-	Ability_component := 1337flex.getAddressFromOffsets(Pawn + offsets.m_CCitadelAbilityComponent + offsets.m_vecAbilities + 0x8, 0x0)
-	i := 0
-	while (i < 22)
-	{
-		AbilityHandle := 1337flex.Read(Ability_component + (i * 0x4),"int")
-		EntryList := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((AbilityHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
-		Ability := 1337flex.getAddressFromOffsets(EntryList + 0x78 * (AbilityHandle & 0x1FF), 0x0)
-		
-		if Ability
+		nUpgradeBits := 1337flex.Read(Ability + offsets.m_nUpgradeBits,"int")
+		bIsCoolingDownInternal := 1337flex.Read(Ability + offsets.m_bIsCoolingDownInternal,"int")
+		eAbilitySlot := 1337flex.Read(Ability + offsets.m_eAbilitySlot,"int")
+		if eAbilitySlot = 21
 		{
-			nUpgradeBits := 1337flex.Read(Ability + 0x6c8,"int")
-			bIsCoolingDownInternal := 1337flex.Read(Ability + 0x684,"int")
-			eAbilitySlot := 1337flex.Read(Ability + offsets.m_eAbilitySlot,"int")
-			if eAbilitySlot = 21
+			; msgbox % HexFormat(AbilityHandle) 	; 4A0115
+			; msgbox % EntryList + 0x78 * (AbilityHandle & 0x1FF) ; 19936D788A0
+			; msgbox % 0x78 * (AbilityHandle & 0x1FF) 	; 81D8
+			; msgbox % HexFormat(EntryList) 	; 19936D706C8
+			; msgbox % HexFormat(Ability) 	; 19BBCE70000
+			eCurrentAttackState := 1337flex.Read(Ability + offsets.m_eCurrentAttackState,"int")
+			bCreatedChargeEffects := 1337flex.Read(Ability + offsets.m_bCreatedChargeEffects,"int")
+			if (bCreatedChargeEffects = 1 and eCurrentAttackState > 0)
 			{
-				msgbox % HexFormat(Ability)
-				eCurrentAttackState := 1337flex.Read(Ability + offsets.m_eCurrentAttackState,"int")
-				bCreatedChargeEffects := 1337flex.Read(Ability + offsets.m_bCreatedChargeEffects,"int")
-				if (bCreatedChargeEffects = 1 and eCurrentAttackState > 0)
-				{
-				Tooltip Charge
-				}
-				else
-				{
-				Tooltip
-				}
+			Tooltip Charge
 			}
-			; Tooltip i - %i%`n%nUpgradeBits%`n%bIsCoolingDownInternal%`n%eAbilitySlot%`n%Pawn%
-			; sleep 500
+			else
+			{
+			Tooltip
+			}
 		}
-		i++
-		; msgbox %i%`n%Ability_component%`n%AbilityHandle%`n%Ability%`n%eAbilitySlot%
-		; msgbox % HexFormat(Ability)
 		
 	}
-	}
-	Exitapp
+	i++
+}
+; Exitapp 
+; }
+	; Exitapp
 
-	*/
+*/
 	
 	
 	
