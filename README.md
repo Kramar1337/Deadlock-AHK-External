@@ -29,7 +29,7 @@ Deadlock External Cheat на AHK для игры [Deadlock](https://store.steamp
 <details>
 <summary>☢️Как обновлять оффсеты?☢️</summary>
 
-__Оффсеты тип "m_": (устаревают раз в 2-4 недели)__
+____Оффсеты тип "m_": (устаревают раз в 2-4 недели)____
 
 __Простой способ(челу надоест продлевать виртуалку и все):__
  - Запустить "1337Flex.ahk" => "DBG"
@@ -43,19 +43,16 @@ __Сложный способ(сложный по началу):__
 https://github.com/neverlosecc/source2gen
 
 3. Установить:
-
+```
 Visual Studio 2019 or newer
-
 CMake
-
+```
 5. Команды для сборки source2gen в CMD
-
+```
 cd C:\Dk\source2gen-main
-
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DSOURCE2GEN_GAME=DEADLOCK
-
 cmake --build build
-
+```
 6. Запустить source2gen-main\build\bin\Debug\source2gen-loader.exe
 
 7. Нажать "MnlUp" и указать путь к папке с sdk "sdk\include\source2sdk"
@@ -71,16 +68,13 @@ __Странный способ(онлайн-оффлайн веб дампер)
 ```
 ; C_BasePlayerPawn
 static m_pCameraServices = 0xd58
-```
 
 m_pCameraServices - имя оффсета
-
 0xd58 - адрес
-
 C_BasePlayerPawn - это имя раздела
+```
 
-
-__Оффсеты тип "dw_": (устаревают оч редко)__
+____Оффсеты тип "dw_": (устаревают оч редко)____
 
  - Запустить "1337Flex.ahk" => "DBG"
  - Open client.dll, автоматически откроет папку с файлом если открыта игра или искать путь самому
