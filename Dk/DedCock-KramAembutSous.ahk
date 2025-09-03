@@ -53,7 +53,7 @@ Menu,Tray, Icon, Exit, shell32.dll,28, 16
 Gui, 1: new, +hwndNewGuiID2
 game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID2)
 
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 global isReading := false
 Toggler1 := false
@@ -75,7 +75,7 @@ Toggler1 := true
 SetTimer, ReadEntities, 1000
 Gosub, ReadEntities
 }
-WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 SetFormat, float, 2.20
 VarStart_time2 = 0
 
@@ -116,7 +116,7 @@ Loop
 	}
 	else
 	{
-		IfWinActive, ahk_exe project8.exe
+		IfWinActive, ahk_exe deadlock.exe
 		{
 			game2.EndDraw()
 			game2.BeginDraw()
@@ -143,8 +143,10 @@ Loop
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
 		DormantVar := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode, "int", offsets.m_bDormant)
+		
 			if (DormantVar == "0")
 			{
+			; tooltip % DormantVar
 			enemyXLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin)
 			enemyYLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin + 0x4)
 			enemyZLocation := 1337flex.Read(ControllerBase + offsets.m_pGameSceneNode,"float", offsets.m_vecAbsOrigin + 0x8)
@@ -197,7 +199,7 @@ Loop
 		{
 			xpos1 := arr[1]
 			ypos1 := arr[2]
-			IfWinActive, ahk_exe project8.exe
+			IfWinActive, ahk_exe deadlock.exe
 			AimAtTarget(xpos1, ypos1)
 		}
 	}
@@ -217,7 +219,10 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 	if LocalPlayer
 	{
 		EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
+		
 		EntityListCout := 1337flex.Read(EntityListCout + dwGameEntitySystem_highestEntityIndex,"int")
+		EntityListCout=2024
+		
 		playerIndex=0
 		BubaArray := []
 		counter1 := 0
@@ -234,8 +239,10 @@ if (!isReading) ; Проверяем, не запущен ли уже проце
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pEntityString := 1337flex.readString(ControllerBase + offsets.m_pEntity,, "utf-8", offsets.m_designerName, 0x0)
+			
 			if (pEntityString == "item_xp")
 			{
+			; msgbox % pEntityString
 			BubaArray.push(ControllerBase)
 			}
 			playerIndex++

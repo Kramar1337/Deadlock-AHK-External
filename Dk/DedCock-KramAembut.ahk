@@ -69,7 +69,7 @@ Menu,Tray, Icon, Exit, shell32.dll,28, 16
 Gui, 1: new, +hwndNewGuiID2
 game2 := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID2)
 
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 Toggler1 := false
@@ -86,7 +86,7 @@ if (!Toggler1)
 Toggler1 := true
 }
 }
-WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 SetFormat, float, 2.20
 VarStart_time := A_TickCount
 LastTime1 := A_TickCount
@@ -116,7 +116,7 @@ Loop
 		}
 		else
 		{
-		IfWinActive, ahk_exe project8.exe
+		IfWinActive, ahk_exe deadlock.exe
 		{
 			game2.BeginDraw()
 			centerX := A_ScreenWidth / 2
@@ -144,10 +144,16 @@ Loop
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			Pawn := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
-			Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			; Health := 1337flex.Read(Pawn + offsets.m_ihealth,"int")
+			
+			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+			
+			; msgbox % Health
+			
 			if Health
 			{
 				BubaArray.push(ControllerBase)
+				; msgbox % Health
 				BubaArray2.push(Pawn)
 			}
 			playerIndex++
@@ -166,11 +172,13 @@ Loop
 	
 	if (!currentTarget)
     {
+	
 	Kramindex := 0
 	bones := []
 	distances := []
 	while (Kramindex < BubaArray.length() && GetKeyState(key_aim, "P"))
 	{
+		
 		Kramindex++
 		ControllerBase := BubaArray[Kramindex]
 		Pawn := BubaArray2[Kramindex]
@@ -178,6 +186,7 @@ Loop
 		HeroID := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_nHeroID,"int")
 		bAlive := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_bAlive,"int")
 		iHealth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
+		
 		if (TeamNum != MyTeamIs)
 		{
 			if (bAlive = 1 && iHealth > 0)
@@ -357,13 +366,13 @@ Loop
 				distance := Sqrt(deltaX**2 + deltaY**2)
 				if (distance <= captureRange*1.5)  ; Проверяем экранное расстояние, а не мировое
 				{
-					IfWinActive, ahk_exe project8.exe
+					IfWinActive, ahk_exe deadlock.exe
 					AimAtTarget(xpos1, ypos1)
 				}
 			}
 			else
 			{
-				IfWinActive, ahk_exe project8.exe
+				IfWinActive, ahk_exe deadlock.exe
 				AimAtTarget(xpos1, ypos1)
 			}
 		}

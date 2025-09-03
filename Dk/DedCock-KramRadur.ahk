@@ -88,7 +88,7 @@ Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
 
 
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
@@ -112,7 +112,7 @@ if (!Toggler1)
 Toggler1 := true
 }
 }
-WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 SetFormat, float, 2.20
 VarStart_time = 0
 Loop
@@ -192,10 +192,10 @@ Loop
 			myAPNetWorth := 1337flex.Read(ControllerBase1 + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
 			GoldNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iGoldNetWorth,"int")
 			APNetWorth := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
-			WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+			WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 			if(enemyXLocation!=0)
 			{
-			IfWinActive, ahk_exe project8.exe
+			IfWinActive, ahk_exe deadlock.exe
 			{
 			if radarBoxEnable
 			{

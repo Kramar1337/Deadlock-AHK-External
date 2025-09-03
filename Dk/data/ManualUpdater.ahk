@@ -37,7 +37,7 @@ Menu,Tray, add, Reload, MetkaMenu2
 Menu,Tray, Icon, Reload, shell32.dll, 239, 16
 Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 Gui, 1: new, +hwndNewGuiID
 game := new ShinsOverlayClass(0,0,A_ScreenWidth,A_ScreenHeight, "1", "1", "1",, NewGuiID)
@@ -157,7 +157,7 @@ While (BoneDbgBool)
 		GameSceneNode1 := 1337flex.getAddressFromOffsets(Pawn1 + offsets.m_pGameSceneNode, 0x0)
 		VarStart_time := A_TickCount
 	}
-	WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe project8.exe
+	WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe deadlock.exe
 	Kramindex := 0
 	playerIndexGet := 0 	;Удалить
 	while Kramindex < BubaArrayEntity.length()
@@ -335,6 +335,7 @@ return
 }
 EntityListCout := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x0)
 EntityListCout := 1337flex.Read(EntityListCout + dwGameEntitySystem_highestEntityIndex,"int")
+EntityListCout=1024
 playerIndex=0
 while(playerIndex < EntityListCout + 1)
 {
@@ -388,7 +389,7 @@ return
 
 ;======================Open client.dll
 LgetClientdll:
-processName := "project8.exe"
+processName := "deadlock.exe"
 filePath := GetProcessPath(processName)
 if (filePath) 
 {

@@ -31,7 +31,7 @@ IniRead, RunDedCockKramMokros, %iniFile%, Settings, RunDedCockKramMokros, 1
 if !RunDedCockKramMokros
 Exitapp
 
-Hotkey, IfWinActive, ahk_exe project8.exe
+Hotkey, IfWinActive, ahk_exe deadlock.exe
 Hotkey, *~$%key_jump%, JumpAction
 Hotkey, *~$%key_crouch%, CrouchAction
 Hotkey, *~$%key_activereload%, Activereload

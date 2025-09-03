@@ -41,7 +41,7 @@ Menu,Tray, add, Exit, MetkaMenu1
 Menu,Tray, Icon, Exit, shell32.dll,28, 16
 AntiVACHashChanger:="fghfh3534gjdgdfgfj6867jhmbdsq4123asddfgdfgaszxxcasdf423dfght7657ghnbnghrtwer32esdfgr65475dgdgdf6867ghjkhji7456wsdfsf34sdfsdf324sdfgdfg453453453456345gdgdgdfsf"
 
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 Toggler1 := false
 
@@ -57,7 +57,7 @@ if (!Toggler1)
 Toggler1 := true
 }
 }
-WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 SetFormat, float, 2.20
 
 vecPunchAngleOld = 0

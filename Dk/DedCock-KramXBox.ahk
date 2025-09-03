@@ -69,7 +69,7 @@ HeroArray := {}
 
 
 
-gameEXE:= "ahk_exe project8.exe"
+gameEXE:= "ahk_exe deadlock.exe"
 gameDLL:= "client.dll"
 Toggler1 := false
 
@@ -90,7 +90,7 @@ Toggler1 := true
 }
 }
 
-WinGetPos,,, windowWidth, windowHeight, ahk_exe project8.exe
+WinGetPos,,, windowWidth, windowHeight, ahk_exe deadlock.exe
 SetFormat, float, 2.20
 VarStart_time = 0
 EntityIndex = 32
@@ -126,10 +126,11 @@ Loop
 			AddressBase := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, (8 * ((playerIndex & 0x7FFF) >> 9) + 16), 0x0)
 			ControllerBase := 1337flex.getAddressFromOffsets(AddressBase + 0x78 * (playerIndex & 0x1FF), 0x0)
 			pawnHandle := 1337flex.Read(ControllerBase + offsets.m_hPawn,"int")
+			; msgbox % HexFormat(dwEntityList)
 			listEntry := 1337flex.getAddressFromOffsets(baseAddress + dwEntityList, 0x8 * ((pawnHandle & 0x7FFF) >> 0x9) + 0x10, 0x0)
 			PawnGet := 1337flex.getAddressFromOffsets(listEntry + 0x78 * (pawnHandle & 0x1FF), 0x0)
 			Health := 1337flex.Read(ControllerBase + offsets.m_PlayerDataGlobal + offsets.m_iHealth,"int")
-			; msgbox % HexFormat(ControllerBase)
+			; msgbox % HexFormat(EntityList)
 			if Health
 			{
 			; m_PlayerDataGlobal = 0x7d0
@@ -265,7 +266,7 @@ while (i < 42)
 			enemyXLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin,"float")
 			enemyYLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x4,"float")
 			enemyZLocation := 1337flex.Read(GameSceneNode + offsets.m_vecAbsOrigin+0x8,"float")
-			WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe project8.exe
+			WinGetPos, windowX, windowY, windowWidth, windowHeight, ahk_exe deadlock.exe
 			if (enemyXLocation != 0)
 			{
 				if (arr := WorldToScreen(enemyXLocation, enemyYLocation, enemyZLocation, windowWidth, windowHeight))
@@ -276,7 +277,7 @@ while (i < 42)
 					xpos2 := arr2[1] + windowX
 					ypos2 := arr2[2] + windowY
 					dist := getDistance(enemyXLocation, enemyYLocation, enemyZLocation)
-					IfWinActive, ahk_exe project8.exe
+					IfWinActive, ahk_exe deadlock.exe
 					{
 						if (dist > 1.2)
 						{
@@ -287,9 +288,12 @@ while (i < 42)
 							APNetWorth := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_iAPNetWorth,"int")
 							UltimateTrained := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_bUltimateTrained,"int")
 							UltimateCooldownEnd := 1337flex.Read(ControllerBaseEntity + offsets.m_PlayerDataGlobal + offsets.m_flUltimateCooldownEnd,"float")
-							CurrentTime := 1337flex.Read(baseAddress + dwGlobalVars + 0x0, "float", 0x34)
+							CurrentTime := 1337flex.Read(baseAddress + dwGlobalVars + 0x0, "float", 0x30)
+							; msgbox % HexFormat(baseAddress + dwGlobalVars)
 							TotalPausedTicksAddress := 1337flex.getAddressFromOffsets(baseAddress + dwGameRules, 0x0)
+							; msgbox % HexFormat(TotalPausedTicksAddress)
 							TotalPausedTicks := 1337flex.Read(TotalPausedTicksAddress + offsets.m_nTotalPausedTicks, "int")
+							; msgbox % TotalPausedTicks
 							TotalPausedTicks := TotalPausedTicks * 0.016666666
 							UltimateCooldownMath := UltimateCooldownEnd - CurrentTime + TotalPausedTicks
 							UltimateTime := ""
