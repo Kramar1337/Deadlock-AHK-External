@@ -223,6 +223,7 @@ URLDeadlockSdk=https://raw.githubusercontent.com/ouwou/source2sdk-deadlock/refs/
 __🔗Ресурсы которые я использовал:🔗__
 | Ссылка | Название | Описание |
 | --- | --- | --- |
+| [Github](https://github.com/hmate9/deadunlock) | DeadUnlock | External python Cheat aim esp |
 | [Github](https://github.com/Loara228/deadlock-esp) | Deadlock-esp | External Cheat for Deadlock от Loara228 |
 | [Github](https://github.com/neverlosecc/source2gen) | Source2gen | Source2 games SDK generator |
 | [Github](https://a2x.github.io/cs2-analyzer/) | CS2-analyzer | Offsets + SDK generator |
