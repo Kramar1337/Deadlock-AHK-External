@@ -1,11 +1,12 @@
 # Deadlock-AHK-External v0.4
 
+В игру наигрался, обновлений не будет.
+
 Deadlock External Cheat на AHK для игры [Deadlock](https://store.steampowered.com/app/1422450/Deadlock/)
 
 🙏 Использование читов может привести к блокировке учетной записи, бан дают по железу, использовать на свой страх и риск на пустом аккиче
 
 [__✨Boosty✨__](https://boosty.to/kramar1337)
-[__✨SteamTrade✨__](https://steamcommunity.com/tradeoffer/new/?partner=176456946&token=QbYR9jmE)
 
 __🚀Функционал:🚀__
 
